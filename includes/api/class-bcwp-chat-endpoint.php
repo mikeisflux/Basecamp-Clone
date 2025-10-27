@@ -63,6 +63,9 @@ class BCWP_Chat_Endpoint extends BCWP_REST_API {
 
         $message = BCWP_Chat::get_message( $message_id );
 
+        // Broadcast via WebSocket if enabled
+        BCWP_WebSocket_Service::broadcast_chat_message( $project_id, $message );
+
         return $this->success_response( $message, '', 201 );
     }
 

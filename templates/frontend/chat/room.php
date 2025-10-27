@@ -51,6 +51,7 @@ $messages = BCWP_Chat::get_project_messages( $bcwp_project->id, 50 );
     </main>
 </div>
 
+<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/websocket-client.js"></script>
 <script>
 const bcwpData = {
     restUrl: '<?php echo rest_url( 'bcwp/v1' ); ?>',
@@ -60,10 +61,65 @@ const bcwpData = {
         'id' => get_current_user_id(),
         'name' => wp_get_current_user()->display_name,
         'avatar' => get_avatar_url( get_current_user_id() ),
-    ) ); ?>
+    ) ); ?>,
+    websocket: <?php echo json_encode( BCWP_WebSocket_Service::get_frontend_config( get_current_user_id() ) ); ?>
 };
 
 let lastMessageId = <?php echo empty( $messages ) ? 0 : $messages[count($messages)-1]->id; ?>;
+let ws = null;
+let usingWebSocket = false;
+let pollingInterval = null;
+
+// Initialize WebSocket or fall back to polling
+if (bcwpData.websocket.enabled) {
+    ws = new BasecampWebSocket(bcwpData.websocket);
+
+    ws.on('connected', () => {
+        console.log('✅ Using WebSocket for real-time chat');
+        usingWebSocket = true;
+        ws.joinProject(bcwpData.projectId);
+
+        // Stop polling if it was running
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+    });
+
+    ws.on('chat-message', (data) => {
+        // Only show messages from other users (our own are shown immediately)
+        if (data.userId !== bcwpData.currentUser.id) {
+            appendMessage({
+                id: data.id,
+                message: data.content,
+                user_name: data.userName,
+                user_avatar: data.avatar,
+                created_at: data.createdAt
+            });
+            lastMessageId = Math.max(lastMessageId, data.id);
+        }
+    });
+
+    ws.on('fallback-to-polling', () => {
+        console.log('⚠️ WebSocket failed, falling back to polling');
+        usingWebSocket = false;
+        startPolling();
+    });
+
+    ws.on('disconnected', () => {
+        console.log('⚠️ WebSocket disconnected, using polling');
+        usingWebSocket = false;
+        startPolling();
+    });
+} else {
+    console.log('📡 Using AJAX polling for chat');
+    startPolling();
+}
+
+function startPolling() {
+    if (pollingInterval) return;
+    pollingInterval = setInterval(loadNewMessages, 3000);
+}
 
 document.getElementById('chat-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -82,10 +138,25 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
             body: JSON.stringify({ message })
         });
 
-        if (response.ok) {
+        const result = await response.json();
+
+        if (response.ok && result.success) {
             input.value = '';
             input.style.height = 'auto';
-            loadNewMessages();
+
+            // Show our own message immediately
+            appendMessage({
+                id: result.data.id,
+                message: result.data.message,
+                user_name: bcwpData.currentUser.name,
+                user_avatar: bcwpData.currentUser.avatar,
+                created_at: result.data.created_at
+            });
+
+            lastMessageId = Math.max(lastMessageId, result.data.id);
+
+            // If using WebSocket, message will be broadcast by the server
+            // If using polling, it will be picked up on next poll
         }
     } catch (error) {
         console.error('Failed to send message:', error);
@@ -98,6 +169,8 @@ document.getElementById('chat-input').addEventListener('input', (e) => {
 });
 
 async function loadNewMessages() {
+    if (usingWebSocket) return; // Skip polling if WebSocket is active
+
     try {
         const response = await fetch(
             `${bcwpData.restUrl}/projects/${bcwpData.projectId}/chat/poll?since_id=${lastMessageId}`,
@@ -119,12 +192,18 @@ async function loadNewMessages() {
 
 function appendMessage(msg) {
     const container = document.getElementById('chat-messages');
+
+    // Check if message already exists
+    if (container.querySelector(`[data-id="${msg.id}"]`)) {
+        return;
+    }
+
     const messageEl = document.createElement('div');
     messageEl.className = 'bcwp-chat-message';
     messageEl.dataset.id = msg.id;
     messageEl.innerHTML = `
         <div class="bcwp-chat-avatar">
-            <img src="${bcwpData.currentUser.avatar}" alt="" class="bcwp-avatar">
+            <img src="${msg.user_avatar || bcwpData.currentUser.avatar}" alt="" class="bcwp-avatar">
         </div>
         <div class="bcwp-chat-content">
             <div class="bcwp-chat-header">
@@ -145,10 +224,19 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-setInterval(loadNewMessages, 3000);
-
 document.getElementById('chat-messages').scrollTop =
     document.getElementById('chat-messages').scrollHeight;
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (ws) {
+        ws.leaveProject(bcwpData.projectId);
+        ws.disconnect();
+    }
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+});
 </script>
 <script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/frontend.js"></script>
 

@@ -51,6 +51,7 @@ class BCWP_Core {
         require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-digest-service.php';
         require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-analytics-service.php';
         require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-google-calendar-service.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-websocket-service.php';
 
         // API
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-rest-api.php';
