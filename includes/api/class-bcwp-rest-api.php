@@ -16,6 +16,7 @@ class BCWP_REST_API {
             new BCWP_Messages_Endpoint(),
             new BCWP_Todos_Endpoint(),
             new BCWP_Chat_Endpoint(),
+            new BCWP_Activities_Endpoint(),
         );
 
         foreach ( $endpoints as $endpoint ) {

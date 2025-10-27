@@ -38,6 +38,7 @@ class BCWP_Core {
         require_once BCWP_PLUGIN_DIR . 'includes/models/class-bcwp-chat.php';
         require_once BCWP_PLUGIN_DIR . 'includes/models/class-bcwp-event.php';
         require_once BCWP_PLUGIN_DIR . 'includes/models/class-bcwp-card.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/models/class-bcwp-activity.php';
 
         // Services
         require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-auth-service.php';
@@ -53,6 +54,7 @@ class BCWP_Core {
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-messages-endpoint.php';
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-todos-endpoint.php';
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-chat-endpoint.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-activities-endpoint.php';
 
         // Frontend
         require_once BCWP_PLUGIN_DIR . 'includes/frontend/class-bcwp-router.php';

@@ -611,6 +611,141 @@
     height: calc(100% - 70px);
 }
 
+/* Activity Feed */
+.bcwp-activity-feed {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.bcwp-activity-filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: var(--bcwp-white);
+    border-radius: var(--bcwp-radius);
+}
+
+.bcwp-activity-filters .bcwp-select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--bcwp-border-color);
+    border-radius: var(--bcwp-radius);
+    font-size: 15px;
+    background-color: var(--bcwp-white);
+}
+
+.bcwp-activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.bcwp-activity-item {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background-color: var(--bcwp-white);
+    border-bottom: 1px solid var(--bcwp-border-color);
+    transition: background-color 0.2s;
+}
+
+.bcwp-activity-item:hover {
+    background-color: #fafaf9;
+}
+
+.bcwp-activity-item:first-child {
+    border-top-left-radius: var(--bcwp-radius);
+    border-top-right-radius: var(--bcwp-radius);
+}
+
+.bcwp-activity-item:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: var(--bcwp-radius);
+    border-bottom-right-radius: var(--bcwp-radius);
+}
+
+.bcwp-activity-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.bcwp-activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.bcwp-activity-header {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.bcwp-activity-avatar {
+    flex-shrink: 0;
+}
+
+.bcwp-activity-description {
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--bcwp-text-color);
+}
+
+.bcwp-activity-project {
+    font-size: 14px;
+    color: var(--bcwp-text-light);
+    margin-bottom: 8px;
+}
+
+.bcwp-activity-project a {
+    color: var(--bcwp-primary-color);
+    text-decoration: none;
+}
+
+.bcwp-activity-project a:hover {
+    text-decoration: underline;
+}
+
+.bcwp-activity-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--bcwp-text-light);
+}
+
+.bcwp-activity-link {
+    color: var(--bcwp-primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.bcwp-activity-link:hover {
+    text-decoration: underline;
+}
+
+.bcwp-activity-new {
+    animation: highlightNew 2s ease-out;
+}
+
+@keyframes highlightNew {
+    0% {
+        background-color: #fef3c7;
+    }
+    100% {
+        background-color: var(--bcwp-white);
+    }
+}
+
+.bcwp-load-more {
+    text-align: center;
+    margin-top: 24px;
+    padding: 20px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .bcwp-container {
