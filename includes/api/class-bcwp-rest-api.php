@@ -17,6 +17,7 @@ class BCWP_REST_API {
             new BCWP_Todos_Endpoint(),
             new BCWP_Chat_Endpoint(),
             new BCWP_Activities_Endpoint(),
+            new BCWP_Search_Endpoint(),
         );
 
         foreach ( $endpoints as $endpoint ) {

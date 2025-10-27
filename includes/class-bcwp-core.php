@@ -55,6 +55,7 @@ class BCWP_Core {
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-todos-endpoint.php';
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-chat-endpoint.php';
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-activities-endpoint.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-search-endpoint.php';
 
         // Frontend
         require_once BCWP_PLUGIN_DIR . 'includes/frontend/class-bcwp-router.php';
