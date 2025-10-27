@@ -39,6 +39,7 @@ class BCWP_Core {
         require_once BCWP_PLUGIN_DIR . 'includes/models/class-bcwp-event.php';
         require_once BCWP_PLUGIN_DIR . 'includes/models/class-bcwp-card.php';
         require_once BCWP_PLUGIN_DIR . 'includes/models/class-bcwp-activity.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/models/class-bcwp-comment.php';
 
         // Services
         require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-auth-service.php';
