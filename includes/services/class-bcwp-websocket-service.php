@@ -131,15 +131,23 @@ class BCWP_WebSocket_Service {
             'exp' => time() + ( 24 * 60 * 60 ), // 24 hours
         );
 
-        // In production, use a proper JWT library
-        // For now, we'll use a simple encoding
+        // Generate proper JWT token using HS256
         $secret = get_option( 'bcwp_websocket_secret', wp_salt() );
-        $header = base64_encode( json_encode( array( 'typ' => 'JWT', 'alg' => 'HS256' ) ) );
-        $payload_encoded = base64_encode( json_encode( $payload ) );
+
+        // Use base64url encoding (URL-safe)
+        $header = self::base64url_encode( json_encode( array( 'typ' => 'JWT', 'alg' => 'HS256' ) ) );
+        $payload_encoded = self::base64url_encode( json_encode( $payload ) );
         $signature = hash_hmac( 'sha256', $header . '.' . $payload_encoded, $secret, true );
-        $signature_encoded = base64_encode( $signature );
+        $signature_encoded = self::base64url_encode( $signature );
 
         return $header . '.' . $payload_encoded . '.' . $signature_encoded;
+    }
+
+    /**
+     * Base64 URL-safe encoding.
+     */
+    private static function base64url_encode( $data ) {
+        return rtrim( strtr( base64_encode( $data ), '+/', '-_' ), '=' );
     }
 
     /**

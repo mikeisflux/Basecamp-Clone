@@ -45,19 +45,36 @@ io.use((socket, next) => {
     }
 
     try {
-        // In production, verify against your WordPress secret key
-        // For now, we'll accept the token and decode it
-        const decoded = jwt.decode(token);
+        // Verify JWT token with secret for security
+        const secret = process.env.JWT_SECRET || process.env.WEBSOCKET_SECRET;
+
+        if (!secret) {
+            console.error('CRITICAL: JWT_SECRET or WEBSOCKET_SECRET not configured');
+            return next(new Error('Server configuration error'));
+        }
+
+        // Use jwt.verify instead of jwt.decode for cryptographic verification
+        const decoded = jwt.verify(token, secret, {
+            algorithms: ['HS256'],
+            maxAge: '24h' // Token expires after 24 hours
+        });
 
         if (!decoded || !decoded.user_id) {
-            return next(new Error('Invalid token'));
+            return next(new Error('Invalid token payload'));
         }
 
         socket.userId = decoded.user_id;
         socket.userName = decoded.user_name || 'User';
         next();
     } catch (err) {
-        next(new Error('Authentication failed'));
+        console.error('JWT verification failed:', err.message);
+        if (err.name === 'TokenExpiredError') {
+            next(new Error('Token expired'));
+        } else if (err.name === 'JsonWebTokenError') {
+            next(new Error('Invalid token'));
+        } else {
+            next(new Error('Authentication failed'));
+        }
     }
 });
 

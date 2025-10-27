@@ -186,8 +186,9 @@ class BCWP_Google_Calendar_Service {
             );
         }
 
-        // Check if event already synced
-        $google_event_id = get_post_meta( $event->id, 'bcwp_google_event_id_' . $user_id, true );
+        // Check if event already synced (stored in metadata JSON column)
+        $metadata = $event->metadata ? json_decode( $event->metadata, true ) : array();
+        $google_event_id = isset( $metadata['google_calendar_ids'][ $user_id ] ) ? $metadata['google_calendar_ids'][ $user_id ] : null;
 
         if ( $google_event_id ) {
             // Update existing event
@@ -215,8 +216,17 @@ class BCWP_Google_Calendar_Service {
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
 
         if ( isset( $body['id'] ) ) {
-            // Store Google event ID
-            update_post_meta( $event->id, 'bcwp_google_event_id_' . $user_id, $body['id'] );
+            // Store Google event ID in metadata column
+            if ( ! isset( $metadata['google_calendar_ids'] ) ) {
+                $metadata['google_calendar_ids'] = array();
+            }
+            $metadata['google_calendar_ids'][ $user_id ] = $body['id'];
+
+            // Update event metadata
+            BCWP_Event::update( $event->id, array(
+                'metadata' => json_encode( $metadata )
+            ) );
+
             return true;
         }
 
@@ -233,7 +243,15 @@ class BCWP_Google_Calendar_Service {
             return new WP_Error( 'no_token', 'Not authenticated with Google' );
         }
 
-        $google_event_id = get_post_meta( $event_id, 'bcwp_google_event_id_' . $user_id, true );
+        // Get event to access metadata
+        $event = BCWP_Event::get( $event_id );
+
+        if ( ! $event ) {
+            return new WP_Error( 'event_not_found', 'Event not found' );
+        }
+
+        $metadata = $event->metadata ? json_decode( $event->metadata, true ) : array();
+        $google_event_id = isset( $metadata['google_calendar_ids'][ $user_id ] ) ? $metadata['google_calendar_ids'][ $user_id ] : null;
 
         if ( empty( $google_event_id ) ) {
             return true; // Nothing to delete
@@ -253,7 +271,12 @@ class BCWP_Google_Calendar_Service {
             return $response;
         }
 
-        delete_post_meta( $event_id, 'bcwp_google_event_id_' . $user_id );
+        // Remove from metadata
+        unset( $metadata['google_calendar_ids'][ $user_id ] );
+        BCWP_Event::update( $event_id, array(
+            'metadata' => json_encode( $metadata )
+        ) );
+
         return true;
     }
 
