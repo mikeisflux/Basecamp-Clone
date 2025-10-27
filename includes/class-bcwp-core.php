@@ -48,6 +48,9 @@ class BCWP_Core {
         require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-email-service.php';
         require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-file-service.php';
         require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-search-service.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-digest-service.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-analytics-service.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/services/class-bcwp-google-calendar-service.php';
 
         // API
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-rest-api.php';
@@ -57,6 +60,11 @@ class BCWP_Core {
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-chat-endpoint.php';
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-activities-endpoint.php';
         require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-search-endpoint.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-events-endpoint.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-import-export-endpoint.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-settings-endpoint.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-analytics-endpoint.php';
+        require_once BCWP_PLUGIN_DIR . 'includes/api/class-bcwp-calendar-integration-endpoint.php';
 
         // Frontend
         require_once BCWP_PLUGIN_DIR . 'includes/frontend/class-bcwp-router.php';
@@ -76,6 +84,9 @@ class BCWP_Core {
 
         // Initialize REST API
         $rest_api = new BCWP_REST_API();
+
+        // Initialize digest service
+        BCWP_Digest_Service::init();
 
         // Add admin menu
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );

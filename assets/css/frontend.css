@@ -552,6 +552,89 @@
     padding: 24px;
 }
 
+.bcwp-modal-large {
+    max-width: 1200px;
+}
+
+/* File Preview Styles */
+.bcwp-image-preview {
+    text-align: center;
+}
+
+.bcwp-image-preview img {
+    transition: transform 0.3s;
+}
+
+.bcwp-image-preview img.bcwp-zoomed {
+    transform: scale(1.5);
+    cursor: zoom-out !important;
+}
+
+.bcwp-preview-hint {
+    text-align: center;
+    font-size: 13px;
+    color: var(--bcwp-text-light);
+    margin-top: 12px;
+    font-style: italic;
+}
+
+.bcwp-preview-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.bcwp-pdf-preview,
+.bcwp-office-preview {
+    text-align: center;
+}
+
+.bcwp-video-preview,
+.bcwp-audio-preview {
+    text-align: center;
+    padding: 20px;
+}
+
+.bcwp-audio-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.bcwp-audio-preview h3 {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+}
+
+.bcwp-text-preview pre {
+    text-align: left;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.bcwp-preview-unsupported {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.bcwp-file-icon-large {
+    font-size: 72px;
+    margin-bottom: 20px;
+}
+
+.bcwp-file-meta {
+    color: var(--bcwp-text-light);
+    font-size: 14px;
+    margin: 16px 0 24px 0;
+}
+
+.bcwp-loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--bcwp-text-light);
+    font-style: italic;
+}
+
 .bcwp-form-group {
     margin-bottom: 20px;
 }

@@ -216,7 +216,7 @@ document.querySelectorAll('.bcwp-delete-doc-btn').forEach(btn => {
     });
 });
 
-// File preview function
+// File preview function with advanced support
 async function previewFile(docId) {
     try {
         const response = await fetch(`${bcwpData.restUrl}/documents/${docId}`, {
@@ -232,27 +232,188 @@ async function previewFile(docId) {
 
             document.getElementById('preview-file-name').textContent = doc.name;
 
+            let previewHTML = '';
+
             // Handle different file types
             if (doc.mime_type.startsWith('image/')) {
-                previewContainer.innerHTML = `<img src="${doc.url}" style="max-width:100%; height:auto;">`;
+                // Image gallery with zoom
+                previewHTML = `
+                    <div class="bcwp-image-preview">
+                        <img src="${doc.url}"
+                             alt="${escapeHtml(doc.name)}"
+                             onclick="this.classList.toggle('bcwp-zoomed')"
+                             style="max-width:100%; height:auto; cursor:zoom-in;">
+                        <div class="bcwp-preview-hint">Click image to zoom</div>
+                    </div>
+                `;
             } else if (doc.mime_type === 'application/pdf') {
-                previewContainer.innerHTML = `<embed src="${doc.url}" type="application/pdf" width="100%" height="600px">`;
+                // Enhanced PDF viewer
+                previewHTML = `
+                    <div class="bcwp-pdf-preview">
+                        <iframe src="${doc.url}"
+                                width="100%"
+                                height="700px"
+                                style="border:none; border-radius:8px;">
+                        </iframe>
+                        <div class="bcwp-preview-actions">
+                            <a href="${doc.url}" target="_blank" class="bcwp-btn bcwp-btn-secondary">
+                                Open in New Tab
+                            </a>
+                            <a href="${doc.url}" download class="bcwp-btn bcwp-btn-primary">
+                                Download PDF
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else if (doc.mime_type.startsWith('video/')) {
+                // Video player
+                previewHTML = `
+                    <div class="bcwp-video-preview">
+                        <video controls style="width:100%; max-height:600px; border-radius:8px;">
+                            <source src="${doc.url}" type="${doc.mime_type}">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="bcwp-preview-actions">
+                            <a href="${doc.url}" download class="bcwp-btn bcwp-btn-primary">
+                                Download Video
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else if (doc.mime_type.startsWith('audio/')) {
+                // Audio player
+                previewHTML = `
+                    <div class="bcwp-audio-preview">
+                        <div class="bcwp-audio-icon">🎵</div>
+                        <h3>${escapeHtml(doc.name)}</h3>
+                        <audio controls style="width:100%; margin:20px 0;">
+                            <source src="${doc.url}" type="${doc.mime_type}">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <div class="bcwp-preview-actions">
+                            <a href="${doc.url}" download class="bcwp-btn bcwp-btn-primary">
+                                Download Audio
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else if (isOfficeDocument(doc.mime_type)) {
+                // Microsoft Office documents using Office Online Viewer
+                const encodedUrl = encodeURIComponent(doc.url);
+                previewHTML = `
+                    <div class="bcwp-office-preview">
+                        <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}"
+                                width="100%"
+                                height="700px"
+                                frameborder="0"
+                                style="border-radius:8px;">
+                        </iframe>
+                        <div class="bcwp-preview-hint">
+                            Microsoft Office Online Viewer
+                        </div>
+                        <div class="bcwp-preview-actions">
+                            <a href="${doc.url}" download class="bcwp-btn bcwp-btn-primary">
+                                Download ${getFileExtension(doc.name).toUpperCase()}
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else if (doc.mime_type === 'text/plain' || doc.mime_type.includes('text/')) {
+                // Text file preview
+                fetch(doc.url)
+                    .then(r => r.text())
+                    .then(text => {
+                        previewContainer.innerHTML = `
+                            <div class="bcwp-text-preview">
+                                <pre style="white-space:pre-wrap; padding:20px; background:#f9fafb; border-radius:8px; max-height:600px; overflow:auto;">${escapeHtml(text.substring(0, 10000))}</pre>
+                                ${text.length > 10000 ? '<p class="bcwp-preview-hint">Preview truncated. Download full file.</p>' : ''}
+                                <div class="bcwp-preview-actions">
+                                    <a href="${doc.url}" download class="bcwp-btn bcwp-btn-primary">
+                                        Download File
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                previewHTML = '<div class="bcwp-loading">Loading preview...</div>';
             } else {
-                previewContainer.innerHTML = `
-                    <p>Preview not available for this file type.</p>
-                    <a href="${doc.url}" download class="bcwp-btn bcwp-btn-primary">Download File</a>
+                // Fallback for unsupported types
+                previewHTML = `
+                    <div class="bcwp-preview-unsupported">
+                        <div class="bcwp-file-icon-large">${BCWP_File_Service_getFileIcon(doc.mime_type)}</div>
+                        <h3>${escapeHtml(doc.name)}</h3>
+                        <p>Preview not available for this file type.</p>
+                        <p class="bcwp-file-meta">
+                            ${doc.mime_type}<br>
+                            ${formatFileSize(doc.file_size)}
+                        </p>
+                        <div class="bcwp-preview-actions">
+                            <a href="${doc.url}" download class="bcwp-btn bcwp-btn-primary">
+                                Download File
+                            </a>
+                        </div>
+                    </div>
                 `;
             }
 
+            previewContainer.innerHTML = previewHTML;
             modal.style.display = 'flex';
 
             modal.querySelector('.bcwp-modal-close').addEventListener('click', () => {
                 modal.style.display = 'none';
             });
+
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
         }
     } catch (error) {
         console.error('Failed to load preview:', error);
+        alert('Failed to load file preview');
     }
+}
+
+// Helper functions
+function isOfficeDocument(mimeType) {
+    const officeTypes = [
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+    ];
+    return officeTypes.includes(mimeType);
+}
+
+function getFileExtension(filename) {
+    return filename.split('.').pop() || '';
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+function BCWP_File_Service_getFileIcon(mimeType) {
+    if (mimeType.startsWith('image/')) return '🖼️';
+    if (mimeType.startsWith('video/')) return '🎥';
+    if (mimeType.startsWith('audio/')) return '🎵';
+    if (mimeType === 'application/pdf') return '📄';
+    if (isOfficeDocument(mimeType)) return '📊';
+    return '📎';
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // Drag and drop file upload

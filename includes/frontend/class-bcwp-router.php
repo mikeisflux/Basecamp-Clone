@@ -30,6 +30,14 @@ class BCWP_Router {
         // Search
         add_rewrite_rule( '^basecamp/search/?$', 'index.php?bcwp_page=search', 'top' );
 
+        // Analytics
+        add_rewrite_rule( '^basecamp/analytics/?$', 'index.php?bcwp_page=analytics', 'top' );
+
+        // Settings
+        add_rewrite_rule( '^basecamp/settings/notifications/?$', 'index.php?bcwp_page=notifications', 'top' );
+        add_rewrite_rule( '^basecamp/settings/calendar-integration/?$', 'index.php?bcwp_page=calendar-integration', 'top' );
+        add_rewrite_rule( '^basecamp/settings/import-export/?$', 'index.php?bcwp_page=import-export', 'top' );
+
         // Projects
         add_rewrite_rule( '^basecamp/projects/new/?$', 'index.php?bcwp_page=project-create', 'top' );
         add_rewrite_rule( '^basecamp/projects/([^/]+)/?$', 'index.php?bcwp_page=project&bcwp_project=$matches[1]', 'top' );
@@ -109,6 +117,10 @@ class BCWP_Router {
             'my-stuff'        => $template_dir . 'my-stuff.php',
             'activity'        => $template_dir . 'activity-feed.php',
             'search'          => $template_dir . 'search.php',
+            'analytics'       => $template_dir . 'analytics.php',
+            'notifications'   => $template_dir . 'settings/notifications.php',
+            'calendar-integration' => $template_dir . 'settings/calendar-integration.php',
+            'import-export'   => $template_dir . 'settings/import-export.php',
             'project'         => $template_dir . 'project/single.php',
             'project-create'  => $template_dir . 'project/create.php',
             'messages'        => $template_dir . 'messages/board.php',
