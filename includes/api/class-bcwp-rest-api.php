@@ -24,6 +24,7 @@ class BCWP_REST_API {
             new BCWP_Analytics_Endpoint(),
             new BCWP_Calendar_Integration_Endpoint(),
             new WC_PayPal_Webhook_Endpoint(),
+            new WC_Subscription_Endpoint(),
         );
 
         foreach ( $endpoints as $endpoint ) {

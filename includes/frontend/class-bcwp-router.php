@@ -15,7 +15,16 @@ class BCWP_Router {
     }
 
     public function add_rewrite_rules() {
-        // Dashboard
+        // Public Subscription Pages (No Auth Required)
+        add_rewrite_rule( '^warcampaign/pricing/?$', 'index.php?wc_public_page=pricing', 'top' );
+        add_rewrite_rule( '^warcampaign/signup/?$', 'index.php?wc_public_page=signup', 'top' );
+        add_rewrite_rule( '^warcampaign/subscription/success/?$', 'index.php?wc_public_page=subscription-success', 'top' );
+        add_rewrite_rule( '^warcampaign/subscription/cancel/?$', 'index.php?wc_public_page=subscription-cancel', 'top' );
+
+        // Warcampaign App Routes (changed from /basecamp to /warcampaign)
+        add_rewrite_rule( '^warcampaign/?$', 'index.php?bcwp_page=dashboard', 'top' );
+
+        // Legacy Basecamp routes for backward compatibility
         add_rewrite_rule( '^basecamp/?$', 'index.php?bcwp_page=dashboard', 'top' );
 
         // Lineup (timeline view)
@@ -61,10 +70,19 @@ class BCWP_Router {
         $vars[] = 'bcwp_page';
         $vars[] = 'bcwp_project';
         $vars[] = 'bcwp_item';
+        $vars[] = 'wc_public_page';
         return $vars;
     }
 
     public function route_request() {
+        // Handle public pages (no auth required)
+        $public_page = get_query_var( 'wc_public_page' );
+        if ( ! empty( $public_page ) ) {
+            $this->route_public_page( $public_page );
+            return;
+        }
+
+        // Handle authenticated pages
         $page = get_query_var( 'bcwp_page' );
 
         if ( empty( $page ) ) {
@@ -133,5 +151,28 @@ class BCWP_Router {
         );
 
         return $templates[ $page ] ?? null;
+    }
+
+    /**
+     * Route public pages (no authentication required).
+     *
+     * @param string $page Public page identifier.
+     */
+    private function route_public_page( $page ) {
+        $template_dir = WC_PLUGIN_DIR . 'templates/public/';
+
+        $templates = array(
+            'pricing'              => $template_dir . 'pricing.php',
+            'signup'               => $template_dir . 'signup.php',
+            'subscription-success' => $template_dir . 'subscription-success.php',
+            'subscription-cancel'  => $template_dir . 'subscription-cancel.php',
+        );
+
+        $template = $templates[ $page ] ?? null;
+
+        if ( $template && file_exists( $template ) ) {
+            include $template;
+            exit;
+        }
     }
 }
