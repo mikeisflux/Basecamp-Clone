@@ -373,8 +373,80 @@ class BCWP_Schema {
         ) $charset_collate;";
         dbDelta( $sql );
 
+        // Subscriptions table (SaaS billing)
+        $sql = "CREATE TABLE {$prefix}wc_subscriptions (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            user_id BIGINT UNSIGNED NOT NULL,
+            plan_id VARCHAR(50) NOT NULL,
+            paypal_subscription_id VARCHAR(100),
+            status VARCHAR(20) NOT NULL DEFAULT 'pending',
+            trial_ends_at DATETIME,
+            current_period_start DATETIME,
+            current_period_end DATETIME,
+            cancel_at DATETIME,
+            canceled_at DATETIME,
+            ended_at DATETIME,
+            metadata JSON,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY user_id (user_id),
+            KEY plan_id (plan_id),
+            KEY status (status),
+            KEY paypal_subscription_id (paypal_subscription_id),
+            KEY current_period_end (current_period_end)
+        ) $charset_collate;";
+        dbDelta( $sql );
+
+        // Billing history table
+        $sql = "CREATE TABLE {$prefix}wc_billing_history (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            subscription_id BIGINT UNSIGNED NOT NULL,
+            user_id BIGINT UNSIGNED NOT NULL,
+            transaction_id VARCHAR(100),
+            transaction_type VARCHAR(50) NOT NULL,
+            amount DECIMAL(10,2) NOT NULL,
+            currency VARCHAR(3) NOT NULL DEFAULT 'USD',
+            status VARCHAR(20) NOT NULL,
+            payment_method VARCHAR(50),
+            billing_reason VARCHAR(100),
+            invoice_url VARCHAR(500),
+            receipt_url VARCHAR(500),
+            metadata JSON,
+            transaction_date DATETIME NOT NULL,
+            created_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            KEY subscription_id (subscription_id),
+            KEY user_id (user_id),
+            KEY transaction_id (transaction_id),
+            KEY status (status),
+            KEY transaction_date (transaction_date)
+        ) $charset_collate;";
+        dbDelta( $sql );
+
+        // Usage tracking table
+        $sql = "CREATE TABLE {$prefix}wc_usage_tracking (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            user_id BIGINT UNSIGNED NOT NULL,
+            metric_type VARCHAR(50) NOT NULL,
+            metric_value BIGINT UNSIGNED NOT NULL DEFAULT 0,
+            period_start DATETIME NOT NULL,
+            period_end DATETIME NOT NULL,
+            metadata JSON,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            KEY user_id (user_id),
+            KEY metric_type (metric_type),
+            KEY period_start (period_start),
+            KEY period_end (period_end),
+            UNIQUE KEY user_metric_period (user_id, metric_type, period_start)
+        ) $charset_collate;";
+        dbDelta( $sql );
+
         // Store database version
         update_option( 'bcwp_db_version', BCWP_VERSION );
+        update_option( 'wc_db_version', WC_VERSION );
     }
 
     /**
@@ -385,6 +457,9 @@ class BCWP_Schema {
         $prefix = $wpdb->prefix;
 
         $tables = array(
+            'wc_usage_tracking',
+            'wc_billing_history',
+            'wc_subscriptions',
             'bcwp_invitations',
             'bcwp_companies',
             'bcwp_comments',
@@ -408,5 +483,6 @@ class BCWP_Schema {
         }
 
         delete_option( 'bcwp_db_version' );
+        delete_option( 'wc_db_version' );
     }
 }
