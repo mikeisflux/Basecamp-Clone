@@ -75,13 +75,20 @@ register_deactivation_hook( __FILE__, 'deactivate_warcampaign' );
 /**
  * The core plugin class.
  */
-require WC_PLUGIN_DIR . 'includes/class-wc-core.php';
+require WC_PLUGIN_DIR . 'includes/class-bcwp-core.php';
+
+/**
+ * Load admin settings (if in admin area)
+ */
+if ( is_admin() ) {
+    require_once WC_PLUGIN_DIR . 'includes/admin/class-wc-admin-settings.php';
+}
 
 /**
  * Begins execution of the plugin.
  */
 function run_warcampaign() {
-    $plugin = new WC_Core();
+    $plugin = new BCWP_Core();
     $plugin->run();
 }
 
