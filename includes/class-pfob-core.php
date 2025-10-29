@@ -36,23 +36,49 @@ class PFOB_Core {
      * Register all hooks.
      */
     private function define_hooks() {
-        // Initialize router
-        $router = new PFOB_Router();
+        // Initialize router (registers its own hooks in constructor)
+        add_action( 'init', array( $this, 'init_router' ), 1 );
 
-        // Initialize assets
-        $assets = new PFOB_Assets();
+        // Initialize assets (registers its own hooks in constructor)
+        add_action( 'init', array( $this, 'init_assets' ), 1 );
 
         // Initialize REST API
-        $rest_api = new PFOB_REST_API();
+        add_action( 'rest_api_init', array( $this, 'init_rest_api' ) );
 
         // Initialize digest service
-        PFOB_Digest_Service::init();
-
-        // Register REST API routes
-        add_action( 'rest_api_init', array( $rest_api, 'register_routes' ) );
+        add_action( 'init', array( $this, 'init_digest_service' ), 1 );
 
         // Flush rewrite rules if needed (after activation)
         add_action( 'init', array( $this, 'maybe_flush_rewrite_rules' ), 999 );
+    }
+
+    /**
+     * Initialize router on init hook.
+     */
+    public function init_router() {
+        new PFOB_Router();
+    }
+
+    /**
+     * Initialize assets on init hook.
+     */
+    public function init_assets() {
+        new PFOB_Assets();
+    }
+
+    /**
+     * Initialize REST API on rest_api_init hook.
+     */
+    public function init_rest_api() {
+        $rest_api = new PFOB_REST_API();
+        $rest_api->register_routes();
+    }
+
+    /**
+     * Initialize digest service on init hook.
+     */
+    public function init_digest_service() {
+        PFOB_Digest_Service::init();
     }
 
     /**
