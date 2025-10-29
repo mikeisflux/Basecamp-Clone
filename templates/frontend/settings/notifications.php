@@ -133,7 +133,7 @@ BCWP_Template::header( 'Notification Settings' );
                     <button type="submit" class="bcwp-btn bcwp-btn-primary">
                         Save Settings
                     </button>
-                    <a href="<?php echo home_url( '/basecamp/dashboard' ); ?>" class="bcwp-btn bcwp-btn-secondary">
+                    <a href="<?php echo home_url( '/projectfob/dashboard' ); ?>" class="bcwp-btn bcwp-btn-secondary">
                         Cancel
                     </a>
                 </div>

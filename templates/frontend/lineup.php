@@ -29,7 +29,7 @@ foreach ( $user_projects as $project ) {
                 'project'    => $project->name,
                 'project_slug' => $project->slug,
                 'id'         => $todo->id,
-                'url'        => home_url( "/basecamp/projects/{$project->slug}/todos" ),
+                'url'        => home_url( "/projectfob/projects/{$project->slug}/todos" ),
             );
         }
     }
@@ -49,7 +49,7 @@ foreach ( $user_projects as $project ) {
             'project_slug' => $project->slug,
             'id'         => $event->id,
             'location'   => $event->location,
-            'url'        => home_url( "/basecamp/projects/{$project->slug}/schedule" ),
+            'url'        => home_url( "/projectfob/projects/{$project->slug}/schedule" ),
         );
     }
 }

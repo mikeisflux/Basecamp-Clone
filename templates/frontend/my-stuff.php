@@ -84,7 +84,7 @@ $assigned_todos = BCWP_Todo::get_user_assigned_items( $user_id );
             <section class="bcwp-my-stuff-section bcwp-full-width">
                 <div class="bcwp-section-header">
                     <h2>My Schedule</h2>
-                    <a href="<?php echo home_url( '/basecamp/schedule/' ); ?>" class="bcwp-link">View all</a>
+                    <a href="<?php echo home_url( '/projectfob/schedule/' ); ?>" class="bcwp-link">View all</a>
                 </div>
                 <div id="my-schedule">
                     <!-- Loaded via JavaScript -->

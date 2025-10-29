@@ -47,7 +47,7 @@ $messages = BCWP_Message::get_project_messages( $bcwp_project->id );
                             <?php endif; ?>
                         </div>
                         <h3 class="bcwp-message-title">
-                            <a href="<?php echo home_url( '/basecamp/projects/' . $bcwp_project->slug . '/messages/' . $message->id . '/' ); ?>">
+                            <a href="<?php echo home_url( '/projectfob/projects/' . $bcwp_project->slug . '/messages/' . $message->id . '/' ); ?>">
                                 <?php echo esc_html( $message->title ); ?>
                             </a>
                         </h3>

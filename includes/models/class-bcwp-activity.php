@@ -301,7 +301,7 @@ class BCWP_Activity {
             return null;
         }
 
-        $base_url = home_url( "/basecamp/projects/{$project->slug}" );
+        $base_url = home_url( "/projectfob/projects/{$project->slug}" );
 
         switch ( $activity->subject_type ) {
             case 'message':

@@ -19,7 +19,7 @@ BCWP_Template::header( $message->title . ' - ' . $bcwp_project->name );
 
         <div class="bcwp-message-header">
             <div class="bcwp-breadcrumb">
-                <a href="<?php echo home_url( '/basecamp/projects/' . $bcwp_project->slug . '/messages' ); ?>">
+                <a href="<?php echo home_url( '/projectfob/projects/' . $bcwp_project->slug . '/messages' ); ?>">
                     Message Board
                 </a>
                 <span>/</span>
@@ -207,7 +207,7 @@ document.getElementById('delete-message-btn')?.addEventListener('click', async (
         });
 
         if (response.ok) {
-            window.location.href = `/basecamp/projects/${bcwpData.projectSlug}/messages`;
+            window.location.href = `/projectfob/projects/${bcwpData.projectSlug}/messages`;
         }
     } catch (error) {
         console.error('Failed to delete message:', error);

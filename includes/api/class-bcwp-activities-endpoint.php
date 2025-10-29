@@ -115,7 +115,7 @@ class BCWP_Activities_Endpoint {
             'icon'         => BCWP_Activity::get_icon( $activity ),
             'link'         => BCWP_Activity::get_link( $activity ),
             'project_name' => $project ? $project->name : null,
-            'project_url'  => $project ? home_url( '/basecamp/projects/' . $project->slug ) : null,
+            'project_url'  => $project ? home_url( '/projectfob/projects/' . $project->slug ) : null,
             'time_ago'     => BCWP_Template::format_date( $activity->created_at ),
             'created_at'   => $activity->created_at,
         );

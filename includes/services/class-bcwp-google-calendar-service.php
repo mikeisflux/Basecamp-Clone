@@ -305,7 +305,7 @@ class BCWP_Google_Calendar_Service {
      * Get redirect URI.
      */
     private static function get_redirect_uri() {
-        return home_url( '/basecamp/settings/calendar-integration' );
+        return home_url( '/projectfob/settings/calendar-integration' );
     }
 
     /**

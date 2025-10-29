@@ -108,7 +108,7 @@ if ( isset( $_GET['code'] ) && isset( $_GET['state'] ) ) {
                         <div class="bcwp-step-content">
                             <h3>Create OAuth Credentials</h3>
                             <p>Create OAuth 2.0 credentials and set the authorized redirect URI to:</p>
-                            <code class="bcwp-code-block"><?php echo esc_url( home_url( '/basecamp/settings/calendar-integration' ) ); ?></code>
+                            <code class="bcwp-code-block"><?php echo esc_url( home_url( '/projectfob/settings/calendar-integration' ) ); ?></code>
                         </div>
                     </div>
 

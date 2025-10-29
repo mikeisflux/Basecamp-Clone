@@ -11,17 +11,17 @@
 <body class="bcwp-body">
     <header class="bcwp-header">
         <div class="bcwp-header-left">
-            <a href="<?php echo home_url( '/basecamp/' ); ?>" class="bcwp-logo">
-                <?php echo esc_html( get_option( 'bcwp_company_name', 'Basecamp' ) ); ?>
+            <a href="<?php echo home_url( '/projectfob/' ); ?>" class="bcwp-logo">
+                <?php echo esc_html( get_option( 'bcwp_company_name', 'ProjectFOB' ) ); ?>
             </a>
         </div>
 
         <nav class="bcwp-header-nav">
-            <a href="<?php echo home_url( '/basecamp/' ); ?>" class="bcwp-nav-item">Home</a>
-            <a href="<?php echo home_url( '/basecamp/lineup/' ); ?>" class="bcwp-nav-item">Lineup</a>
-            <a href="<?php echo home_url( '/basecamp/my-stuff/' ); ?>" class="bcwp-nav-item">My Stuff</a>
-            <a href="<?php echo home_url( '/basecamp/activity/' ); ?>" class="bcwp-nav-item">Activity</a>
-            <a href="<?php echo home_url( '/basecamp/search/' ); ?>" class="bcwp-nav-item">Find</a>
+            <a href="<?php echo home_url( '/projectfob/' ); ?>" class="bcwp-nav-item">Home</a>
+            <a href="<?php echo home_url( '/projectfob/lineup/' ); ?>" class="bcwp-nav-item">Lineup</a>
+            <a href="<?php echo home_url( '/projectfob/my-stuff/' ); ?>" class="bcwp-nav-item">My Stuff</a>
+            <a href="<?php echo home_url( '/projectfob/activity/' ); ?>" class="bcwp-nav-item">Activity</a>
+            <a href="<?php echo home_url( '/projectfob/search/' ); ?>" class="bcwp-nav-item">Find</a>
         </nav>
 
         <div class="bcwp-header-right">
@@ -35,9 +35,9 @@
                 <span class="bcwp-user-name"><?php echo esc_html( wp_get_current_user()->display_name ); ?></span>
                 <div class="bcwp-user-dropdown">
                     <?php if ( current_user_can( 'manage_options' ) ) : ?>
-                        <a href="<?php echo admin_url( 'admin.php?page=basecamp-wp-pro' ); ?>">Settings</a>
+                        <a href="<?php echo admin_url( 'admin.php?page=projectfob' ); ?>">Settings</a>
                     <?php endif; ?>
-                    <a href="<?php echo wp_logout_url( home_url( '/basecamp/' ) ); ?>">Sign out</a>
+                    <a href="<?php echo wp_logout_url( home_url( '/projectfob/' ) ); ?>">Sign out</a>
                 </div>
             </div>
         </div>

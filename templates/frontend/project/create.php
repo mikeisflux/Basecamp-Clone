@@ -64,7 +64,7 @@ BCWP_Template::header( 'Create New Project' );
                     </div>
 
                     <div class="bcwp-wizard-actions">
-                        <a href="<?php echo home_url( '/basecamp/dashboard' ); ?>" class="bcwp-btn bcwp-btn-secondary">
+                        <a href="<?php echo home_url( '/projectfob/dashboard' ); ?>" class="bcwp-btn bcwp-btn-secondary">
                             Cancel
                         </a>
                         <button type="button" class="bcwp-btn bcwp-btn-primary" data-next-step>
@@ -319,7 +319,7 @@ document.getElementById('project-wizard-form').addEventListener('submit', async 
         const result = await response.json();
 
         if (result.success) {
-            window.location.href = `/basecamp/projects/${result.data.slug}/`;
+            window.location.href = `/projectfob/projects/${result.data.slug}/`;
         } else {
             alert(result.message || 'Failed to create project');
             submitBtn.disabled = false;

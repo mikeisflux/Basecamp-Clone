@@ -325,7 +325,7 @@ function showImportResult(success, data) {
                 <li>${data.stats.events} events</li>
                 <li>${data.stats.documents} documents (metadata only)</li>
             </ul>
-            <a href="/basecamp/projects/${data.project_slug}/" class="bcwp-btn bcwp-btn-primary">
+            <a href="/projectfob/projects/${data.project_slug}/" class="bcwp-btn bcwp-btn-primary">
                 View Project
             </a>
         `;

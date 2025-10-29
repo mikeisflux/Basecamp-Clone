@@ -25,11 +25,11 @@ class BCWP_Template {
     }
 
     public static function get_project_url( $project ) {
-        return home_url( '/basecamp/projects/' . $project->slug . '/' );
+        return home_url( '/projectfob/projects/' . $project->slug . '/' );
     }
 
     public static function get_tool_url( $project, $tool ) {
-        return home_url( '/basecamp/projects/' . $project->slug . '/' . $tool . '/' );
+        return home_url( '/projectfob/projects/' . $project->slug . '/' . $tool . '/' );
     }
 
     public static function format_date( $date ) {

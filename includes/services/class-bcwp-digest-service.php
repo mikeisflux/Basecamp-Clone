@@ -259,7 +259,7 @@ class BCWP_Digest_Service {
      * Generate HTML email body.
      */
     private static function generate_digest_html( $user, $data, $frequency ) {
-        $base_url = home_url( '/basecamp/' );
+        $base_url = home_url( '/projectfob/' );
         $period = $frequency === 'daily' ? 'the last day' : 'the last week';
 
         ob_start();
@@ -394,7 +394,7 @@ class BCWP_Digest_Service {
                 <div class="footer">
                     <p>You're receiving this because you enabled <?php echo esc_html( $frequency ); ?> digests.</p>
                     <p>
-                        <a href="<?php echo esc_url( home_url( '/basecamp/settings/notifications' ) ); ?>">
+                        <a href="<?php echo esc_url( home_url( '/projectfob/settings/notifications' ) ); ?>">
                             Update notification preferences
                         </a>
                     </p>

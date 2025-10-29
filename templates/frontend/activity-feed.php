@@ -87,7 +87,7 @@ $activities = BCWP_Activity::get_user_timeline( $user_id, 50 );
                                 <?php $project = BCWP_Project::get( $activity->project_id ); ?>
                                 <?php if ( $project ) : ?>
                                     <div class="bcwp-activity-project">
-                                        in <a href="<?php echo home_url( '/basecamp/projects/' . $project->slug ); ?>">
+                                        in <a href="<?php echo home_url( '/projectfob/projects/' . $project->slug ); ?>">
                                             <?php echo esc_html( $project->name ); ?>
                                         </a>
                                     </div>

@@ -21,49 +21,46 @@ class BCWP_Router {
         add_rewrite_rule( '^projectfob/subscription/success/?$', 'index.php?pfob_public_page=subscription-success', 'top' );
         add_rewrite_rule( '^projectfob/subscription/cancel/?$', 'index.php?pfob_public_page=subscription-cancel', 'top' );
 
-        // ProjectFOB App Routes (changed from /basecamp to /projectfob)
+        // ProjectFOB App Routes
         add_rewrite_rule( '^projectfob/?$', 'index.php?bcwp_page=dashboard', 'top' );
 
-        // Legacy Basecamp routes for backward compatibility
-        add_rewrite_rule( '^basecamp/?$', 'index.php?bcwp_page=dashboard', 'top' );
-
         // Lineup (timeline view)
-        add_rewrite_rule( '^basecamp/lineup/?$', 'index.php?bcwp_page=lineup', 'top' );
+        add_rewrite_rule( '^projectfob/lineup/?$', 'index.php?bcwp_page=lineup', 'top' );
 
         // My Stuff
-        add_rewrite_rule( '^basecamp/my-stuff/?$', 'index.php?bcwp_page=my-stuff', 'top' );
+        add_rewrite_rule( '^projectfob/my-stuff/?$', 'index.php?bcwp_page=my-stuff', 'top' );
 
         // Activity
-        add_rewrite_rule( '^basecamp/activity/?$', 'index.php?bcwp_page=activity', 'top' );
+        add_rewrite_rule( '^projectfob/activity/?$', 'index.php?bcwp_page=activity', 'top' );
 
         // Search
-        add_rewrite_rule( '^basecamp/search/?$', 'index.php?bcwp_page=search', 'top' );
+        add_rewrite_rule( '^projectfob/search/?$', 'index.php?bcwp_page=search', 'top' );
 
         // Analytics
-        add_rewrite_rule( '^basecamp/analytics/?$', 'index.php?bcwp_page=analytics', 'top' );
+        add_rewrite_rule( '^projectfob/analytics/?$', 'index.php?bcwp_page=analytics', 'top' );
 
         // Settings
-        add_rewrite_rule( '^basecamp/settings/notifications/?$', 'index.php?bcwp_page=notifications', 'top' );
-        add_rewrite_rule( '^basecamp/settings/calendar-integration/?$', 'index.php?bcwp_page=calendar-integration', 'top' );
-        add_rewrite_rule( '^basecamp/settings/import-export/?$', 'index.php?bcwp_page=import-export', 'top' );
+        add_rewrite_rule( '^projectfob/settings/notifications/?$', 'index.php?bcwp_page=notifications', 'top' );
+        add_rewrite_rule( '^projectfob/settings/calendar-integration/?$', 'index.php?bcwp_page=calendar-integration', 'top' );
+        add_rewrite_rule( '^projectfob/settings/import-export/?$', 'index.php?bcwp_page=import-export', 'top' );
 
         // Projects
-        add_rewrite_rule( '^basecamp/projects/new/?$', 'index.php?bcwp_page=project-create', 'top' );
-        add_rewrite_rule( '^basecamp/projects/([^/]+)/?$', 'index.php?bcwp_page=project&bcwp_project=$matches[1]', 'top' );
+        add_rewrite_rule( '^projectfob/projects/new/?$', 'index.php?bcwp_page=project-create', 'top' );
+        add_rewrite_rule( '^projectfob/projects/([^/]+)/?$', 'index.php?bcwp_page=project&bcwp_project=$matches[1]', 'top' );
 
         // Project tools
-        add_rewrite_rule( '^basecamp/projects/([^/]+)/messages/?$', 'index.php?bcwp_page=messages&bcwp_project=$matches[1]', 'top' );
-        add_rewrite_rule( '^basecamp/projects/([^/]+)/messages/([0-9]+)/?$', 'index.php?bcwp_page=message-single&bcwp_project=$matches[1]&bcwp_item=$matches[2]', 'top' );
+        add_rewrite_rule( '^projectfob/projects/([^/]+)/messages/?$', 'index.php?bcwp_page=messages&bcwp_project=$matches[1]', 'top' );
+        add_rewrite_rule( '^projectfob/projects/([^/]+)/messages/([0-9]+)/?$', 'index.php?bcwp_page=message-single&bcwp_project=$matches[1]&bcwp_item=$matches[2]', 'top' );
 
-        add_rewrite_rule( '^basecamp/projects/([^/]+)/todos/?$', 'index.php?bcwp_page=todos&bcwp_project=$matches[1]', 'top' );
+        add_rewrite_rule( '^projectfob/projects/([^/]+)/todos/?$', 'index.php?bcwp_page=todos&bcwp_project=$matches[1]', 'top' );
 
-        add_rewrite_rule( '^basecamp/projects/([^/]+)/documents/?$', 'index.php?bcwp_page=documents&bcwp_project=$matches[1]', 'top' );
+        add_rewrite_rule( '^projectfob/projects/([^/]+)/documents/?$', 'index.php?bcwp_page=documents&bcwp_project=$matches[1]', 'top' );
 
-        add_rewrite_rule( '^basecamp/projects/([^/]+)/chat/?$', 'index.php?bcwp_page=chat&bcwp_project=$matches[1]', 'top' );
+        add_rewrite_rule( '^projectfob/projects/([^/]+)/chat/?$', 'index.php?bcwp_page=chat&bcwp_project=$matches[1]', 'top' );
 
-        add_rewrite_rule( '^basecamp/projects/([^/]+)/schedule/?$', 'index.php?bcwp_page=schedule&bcwp_project=$matches[1]', 'top' );
+        add_rewrite_rule( '^projectfob/projects/([^/]+)/schedule/?$', 'index.php?bcwp_page=schedule&bcwp_project=$matches[1]', 'top' );
 
-        add_rewrite_rule( '^basecamp/projects/([^/]+)/cards/?$', 'index.php?bcwp_page=cards&bcwp_project=$matches[1]', 'top' );
+        add_rewrite_rule( '^projectfob/projects/([^/]+)/cards/?$', 'index.php?bcwp_page=cards&bcwp_project=$matches[1]', 'top' );
     }
 
     public function add_query_vars( $vars ) {

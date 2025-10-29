@@ -122,7 +122,7 @@ class BCWP_Core {
                 <h2><?php _e( 'Welcome to Basecamp WP Pro', 'basecamp-wp-pro' ); ?></h2>
                 <p><?php _e( 'Your Basecamp clone is ready to use!', 'basecamp-wp-pro' ); ?></p>
                 <p>
-                    <a href="<?php echo esc_url( home_url( '/basecamp/' ) ); ?>" class="button button-primary">
+                    <a href="<?php echo esc_url( home_url( '/projectfob/' ) ); ?>" class="button button-primary">
                         <?php _e( 'Go to Dashboard', 'basecamp-wp-pro' ); ?>
                     </a>
                 </p>
