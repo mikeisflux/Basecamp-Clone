@@ -1,10 +1,12 @@
 # ProjectFOB
 
-A complete Basecamp clone built as a single WordPress plugin with no third-party dependencies.
+**Every great plan deploys from the FOB.**
+
+A complete SaaS project management platform built as a WordPress plugin with subscription billing, cloud storage, and real-time collaboration.
 
 ## Description
 
-ProjectFOB transforms WordPress into a fully-featured project management system inspired by Basecamp. It provides a custom interface with all the tools teams need to collaborate, communicate, and manage projects effectively.
+ProjectFOB transforms WordPress into a fully-featured project management system. It provides a custom interface with all the tools teams need to collaborate, communicate, and manage projects effectively - with built-in subscription billing via PayPal and cloud file storage via Cloudflare R2.
 
 ## Features
 
@@ -27,11 +29,12 @@ ProjectFOB transforms WordPress into a fully-featured project management system 
 
 ## Installation
 
-1. Upload the `basecamp-wp-pro` folder to the `/wp-content/plugins/` directory
+1. Upload the `projectfob-2.0.0.zip` file via WordPress Admin > Plugins > Add New > Upload Plugin
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Navigate to the Basecamp menu in the WordPress admin
-4. Configure your settings (company name, colors, etc.)
-5. Visit `yoursite.com/basecamp/` to start using the system
+3. Navigate to the ProjectFOB menu in the WordPress admin
+4. Configure PayPal and Cloudflare R2 credentials in Settings
+5. Visit `yoursite.com/projectfob/pricing` for the public pricing page
+6. Visit `yoursite.com/projectfob/` to access the platform (requires subscription)
 
 ## Requirements
 
@@ -44,7 +47,7 @@ ProjectFOB transforms WordPress into a fully-featured project management system 
 
 ### Admin Settings
 
-Go to **WordPress Admin > Basecamp** to configure:
+Go to **WordPress Admin > ProjectFOB** to configure:
 
 - **Company Name** - Your organization name
 - **Primary Color** - Brand color for buttons and accents
@@ -55,11 +58,11 @@ Go to **WordPress Admin > Basecamp** to configure:
 
 The plugin creates custom URLs that work independently of your WordPress theme:
 
-- `/basecamp/` - Dashboard
-- `/basecamp/projects/` - Projects list
-- `/basecamp/projects/{slug}/` - Individual project
-- `/basecamp/my-stuff/` - Personal workspace
-- `/basecamp/activity/` - Activity feed
+- `/projectfob/` - Dashboard
+- `/projectfob/projects/` - Projects list
+- `/projectfob/projects/{slug}/` - Individual project
+- `/projectfob/my-stuff/` - Personal workspace
+- `/projectfob/activity/` - Activity feed
 
 ## User Roles & Permissions
 
@@ -198,7 +201,7 @@ When you uninstall the plugin:
 ## Support
 
 For issues, questions, or feature requests:
-- GitHub: https://github.com/mikeisflux/Basecamp-Clone
+- GitHub: https://github.com/mikeisflux/ProjectFOB-Clone
 - Documentation: See docs/ folder
 
 ## Changelog
@@ -214,7 +217,7 @@ For issues, questions, or feature requests:
 
 ## Credits
 
-Inspired by Basecamp by 37signals
+Inspired by ProjectFOB by 37signals
 
 ## License
 

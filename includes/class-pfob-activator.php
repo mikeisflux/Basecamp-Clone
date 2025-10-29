@@ -31,6 +31,10 @@ class PFOB_Activator {
         // Set default options
         self::set_default_options();
 
+        // Initialize router to register rewrite rules before flushing
+        require_once PFOB_PLUGIN_DIR . 'includes/frontend/class-pfob-router.php';
+        $router = new PFOB_Router();
+
         // Flush rewrite rules
         flush_rewrite_rules();
 
