@@ -39,6 +39,10 @@ class PFOB_Activator {
         // Set a flag to flush rewrite rules on next load
         update_option( 'pfob_flush_rewrite_rules', '1' );
 
+        // Show activation notice with flush button
+        update_option( 'pfob_show_activation_notice', '1' );
+        delete_option( 'pfob_activation_notice_dismissed' ); // Reset dismissal in case of re-activation
+
         // Set activation timestamp
         update_option( 'pfob_activation_time', current_time( 'timestamp' ) );
         update_option( 'pfob_version', PFOB_VERSION );

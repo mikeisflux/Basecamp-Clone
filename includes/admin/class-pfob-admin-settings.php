@@ -15,11 +15,14 @@ class PFOB_Admin_Settings {
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+        add_action( 'admin_notices', array( $this, 'show_activation_notice' ) );
 
         // AJAX handlers
         add_action( 'wp_ajax_pfob_test_paypal_connection', array( $this, 'test_paypal_connection' ) );
         add_action( 'wp_ajax_pfob_test_r2_connection', array( $this, 'test_r2_connection' ) );
         add_action( 'wp_ajax_pfob_sync_paypal_plans', array( $this, 'sync_paypal_plans' ) );
+        add_action( 'wp_ajax_pfob_flush_rewrite_rules', array( $this, 'ajax_flush_rewrite_rules' ) );
+        add_action( 'wp_ajax_pfob_dismiss_notice', array( $this, 'ajax_dismiss_notice' ) );
     }
 
     /**
@@ -245,6 +248,149 @@ class PFOB_Admin_Settings {
                 'plans' => $result,
             ) );
         }
+    }
+
+    /**
+     * Show activation notice with flush rewrite rules button
+     */
+    public function show_activation_notice() {
+        // Check if notice has been dismissed
+        if ( get_option( 'pfob_activation_notice_dismissed' ) ) {
+            return;
+        }
+
+        // Check if plugin was just activated or rewrite rules need flushing
+        if ( ! get_option( 'pfob_show_activation_notice' ) && ! get_option( 'pfob_flush_rewrite_rules' ) ) {
+            return;
+        }
+
+        ?>
+        <div class="notice notice-info is-dismissible pfob-activation-notice" id="pfob-activation-notice">
+            <p>
+                <strong>ℹ️ ProjectFOB:</strong>
+                If your links (like <code>/projectfob/</code>, <code>/projectfob/pricing/</code>, or project pages) don't work,
+                <a href="#" id="pfob-flush-rewrite-rules-btn" class="button button-primary" style="margin: 0 5px;">Click here to flush rewrite rules</a>
+                or go to <strong>Settings → Permalinks</strong> and click "Save Changes".
+            </p>
+        </div>
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            // Flush rewrite rules button
+            $('#pfob-flush-rewrite-rules-btn').on('click', function(e) {
+                e.preventDefault();
+                var $btn = $(this);
+                var originalText = $btn.text();
+
+                $btn.prop('disabled', true).text('Flushing...');
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pfob_flush_rewrite_rules',
+                        nonce: '<?php echo wp_create_nonce( 'pfob_flush_rewrite_rules' ); ?>'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $btn.text('✓ Done!').removeClass('button-primary').addClass('button-secondary');
+                            $('#pfob-activation-notice p').html(
+                                '<strong>✅ Success!</strong> Rewrite rules have been flushed. Your links should work now. ' +
+                                '<a href="#" class="pfob-dismiss-notice">Dismiss this notice</a>'
+                            );
+
+                            // Auto-dismiss after 5 seconds
+                            setTimeout(function() {
+                                $('#pfob-activation-notice').fadeOut(function() {
+                                    $(this).remove();
+                                });
+                            }, 5000);
+                        } else {
+                            alert('Error: ' + (response.data ? response.data.message : 'Unknown error'));
+                            $btn.prop('disabled', false).text(originalText);
+                        }
+                    },
+                    error: function() {
+                        alert('AJAX request failed. Please try going to Settings → Permalinks manually.');
+                        $btn.prop('disabled', false).text(originalText);
+                    }
+                });
+            });
+
+            // Dismiss notice button
+            $(document).on('click', '.pfob-dismiss-notice', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pfob_dismiss_notice',
+                        nonce: '<?php echo wp_create_nonce( 'pfob_dismiss_notice' ); ?>'
+                    },
+                    success: function() {
+                        $('#pfob-activation-notice').fadeOut(function() {
+                            $(this).remove();
+                        });
+                    }
+                });
+            });
+
+            // Handle WordPress native dismiss button
+            $('#pfob-activation-notice').on('click', '.notice-dismiss', function() {
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pfob_dismiss_notice',
+                        nonce: '<?php echo wp_create_nonce( 'pfob_dismiss_notice' ); ?>'
+                    }
+                });
+            });
+        });
+        </script>
+        <?php
+    }
+
+    /**
+     * AJAX handler to flush rewrite rules
+     */
+    public function ajax_flush_rewrite_rules() {
+        check_ajax_referer( 'pfob_flush_rewrite_rules', 'nonce' );
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Permission denied' ) );
+        }
+
+        // Register routes
+        require_once PFOB_PLUGIN_DIR . 'includes/frontend/class-pfob-router.php';
+        PFOB_Router::register_rewrite_rules();
+
+        // Flush
+        flush_rewrite_rules();
+
+        // Clear the flags
+        delete_option( 'pfob_flush_rewrite_rules' );
+        delete_option( 'pfob_show_activation_notice' );
+
+        wp_send_json_success( array(
+            'message' => 'Rewrite rules flushed successfully!'
+        ) );
+    }
+
+    /**
+     * AJAX handler to dismiss notice
+     */
+    public function ajax_dismiss_notice() {
+        check_ajax_referer( 'pfob_dismiss_notice', 'nonce' );
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Permission denied' ) );
+        }
+
+        update_option( 'pfob_activation_notice_dismissed', '1' );
+        delete_option( 'pfob_show_activation_notice' );
+
+        wp_send_json_success();
     }
 }
 
