@@ -13,19 +13,19 @@ class PFOB_Chat_Endpoint extends PFOB_REST_API {
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( $this, 'get_messages' ),
-                'permission_callback' => array( $this, 'check_permission' ),
+                'permission_callback' => array( $this, 'check_permission_with_subscription' ),
             ),
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( $this, 'create_message' ),
-                'permission_callback' => array( $this, 'check_permission' ),
+                'permission_callback' => array( $this, 'check_permission_with_subscription' ),
             ),
         ) );
 
         register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/chat/poll', array(
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => array( $this, 'poll_messages' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
     }
 

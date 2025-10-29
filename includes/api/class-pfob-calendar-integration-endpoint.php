@@ -18,35 +18,35 @@ class PFOB_Calendar_Integration_Endpoint {
         register_rest_route( $this->namespace, '/calendar-integration/status', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'get_status' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Get authorization URL
         register_rest_route( $this->namespace, '/calendar-integration/auth-url', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'get_auth_url' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Disconnect
         register_rest_route( $this->namespace, '/calendar-integration/disconnect', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'disconnect' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Sync event
         register_rest_route( $this->namespace, '/calendar-integration/sync-event/(?P<event_id>\d+)', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'sync_event' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Update settings
         register_rest_route( $this->namespace, '/calendar-integration/settings', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'update_settings' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
     }
 

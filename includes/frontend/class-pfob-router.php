@@ -98,6 +98,9 @@ class PFOB_Router {
         // Require authentication
         PFOB_Auth_Service::require_auth();
 
+        // Require active subscription
+        PFOB_Auth_Service::require_subscription();
+
         // Load template based on page
         $template = $this->get_template_for_page( $page );
 

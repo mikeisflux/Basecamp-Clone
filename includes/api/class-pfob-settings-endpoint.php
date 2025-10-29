@@ -18,21 +18,21 @@ class PFOB_Settings_Endpoint {
         register_rest_route( $this->namespace, '/settings', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'get_settings' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Update user settings
         register_rest_route( $this->namespace, '/settings', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'update_settings' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Send test digest
         register_rest_route( $this->namespace, '/settings/test-digest', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'send_test_digest' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
     }
 

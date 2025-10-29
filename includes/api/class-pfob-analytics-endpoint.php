@@ -18,28 +18,28 @@ class PFOB_Analytics_Endpoint {
         register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/analytics', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'get_project_analytics' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Get user analytics
         register_rest_route( $this->namespace, '/analytics/user', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'get_user_analytics' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Get workspace analytics
         register_rest_route( $this->namespace, '/analytics/workspace', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'get_workspace_analytics' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Get all projects overview
         register_rest_route( $this->namespace, '/analytics/projects', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'get_all_projects_analytics' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
     }
 

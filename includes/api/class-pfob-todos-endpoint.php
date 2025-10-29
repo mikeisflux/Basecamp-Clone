@@ -14,12 +14,12 @@ class PFOB_Todos_Endpoint extends PFOB_REST_API {
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( $this, 'get_lists' ),
-                'permission_callback' => array( $this, 'check_permission' ),
+                'permission_callback' => array( $this, 'check_permission_with_subscription' ),
             ),
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( $this, 'create_list' ),
-                'permission_callback' => array( $this, 'check_permission' ),
+                'permission_callback' => array( $this, 'check_permission_with_subscription' ),
             ),
         ) );
 
@@ -28,12 +28,12 @@ class PFOB_Todos_Endpoint extends PFOB_REST_API {
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( $this, 'get_items' ),
-                'permission_callback' => array( $this, 'check_permission' ),
+                'permission_callback' => array( $this, 'check_permission_with_subscription' ),
             ),
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( $this, 'create_item' ),
-                'permission_callback' => array( $this, 'check_permission' ),
+                'permission_callback' => array( $this, 'check_permission_with_subscription' ),
             ),
         ) );
 
@@ -41,19 +41,19 @@ class PFOB_Todos_Endpoint extends PFOB_REST_API {
             array(
                 'methods'             => WP_REST_Server::EDITABLE,
                 'callback'            => array( $this, 'update_item' ),
-                'permission_callback' => array( $this, 'check_permission' ),
+                'permission_callback' => array( $this, 'check_permission_with_subscription' ),
             ),
             array(
                 'methods'             => WP_REST_Server::DELETABLE,
                 'callback'            => array( $this, 'delete_item' ),
-                'permission_callback' => array( $this, 'check_permission' ),
+                'permission_callback' => array( $this, 'check_permission_with_subscription' ),
             ),
         ) );
 
         register_rest_route( $this->namespace, '/todo-items/(?P<id>\d+)/complete', array(
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array( $this, 'complete_item' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
     }
 

@@ -18,35 +18,35 @@ class PFOB_Import_Export_Endpoint {
         register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/export', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'export_project_json' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Import project from JSON
         register_rest_route( $this->namespace, '/projects/import', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'import_project_json' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Export todos to CSV
         register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/todos/export/csv', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'export_todos_csv' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Export messages to CSV
         register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/messages/export/csv', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'export_messages_csv' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Export all projects overview
         register_rest_route( $this->namespace, '/export/all', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'export_all_projects' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
     }
 

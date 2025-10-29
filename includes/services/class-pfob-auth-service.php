@@ -56,6 +56,43 @@ class PFOB_Auth_Service {
     }
 
     /**
+     * Check if user has an active subscription.
+     *
+     * @param int $user_id User ID (optional, defaults to current user).
+     * @return bool True if user has active subscription, false otherwise.
+     */
+    public static function has_active_subscription( $user_id = null ) {
+        if ( $user_id === null ) {
+            $user_id = self::get_current_user_id();
+        }
+
+        // Admins always have access
+        if ( user_can( $user_id, 'manage_options' ) ) {
+            return true;
+        }
+
+        return PFOB_Subscription::is_active( $user_id );
+    }
+
+    /**
+     * Require active subscription.
+     * Redirects to pricing page if no active subscription.
+     */
+    public static function require_subscription() {
+        $user_id = self::get_current_user_id();
+
+        // Admins always have access
+        if ( user_can( $user_id, 'manage_options' ) ) {
+            return;
+        }
+
+        if ( ! PFOB_Subscription::is_active( $user_id ) ) {
+            wp_redirect( home_url( '/projectfob/pricing/' ) );
+            exit;
+        }
+    }
+
+    /**
      * Get current URL.
      *
      * @return string Current URL.

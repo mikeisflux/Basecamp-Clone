@@ -40,6 +40,17 @@ class PFOB_REST_API {
     }
 
     /**
+     * Check if user is authenticated and has active subscription.
+     */
+    public function check_permission_with_subscription( $request ) {
+        if ( ! is_user_logged_in() ) {
+            return false;
+        }
+
+        return PFOB_Auth_Service::has_active_subscription();
+    }
+
+    /**
      * Send success response.
      */
     protected function success_response( $data, $message = '', $status = 200 ) {

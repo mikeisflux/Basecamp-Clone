@@ -14,7 +14,7 @@ class PFOB_Search_Endpoint {
         register_rest_route( 'pfob/v1', '/search', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'search' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
             'args'                => array(
                 'q'          => array(
                     'required' => true,

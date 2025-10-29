@@ -13,49 +13,49 @@ class PFOB_Projects_Endpoint extends PFOB_REST_API {
         register_rest_route( $this->namespace, '/projects', array(
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => array( $this, 'get_projects' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Create project
         register_rest_route( $this->namespace, '/projects', array(
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array( $this, 'create_project' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Get single project
         register_rest_route( $this->namespace, '/projects/(?P<id>\d+)', array(
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => array( $this, 'get_project' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Update project
         register_rest_route( $this->namespace, '/projects/(?P<id>\d+)', array(
             'methods'             => WP_REST_Server::EDITABLE,
             'callback'            => array( $this, 'update_project' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Delete project
         register_rest_route( $this->namespace, '/projects/(?P<id>\d+)', array(
             'methods'             => WP_REST_Server::DELETABLE,
             'callback'            => array( $this, 'delete_project' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Get project members
         register_rest_route( $this->namespace, '/projects/(?P<id>\d+)/members', array(
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => array( $this, 'get_members' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Add project member
         register_rest_route( $this->namespace, '/projects/(?P<id>\d+)/members', array(
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array( $this, 'add_member' ),
-            'permission_callback' => array( $this, 'check_permission' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
     }
 
