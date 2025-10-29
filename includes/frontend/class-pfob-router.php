@@ -14,6 +14,15 @@ class PFOB_Router {
         add_action( 'template_redirect', array( $this, 'route_request' ) );
     }
 
+    /**
+     * Manually add rewrite rules (for use during activation).
+     * Call this directly when you need to register rules outside of the init hook.
+     */
+    public static function register_rewrite_rules() {
+        $instance = new self();
+        $instance->add_rewrite_rules();
+    }
+
     public function add_rewrite_rules() {
         // Public Subscription Pages (No Auth Required)
         add_rewrite_rule( '^projectfob/pricing/?$', 'index.php?pfob_public_page=pricing', 'top' );
