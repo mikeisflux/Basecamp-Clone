@@ -54,6 +54,14 @@ define( 'PFOB_PLAN_BUSINESS', 'business' );
 define( 'PFOB_PLAN_ENTERPRISE', 'enterprise' );
 
 /**
+ * Backward compatibility constants for BCWP classes
+ */
+define( 'BCWP_VERSION', PFOB_VERSION );
+define( 'BCWP_PLUGIN_DIR', PFOB_PLUGIN_DIR );
+define( 'BCWP_PLUGIN_URL', PFOB_PLUGIN_URL );
+define( 'BCWP_PLUGIN_BASENAME', PFOB_PLUGIN_BASENAME );
+
+/**
  * The code that runs during plugin activation.
  */
 function activate_projectfob() {
@@ -76,6 +84,17 @@ register_deactivation_hook( __FILE__, 'deactivate_projectfob' );
  * The core plugin class.
  */
 require PFOB_PLUGIN_DIR . 'includes/class-bcwp-core.php';
+
+/**
+ * Load SaaS subscription system
+ */
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-subscription.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-billing-history.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-usage.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-paypal-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-r2-storage-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-paypal-webhook-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-subscription-endpoint.php';
 
 /**
  * Load admin settings (if in admin area)
