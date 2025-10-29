@@ -126,7 +126,7 @@ class PFOB_Events_Endpoint {
 
         foreach ( $events as $event ) {
             $ical .= "BEGIN:VEVENT\r\n";
-            $ical .= "UID:" . md5( $event->id . $event->created_at ) . "@basecampwp\r\n";
+            $ical .= "UID:" . md5( $event->id . $event->created_at ) . "@projectfob\r\n";
             $ical .= "DTSTAMP:" . $this->format_ical_date( $event->created_at ) . "\r\n";
             $ical .= "DTSTART:" . $this->format_ical_date( $event->start_datetime, $event->all_day ) . "\r\n";
             $ical .= "DTEND:" . $this->format_ical_date( $event->end_datetime, $event->all_day ) . "\r\n";

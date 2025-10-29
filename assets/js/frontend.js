@@ -2,7 +2,7 @@
  * ProjectFOB - Frontend JavaScript
  */
 
-class BasecampWP {
+class ProjectFOB {
     constructor() {
         if (typeof pfobData !== 'undefined') {
             this.restUrl = pfobData.restUrl;
@@ -158,7 +158,7 @@ class BasecampWP {
                 document.querySelector('.pfob-modal')?.remove();
 
                 // Redirect to project page
-                window.location.href = `/basecamp/projects/${result.data.slug}/`;
+                window.location.href = `/projectfob/projects/${result.data.slug}/`;
             }
         } catch (error) {
             // Error already handled in apiRequest
@@ -400,5 +400,5 @@ class BasecampWP {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    window.pfob = new BasecampWP();
+    window.pfob = new ProjectFOB();
 });

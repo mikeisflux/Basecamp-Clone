@@ -252,7 +252,7 @@ class PFOB_Digest_Service {
     private static function get_digest_subject( $frequency ) {
         $site_name = get_bloginfo( 'name' );
         $period = $frequency === 'daily' ? 'Daily' : 'Weekly';
-        return sprintf( '[%s] Your %s Basecamp Digest', $site_name, $period );
+        return sprintf( '[%s] Your %s ProjectFOB Digest', $site_name, $period );
     }
 
     /**
@@ -290,7 +290,7 @@ class PFOB_Digest_Service {
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>📊 Your Basecamp Digest</h1>
+                    <h1>📊 Your ProjectFOB Digest</h1>
                     <p>Here's what happened in <?php echo esc_html( $period ); ?></p>
                 </div>
 

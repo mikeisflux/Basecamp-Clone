@@ -28,7 +28,7 @@ if ( isset( $_GET['code'] ) && isset( $_GET['state'] ) ) {
 
         <header class="pfob-page-header">
             <h1>📅 Calendar Integration</h1>
-            <p class="pfob-subtitle">Connect your Google Calendar to sync Basecamp events</p>
+            <p class="pfob-subtitle">Connect your Google Calendar to sync ProjectFOB events</p>
         </header>
 
         <?php if ( isset( $success_message ) ) : ?>
@@ -60,7 +60,7 @@ if ( isset( $_GET['code'] ) && isset( $_GET['state'] ) ) {
                     <input type="checkbox" id="auto-sync-checkbox">
                     <div class="pfob-checkbox-content">
                         <strong>Auto-sync events</strong>
-                        <p>Automatically sync new Basecamp events to Google Calendar</p>
+                        <p>Automatically sync new ProjectFOB events to Google Calendar</p>
                     </div>
                 </label>
 
@@ -79,7 +79,7 @@ if ( isset( $_GET['code'] ) && isset( $_GET['state'] ) ) {
                         <strong>Google Calendar (Advanced):</strong> For administrators: Configure Google OAuth credentials in WordPress admin settings to enable direct Google Calendar synchronization.
                     </li>
                     <li>
-                        <strong>Two-way Sync:</strong> Currently supports one-way sync from Basecamp to Google Calendar. Events created in Basecamp will appear in Google Calendar.
+                        <strong>Two-way Sync:</strong> Currently supports one-way sync from ProjectFOB to Google Calendar. Events created in ProjectFOB will appear in Google Calendar.
                     </li>
                 </ul>
             </div>
@@ -163,7 +163,7 @@ function displayStatus(data) {
                 <div class="pfob-status-icon">✓</div>
                 <div>
                     <h3>Connected to Google Calendar</h3>
-                    <p>Your Basecamp events can be synced to Google Calendar</p>
+                    <p>Your ProjectFOB events can be synced to Google Calendar</p>
                 </div>
             </div>
             <button class="pfob-btn pfob-btn-danger" id="disconnect-btn">

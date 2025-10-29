@@ -36,7 +36,7 @@ $projects = PFOB_Project::get_user_projects( $user_id );
         <div class="pfob-projects-grid" id="projects-container">
             <?php if ( empty( $projects ) ) : ?>
                 <div class="pfob-empty-state">
-                    <h3>Welcome to Basecamp!</h3>
+                    <h3>Welcome to ProjectFOB!</h3>
                     <p>You don't have any projects yet. Create your first project to get started.</p>
                     <button class="pfob-btn pfob-btn-primary" onclick="document.getElementById('create-project-btn').click()">
                         Create Your First Project

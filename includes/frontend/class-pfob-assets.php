@@ -14,8 +14,8 @@ class PFOB_Assets {
     }
 
     public function enqueue_assets() {
-        // Only load on Basecamp pages
-        if ( ! $this->is_basecamp_page() ) {
+        // Only load on ProjectFOB pages
+        if ( ! $this->is_projectfob_page() ) {
             return;
         }
 
@@ -52,7 +52,7 @@ class PFOB_Assets {
 
     public function enqueue_admin_assets( $hook ) {
         // Only load on plugin admin page
-        if ( $hook !== 'toplevel_page_basecamp-wp-pro' ) {
+        if ( $hook !== 'toplevel_page_projectfob' ) {
             return;
         }
 
@@ -60,7 +60,7 @@ class PFOB_Assets {
         wp_enqueue_script( 'wp-color-picker' );
     }
 
-    private function is_basecamp_page() {
+    private function is_projectfob_page() {
         $page = get_query_var( 'pfob_page' );
         return ! empty( $page );
     }

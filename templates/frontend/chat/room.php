@@ -72,7 +72,7 @@ let pollingInterval = null;
 
 // Initialize WebSocket or fall back to polling
 if (pfobData.websocket.enabled) {
-    ws = new BasecampWebSocket(pfobData.websocket);
+    ws = new ProjectFOBWebSocket(pfobData.websocket);
 
     ws.on('connected', () => {
         console.log('✅ Using WebSocket for real-time chat');

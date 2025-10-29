@@ -1,10 +1,10 @@
 /**
- * Basecamp WP WebSocket Client
+ * ProjectFOB WebSocket Client
  *
  * Handles WebSocket connections for real-time features
  */
 
-class BasecampWebSocket {
+class ProjectFOBWebSocket {
     constructor(config) {
         this.config = config;
         this.socket = null;
@@ -259,4 +259,4 @@ class BasecampWebSocket {
 }
 
 // Global instance
-window.BasecampWebSocket = BasecampWebSocket;
+window.ProjectFOBWebSocket = ProjectFOBWebSocket;

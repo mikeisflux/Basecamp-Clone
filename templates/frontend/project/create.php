@@ -76,7 +76,7 @@ PFOB_Template::header( 'Create New Project' );
                 <!-- Step 2: Choose Tools -->
                 <div class="pfob-wizard-content" data-step="2">
                     <h2>Which tools do you want to use?</h2>
-                    <p class="pfob-step-description">Select the Basecamp tools you need for this project. You can always add or remove tools later.</p>
+                    <p class="pfob-step-description">Select the ProjectFOB tools you need for this project. You can always add or remove tools later.</p>
 
                     <div class="pfob-tools-grid">
                         <label class="pfob-tool-card">

@@ -351,7 +351,7 @@ class PFOB_Import_Export_Endpoint {
 
         // Send as JSON file download
         header( 'Content-Type: application/json; charset=utf-8' );
-        header( 'Content-Disposition: attachment; filename="basecamp-projects-overview-' . date( 'Y-m-d' ) . '.json"' );
+        header( 'Content-Disposition: attachment; filename="projectfob-projects-overview-' . date( 'Y-m-d' ) . '.json"' );
         echo json_encode( $export_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
         exit;
     }

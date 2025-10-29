@@ -87,6 +87,17 @@ require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-paypal-service.php'
 require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-r2-storage-service.php';
 require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-paypal-webhook-endpoint.php';
 require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-subscription-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-projects-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-messages-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-todos-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-chat-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-activities-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-search-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-events-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-import-export-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-settings-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-analytics-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-calendar-integration-endpoint.php';
 
 /**
  * Load admin settings (if in admin area)
