@@ -2,7 +2,7 @@
 /**
  * Admin Dashboard Template
  *
- * @package Warcampaign
+ * @package ProjectFOB
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,22 +10,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Get statistics
-$subscription_stats = WC_Subscription::get_statistics();
+$subscription_stats = PFOB_Subscription::get_statistics();
 $active_subscriptions = $subscription_stats['active'] ?? 0;
 $canceled_subscriptions = $subscription_stats['canceled'] ?? 0;
 $mrr = $subscription_stats['mrr'] ?? 0;
 $by_plan = $subscription_stats['by_plan'] ?? array();
 
 // Get recent transactions
-$recent_transactions = WC_Billing_History::get_recent( 10 );
+$recent_transactions = PFOB_Billing_History::get_recent( 10 );
 
 // Check configuration status
-$paypal_configured = WC_PayPal_Service::is_configured();
-$r2_configured = WC_R2_Storage_Service::is_configured();
+$paypal_configured = PFOB_PayPal_Service::is_configured();
+$r2_configured = PFOB_R2_Storage_Service::is_configured();
 ?>
 
-<div class="wrap wc-admin-dashboard">
-    <h1>Warcampaign Dashboard</h1>
+<div class="wrap pfob-admin-dashboard">
+    <h1>ProjectFOB Dashboard</h1>
 
     <!-- Configuration Status -->
     <?php if ( ! $paypal_configured || ! $r2_configured ) : ?>
@@ -33,18 +33,18 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
             <p><strong>Setup Required:</strong> Please configure the following to start accepting subscriptions:</p>
             <ul>
                 <?php if ( ! $paypal_configured ) : ?>
-                    <li><a href="<?php echo admin_url( 'admin.php?page=warcampaign-settings' ); ?>">Configure PayPal credentials</a></li>
+                    <li><a href="<?php echo admin_url( 'admin.php?page=projectfob-settings' ); ?>">Configure PayPal credentials</a></li>
                 <?php endif; ?>
                 <?php if ( ! $r2_configured ) : ?>
-                    <li><a href="<?php echo admin_url( 'admin.php?page=warcampaign-settings' ); ?>">Configure Cloudflare R2 storage</a></li>
+                    <li><a href="<?php echo admin_url( 'admin.php?page=projectfob-settings' ); ?>">Configure Cloudflare R2 storage</a></li>
                 <?php endif; ?>
             </ul>
         </div>
     <?php endif; ?>
 
     <!-- Stats Grid -->
-    <div class="wc-stats-grid">
-        <div class="wc-stat-card">
+    <div class="pfob-stats-grid">
+        <div class="pfob-stat-card">
             <div class="stat-icon">
                 <span class="dashicons dashicons-groups"></span>
             </div>
@@ -54,7 +54,7 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
             </div>
         </div>
 
-        <div class="wc-stat-card">
+        <div class="pfob-stat-card">
             <div class="stat-icon" style="background: #dc3545;">
                 <span class="dashicons dashicons-dismiss"></span>
             </div>
@@ -64,7 +64,7 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
             </div>
         </div>
 
-        <div class="wc-stat-card">
+        <div class="pfob-stat-card">
             <div class="stat-icon" style="background: #28a745;">
                 <span class="dashicons dashicons-money-alt"></span>
             </div>
@@ -74,7 +74,7 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
             </div>
         </div>
 
-        <div class="wc-stat-card">
+        <div class="pfob-stat-card">
             <div class="stat-icon" style="background: #ffc107;">
                 <span class="dashicons dashicons-chart-line"></span>
             </div>
@@ -87,17 +87,17 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
 
     <!-- Subscriptions by Plan -->
     <?php if ( ! empty( $by_plan ) ) : ?>
-        <div class="wc-dashboard-section">
+        <div class="pfob-dashboard-section">
             <h2>Subscriptions by Plan</h2>
-            <div class="wc-plan-grid">
+            <div class="pfob-plan-grid">
                 <?php
-                $plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+                $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
                 foreach ( $by_plan as $plan_data ) :
                     $plan_key = $plan_data->plan_id;
                     $plan_info = $plans[ $plan_key ] ?? array();
                     $count = $plan_data->count ?? 0;
                     ?>
-                    <div class="wc-plan-card">
+                    <div class="pfob-plan-card">
                         <h3><?php echo esc_html( $plan_info['name'] ?? ucfirst( $plan_key ) ); ?></h3>
                         <div class="plan-price">$<?php echo number_format( $plan_info['price'] ?? 0, 2 ); ?>/mo</div>
                         <div class="plan-subscribers">
@@ -113,7 +113,7 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
     <?php endif; ?>
 
     <!-- Recent Transactions -->
-    <div class="wc-dashboard-section">
+    <div class="pfob-dashboard-section">
         <h2>Recent Transactions</h2>
         <?php if ( ! empty( $recent_transactions ) ) : ?>
             <table class="wp-list-table widefat fixed striped">
@@ -156,31 +156,31 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
                 </tbody>
             </table>
         <?php else : ?>
-            <p>No transactions yet. <a href="<?php echo site_url( '/warcampaign/pricing' ); ?>">Visit pricing page</a> to test the signup flow.</p>
+            <p>No transactions yet. <a href="<?php echo site_url( '/projectfob/pricing' ); ?>">Visit pricing page</a> to test the signup flow.</p>
         <?php endif; ?>
     </div>
 
     <!-- Quick Links -->
-    <div class="wc-dashboard-section">
+    <div class="pfob-dashboard-section">
         <h2>Quick Links</h2>
-        <div class="wc-quick-links">
-            <a href="<?php echo admin_url( 'admin.php?page=warcampaign-settings' ); ?>" class="wc-link-card">
+        <div class="pfob-quick-links">
+            <a href="<?php echo admin_url( 'admin.php?page=projectfob-settings' ); ?>" class="pfob-link-card">
                 <span class="dashicons dashicons-admin-settings"></span>
                 <span>Settings</span>
             </a>
-            <a href="<?php echo admin_url( 'admin.php?page=warcampaign-users' ); ?>" class="wc-link-card">
+            <a href="<?php echo admin_url( 'admin.php?page=projectfob-users' ); ?>" class="pfob-link-card">
                 <span class="dashicons dashicons-groups"></span>
                 <span>Manage Users</span>
             </a>
-            <a href="<?php echo admin_url( 'admin.php?page=warcampaign-billing' ); ?>" class="wc-link-card">
+            <a href="<?php echo admin_url( 'admin.php?page=projectfob-billing' ); ?>" class="pfob-link-card">
                 <span class="dashicons dashicons-money-alt"></span>
                 <span>Billing & Revenue</span>
             </a>
-            <a href="<?php echo site_url( '/warcampaign/pricing' ); ?>" class="wc-link-card" target="_blank">
+            <a href="<?php echo site_url( '/projectfob/pricing' ); ?>" class="pfob-link-card" target="_blank">
                 <span class="dashicons dashicons-external"></span>
                 <span>View Pricing Page</span>
             </a>
-            <a href="<?php echo site_url( '/warcampaign/' ); ?>" class="wc-link-card" target="_blank">
+            <a href="<?php echo site_url( '/projectfob/' ); ?>" class="pfob-link-card" target="_blank">
                 <span class="dashicons dashicons-dashboard"></span>
                 <span>User Dashboard</span>
             </a>
@@ -189,14 +189,14 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
 </div>
 
 <style>
-.wc-stats-grid {
+.pfob-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     margin: 20px 0;
 }
 
-.wc-stat-card {
+.pfob-stat-card {
     background: white;
     border: 1px solid #ccd0d4;
     border-radius: 4px;
@@ -240,7 +240,7 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
     color: #1d2327;
 }
 
-.wc-dashboard-section {
+.pfob-dashboard-section {
     background: white;
     border: 1px solid #ccd0d4;
     border-radius: 4px;
@@ -248,24 +248,24 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
     margin: 20px 0;
 }
 
-.wc-dashboard-section h2 {
+.pfob-dashboard-section h2 {
     margin-top: 0;
 }
 
-.wc-plan-grid {
+.pfob-plan-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
 }
 
-.wc-plan-card {
+.pfob-plan-card {
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
     text-align: center;
 }
 
-.wc-plan-card h3 {
+.pfob-plan-card h3 {
     margin: 0 0 10px 0;
     color: #2271b1;
 }
@@ -308,13 +308,13 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
     color: #856404;
 }
 
-.wc-quick-links {
+.pfob-quick-links {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
 }
 
-.wc-link-card {
+.pfob-link-card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -327,19 +327,19 @@ $r2_configured = WC_R2_Storage_Service::is_configured();
     transition: all 0.3s ease;
 }
 
-.wc-link-card:hover {
+.pfob-link-card:hover {
     border-color: #2271b1;
     background: #f6f7f7;
     transform: translateY(-2px);
 }
 
-.wc-link-card .dashicons {
+.pfob-link-card .dashicons {
     font-size: 32px;
     width: 32px;
     height: 32px;
 }
 
-.wc-link-card span:last-child {
+.pfob-link-card span:last-child {
     font-weight: 600;
 }
 </style>

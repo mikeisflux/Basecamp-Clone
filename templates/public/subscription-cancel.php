@@ -3,7 +3,7 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Subscription Canceled - Warcampaign</title>
+    <title>Subscription Canceled - ProjectFOB</title>
     <style>
         body {
             margin: 0;
@@ -115,12 +115,12 @@
         <div class="info-box">
             <p>
                 <strong>Note:</strong> Your account has been created but is not active yet.
-                You'll need to complete the subscription to access Warcampaign.
+                You'll need to complete the subscription to access ProjectFOB.
             </p>
         </div>
 
         <div class="cta-buttons">
-            <a href="<?php echo site_url( '/warcampaign/pricing' ); ?>" class="cta-button">
+            <a href="<?php echo site_url( '/projectfob/pricing' ); ?>" class="cta-button">
                 Try Again
             </a>
             <a href="<?php echo home_url(); ?>" class="cta-button secondary">

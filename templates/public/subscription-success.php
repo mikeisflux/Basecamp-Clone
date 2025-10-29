@@ -3,7 +3,7 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Warcampaign!</title>
+    <title>Welcome to ProjectFOB!</title>
     <style>
         body {
             margin: 0;
@@ -124,7 +124,7 @@
 
         <div id="success-content" style="display: none;">
             <div class="success-icon">✓</div>
-            <h1>Welcome to Warcampaign!</h1>
+            <h1>Welcome to ProjectFOB!</h1>
             <p class="subtitle">
                 Your subscription has been activated successfully.<br>
                 You're all set to start collaborating with your team.
@@ -140,7 +140,7 @@
                 </ul>
             </div>
 
-            <a href="<?php echo site_url( '/warcampaign/' ); ?>" class="cta-button">
+            <a href="<?php echo site_url( '/projectfob/' ); ?>" class="cta-button">
                 Go to Dashboard
             </a>
         </div>
@@ -154,12 +154,12 @@
 
             if (!subscriptionId) {
                 // No subscription ID, just redirect to dashboard
-                window.location.href = '<?php echo site_url( '/warcampaign/' ); ?>';
+                window.location.href = '<?php echo site_url( '/projectfob/' ); ?>';
                 return;
             }
 
             try {
-                const response = await fetch('/wp-json/warcampaign/v1/subscription/complete', {
+                const response = await fetch('/wp-json/projectfob/v1/subscription/complete', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -178,13 +178,13 @@
                     document.getElementById('success-content').style.display = 'block';
                 } else {
                     // Redirect to dashboard anyway (subscription may have already been activated by webhook)
-                    window.location.href = '<?php echo site_url( '/warcampaign/' ); ?>';
+                    window.location.href = '<?php echo site_url( '/projectfob/' ); ?>';
                 }
             } catch (error) {
                 console.error('Error completing subscription:', error);
                 // Redirect to dashboard anyway
                 setTimeout(() => {
-                    window.location.href = '<?php echo site_url( '/warcampaign/' ); ?>';
+                    window.location.href = '<?php echo site_url( '/projectfob/' ); ?>';
                 }, 2000);
             }
         }

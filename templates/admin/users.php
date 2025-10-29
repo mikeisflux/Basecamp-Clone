@@ -2,7 +2,7 @@
 /**
  * Admin Users & Subscriptions Page
  *
- * @package Warcampaign
+ * @package ProjectFOB
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,18 +11,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Get all subscriptions
 global $wpdb;
-$subscriptions_table = $wpdb->prefix . 'wc_subscriptions';
+$subscriptions_table = $wpdb->prefix . 'pfob_subscriptions';
 $subscriptions = $wpdb->get_results(
     "SELECT * FROM {$subscriptions_table} ORDER BY created_at DESC"
 );
 
-$plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+$plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
 ?>
 
-<div class="wrap wc-admin-users">
+<div class="wrap pfob-admin-users">
     <h1>Users & Subscriptions</h1>
 
-    <div class="wc-admin-section">
+    <div class="pfob-admin-section">
         <?php if ( ! empty( $subscriptions ) ) : ?>
             <table class="wp-list-table widefat fixed striped">
                 <thead>
@@ -78,14 +78,14 @@ $plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
             </table>
         <?php else : ?>
             <div class="notice notice-info">
-                <p>No subscriptions yet. <a href="<?php echo site_url( '/warcampaign/pricing' ); ?>">Test the signup flow</a> to create your first subscriber.</p>
+                <p>No subscriptions yet. <a href="<?php echo site_url( '/projectfob/pricing' ); ?>">Test the signup flow</a> to create your first subscriber.</p>
             </div>
         <?php endif; ?>
     </div>
 </div>
 
 <style>
-.wc-admin-section {
+.pfob-admin-section {
     background: white;
     border: 1px solid #ccd0d4;
     border-radius: 4px;

@@ -2,11 +2,11 @@
 /**
  * Admin Settings Page
  *
- * @package    Warcampaign
- * @subpackage Warcampaign/includes/admin
+ * @package    ProjectFOB
+ * @subpackage ProjectFOB/includes/admin
  */
 
-class WC_Admin_Settings {
+class PFOB_Admin_Settings {
 
     /**
      * Initialize the admin settings
@@ -17,9 +17,9 @@ class WC_Admin_Settings {
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
         // AJAX handlers
-        add_action( 'wp_ajax_wc_test_paypal_connection', array( $this, 'test_paypal_connection' ) );
-        add_action( 'wp_ajax_wc_test_r2_connection', array( $this, 'test_r2_connection' ) );
-        add_action( 'wp_ajax_wc_sync_paypal_plans', array( $this, 'sync_paypal_plans' ) );
+        add_action( 'wp_ajax_pfob_test_paypal_connection', array( $this, 'test_paypal_connection' ) );
+        add_action( 'wp_ajax_pfob_test_r2_connection', array( $this, 'test_r2_connection' ) );
+        add_action( 'wp_ajax_pfob_sync_paypal_plans', array( $this, 'sync_paypal_plans' ) );
     }
 
     /**
@@ -28,10 +28,10 @@ class WC_Admin_Settings {
     public function add_admin_menu() {
         // Main menu
         add_menu_page(
-            'Warcampaign',
-            'Warcampaign',
+            'ProjectFOB',
+            'ProjectFOB',
             'manage_options',
-            'warcampaign',
+            'projectfob',
             array( $this, 'dashboard_page' ),
             'dashicons-groups',
             30
@@ -39,41 +39,41 @@ class WC_Admin_Settings {
 
         // Dashboard
         add_submenu_page(
-            'warcampaign',
+            'projectfob',
             'Dashboard',
             'Dashboard',
             'manage_options',
-            'warcampaign',
+            'projectfob',
             array( $this, 'dashboard_page' )
         );
 
         // Settings
         add_submenu_page(
-            'warcampaign',
+            'projectfob',
             'Settings',
             'Settings',
             'manage_options',
-            'warcampaign-settings',
+            'projectfob-settings',
             array( $this, 'settings_page' )
         );
 
         // Users
         add_submenu_page(
-            'warcampaign',
+            'projectfob',
             'Users & Subscriptions',
             'Users',
             'manage_options',
-            'warcampaign-users',
+            'projectfob-users',
             array( $this, 'users_page' )
         );
 
         // Billing
         add_submenu_page(
-            'warcampaign',
+            'projectfob',
             'Billing & Revenue',
             'Billing',
             'manage_options',
-            'warcampaign-billing',
+            'projectfob-billing',
             array( $this, 'billing_page' )
         );
     }
@@ -83,14 +83,14 @@ class WC_Admin_Settings {
      */
     public function register_settings() {
         // PayPal Settings
-        register_setting( 'wc_paypal_settings', 'wc_paypal_client_id' );
-        register_setting( 'wc_paypal_settings', 'wc_paypal_client_secret' );
-        register_setting( 'wc_paypal_settings', 'wc_paypal_sandbox_mode' );
-        register_setting( 'wc_paypal_settings', 'wc_paypal_webhook_id' );
+        register_setting( 'pfob_paypal_settings', 'pfob_paypal_client_id' );
+        register_setting( 'pfob_paypal_settings', 'pfob_paypal_client_secret' );
+        register_setting( 'pfob_paypal_settings', 'pfob_paypal_sandbox_mode' );
+        register_setting( 'pfob_paypal_settings', 'pfob_paypal_webhook_id' );
 
         // R2 Settings
-        register_setting( 'wc_r2_settings', 'wc_r2_access_key_id' );
-        register_setting( 'wc_r2_settings', 'wc_r2_secret_access_key' );
+        register_setting( 'pfob_r2_settings', 'pfob_r2_access_key_id' );
+        register_setting( 'pfob_r2_settings', 'pfob_r2_secret_access_key' );
     }
 
     /**
@@ -98,16 +98,16 @@ class WC_Admin_Settings {
      */
     public function enqueue_admin_scripts( $hook ) {
         // Only load on our admin pages
-        if ( strpos( $hook, 'warcampaign' ) === false ) {
+        if ( strpos( $hook, 'projectfob' ) === false ) {
             return;
         }
 
-        wp_enqueue_style( 'wc-admin-styles', WC_PLUGIN_URL . 'assets/css/admin.css', array(), WC_VERSION );
-        wp_enqueue_script( 'wc-admin-scripts', WC_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery' ), WC_VERSION, true );
+        wp_enqueue_style( 'pfob-admin-styles', PFOB_PLUGIN_URL . 'assets/css/admin.css', array(), PFOB_VERSION );
+        wp_enqueue_script( 'pfob-admin-scripts', PFOB_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery' ), PFOB_VERSION, true );
 
-        wp_localize_script( 'wc-admin-scripts', 'wcAdmin', array(
+        wp_localize_script( 'pfob-admin-scripts', 'pfobAdmin', array(
             'ajaxurl' => admin_url( 'admin-ajax.php' ),
-            'nonce' => wp_create_nonce( 'wc_admin_nonce' ),
+            'nonce' => wp_create_nonce( 'pfob_admin_nonce' ),
         ) );
     }
 
@@ -115,7 +115,7 @@ class WC_Admin_Settings {
      * Dashboard page
      */
     public function dashboard_page() {
-        include WC_PLUGIN_DIR . 'templates/admin/dashboard.php';
+        include PFOB_PLUGIN_DIR . 'templates/admin/dashboard.php';
     }
 
     /**
@@ -123,25 +123,25 @@ class WC_Admin_Settings {
      */
     public function settings_page() {
         // Save settings if submitted
-        if ( isset( $_POST['wc_save_settings'] ) && check_admin_referer( 'wc_settings_save' ) ) {
+        if ( isset( $_POST['pfob_save_settings'] ) && check_admin_referer( 'pfob_settings_save' ) ) {
             $this->save_settings();
         }
 
-        include WC_PLUGIN_DIR . 'templates/admin/settings.php';
+        include PFOB_PLUGIN_DIR . 'templates/admin/settings.php';
     }
 
     /**
      * Users page
      */
     public function users_page() {
-        include WC_PLUGIN_DIR . 'templates/admin/users.php';
+        include PFOB_PLUGIN_DIR . 'templates/admin/users.php';
     }
 
     /**
      * Billing page
      */
     public function billing_page() {
-        include WC_PLUGIN_DIR . 'templates/admin/billing.php';
+        include PFOB_PLUGIN_DIR . 'templates/admin/billing.php';
     }
 
     /**
@@ -149,44 +149,44 @@ class WC_Admin_Settings {
      */
     private function save_settings() {
         // PayPal settings
-        if ( isset( $_POST['wc_paypal_client_id'] ) ) {
-            update_option( 'wc_paypal_client_id', sanitize_text_field( $_POST['wc_paypal_client_id'] ) );
+        if ( isset( $_POST['pfob_paypal_client_id'] ) ) {
+            update_option( 'pfob_paypal_client_id', sanitize_text_field( $_POST['pfob_paypal_client_id'] ) );
         }
-        if ( isset( $_POST['wc_paypal_client_secret'] ) ) {
-            update_option( 'wc_paypal_client_secret', sanitize_text_field( $_POST['wc_paypal_client_secret'] ) );
+        if ( isset( $_POST['pfob_paypal_client_secret'] ) ) {
+            update_option( 'pfob_paypal_client_secret', sanitize_text_field( $_POST['pfob_paypal_client_secret'] ) );
         }
-        if ( isset( $_POST['wc_paypal_sandbox_mode'] ) ) {
-            update_option( 'wc_paypal_sandbox_mode', '1' );
+        if ( isset( $_POST['pfob_paypal_sandbox_mode'] ) ) {
+            update_option( 'pfob_paypal_sandbox_mode', '1' );
         } else {
-            update_option( 'wc_paypal_sandbox_mode', '0' );
+            update_option( 'pfob_paypal_sandbox_mode', '0' );
         }
-        if ( isset( $_POST['wc_paypal_webhook_id'] ) ) {
-            update_option( 'wc_paypal_webhook_id', sanitize_text_field( $_POST['wc_paypal_webhook_id'] ) );
+        if ( isset( $_POST['pfob_paypal_webhook_id'] ) ) {
+            update_option( 'pfob_paypal_webhook_id', sanitize_text_field( $_POST['pfob_paypal_webhook_id'] ) );
         }
 
         // R2 settings
-        if ( isset( $_POST['wc_r2_access_key_id'] ) ) {
-            update_option( 'wc_r2_access_key_id', sanitize_text_field( $_POST['wc_r2_access_key_id'] ) );
+        if ( isset( $_POST['pfob_r2_access_key_id'] ) ) {
+            update_option( 'pfob_r2_access_key_id', sanitize_text_field( $_POST['pfob_r2_access_key_id'] ) );
         }
-        if ( isset( $_POST['wc_r2_secret_access_key'] ) ) {
-            update_option( 'wc_r2_secret_access_key', sanitize_text_field( $_POST['wc_r2_secret_access_key'] ) );
+        if ( isset( $_POST['pfob_r2_secret_access_key'] ) ) {
+            update_option( 'pfob_r2_secret_access_key', sanitize_text_field( $_POST['pfob_r2_secret_access_key'] ) );
         }
 
-        add_settings_error( 'wc_settings', 'settings_saved', 'Settings saved successfully!', 'success' );
+        add_settings_error( 'pfob_settings', 'settings_saved', 'Settings saved successfully!', 'success' );
     }
 
     /**
      * Test PayPal connection (AJAX)
      */
     public function test_paypal_connection() {
-        check_ajax_referer( 'wc_admin_nonce', 'nonce' );
+        check_ajax_referer( 'pfob_admin_nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_send_json_error( array( 'message' => 'Unauthorized' ) );
         }
 
         // Try to get access token
-        $result = WC_PayPal_Service::get_access_token();
+        $result = PFOB_PayPal_Service::get_access_token();
 
         if ( is_wp_error( $result ) ) {
             wp_send_json_error( array(
@@ -203,14 +203,14 @@ class WC_Admin_Settings {
      * Test R2 connection (AJAX)
      */
     public function test_r2_connection() {
-        check_ajax_referer( 'wc_admin_nonce', 'nonce' );
+        check_ajax_referer( 'pfob_admin_nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_send_json_error( array( 'message' => 'Unauthorized' ) );
         }
 
         // Try to list objects
-        $result = WC_R2_Storage_Service::list_objects( '', 1 );
+        $result = PFOB_R2_Storage_Service::list_objects( '', 1 );
 
         if ( is_wp_error( $result ) ) {
             wp_send_json_error( array(
@@ -227,13 +227,13 @@ class WC_Admin_Settings {
      * Sync PayPal plans (AJAX)
      */
     public function sync_paypal_plans() {
-        check_ajax_referer( 'wc_admin_nonce', 'nonce' );
+        check_ajax_referer( 'pfob_admin_nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_send_json_error( array( 'message' => 'Unauthorized' ) );
         }
 
-        $result = WC_PayPal_Service::sync_subscription_plans();
+        $result = PFOB_PayPal_Service::sync_subscription_plans();
 
         if ( is_wp_error( $result ) ) {
             wp_send_json_error( array(
@@ -250,5 +250,5 @@ class WC_Admin_Settings {
 
 // Initialize admin settings
 if ( is_admin() ) {
-    new WC_Admin_Settings();
+    new PFOB_Admin_Settings();
 }

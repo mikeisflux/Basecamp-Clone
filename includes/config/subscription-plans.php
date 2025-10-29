@@ -1,9 +1,9 @@
 <?php
 /**
- * Warcampaign Subscription Plans Configuration
+ * ProjectFOB Subscription Plans Configuration
  *
- * @package    Warcampaign
- * @subpackage Warcampaign/includes/config
+ * @package    ProjectFOB
+ * @subpackage ProjectFOB/includes/config
  */
 
 return array(

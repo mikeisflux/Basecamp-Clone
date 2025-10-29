@@ -2,13 +2,13 @@
 /**
  * Subscription Management REST API Endpoint
  *
- * @package    Warcampaign
- * @subpackage Warcampaign/includes/api
+ * @package    ProjectFOB
+ * @subpackage ProjectFOB/includes/api
  */
 
-class WC_Subscription_Endpoint {
+class PFOB_Subscription_Endpoint {
 
-    protected $namespace = 'warcampaign/v1';
+    protected $namespace = 'projectfob/v1';
 
     /**
      * Register routes.
@@ -116,7 +116,7 @@ class WC_Subscription_Endpoint {
      * Get available subscription plans.
      */
     public function get_plans( $request ) {
-        $plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+        $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
 
         return new WP_REST_Response( array(
             'success' => true,
@@ -136,7 +136,7 @@ class WC_Subscription_Endpoint {
         }
 
         // Validate plan
-        $plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+        $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
         if ( ! isset( $plans[ $params['plan_id'] ] ) ) {
             return new WP_Error( 'invalid_plan', 'Invalid subscription plan.', array( 'status' => 400 ) );
         }
@@ -161,7 +161,7 @@ class WC_Subscription_Endpoint {
         ) );
 
         // Create subscription record
-        $subscription_id = WC_Subscription::create( array(
+        $subscription_id = PFOB_Subscription::create( array(
             'user_id' => $user_id,
             'plan_id' => $params['plan_id'],
             'status' => 'pending',
@@ -174,10 +174,10 @@ class WC_Subscription_Endpoint {
         }
 
         // Create PayPal subscription
-        $return_url = site_url( '/warcampaign/subscription/success' );
-        $cancel_url = site_url( '/warcampaign/subscription/cancel' );
+        $return_url = site_url( '/projectfob/subscription/success' );
+        $cancel_url = site_url( '/projectfob/subscription/cancel' );
 
-        $paypal_result = WC_PayPal_Service::create_subscription(
+        $paypal_result = PFOB_PayPal_Service::create_subscription(
             $user_id,
             $params['plan_id'],
             $return_url,
@@ -186,12 +186,12 @@ class WC_Subscription_Endpoint {
 
         if ( is_wp_error( $paypal_result ) ) {
             // Rollback
-            WC_Subscription::update( $subscription_id, array( 'status' => 'failed' ) );
+            PFOB_Subscription::update( $subscription_id, array( 'status' => 'failed' ) );
             return $paypal_result;
         }
 
         // Update subscription with PayPal ID
-        WC_Subscription::update( $subscription_id, array(
+        PFOB_Subscription::update( $subscription_id, array(
             'paypal_subscription_id' => $paypal_result['subscription_id'],
         ) );
 
@@ -217,21 +217,21 @@ class WC_Subscription_Endpoint {
         $paypal_subscription_id = $request->get_param( 'subscription_id' );
 
         // Get subscription
-        $subscription = WC_Subscription::get_by_paypal_id( $paypal_subscription_id );
+        $subscription = PFOB_Subscription::get_by_paypal_id( $paypal_subscription_id );
 
         if ( ! $subscription || $subscription->user_id != $user_id ) {
             return new WP_Error( 'invalid_subscription', 'Invalid subscription.', array( 'status' => 404 ) );
         }
 
         // Get details from PayPal
-        $paypal_details = WC_PayPal_Service::get_subscription( $paypal_subscription_id );
+        $paypal_details = PFOB_PayPal_Service::get_subscription( $paypal_subscription_id );
 
         if ( is_wp_error( $paypal_details ) ) {
             return $paypal_details;
         }
 
         // Update subscription status
-        WC_Subscription::update( $subscription->id, array(
+        PFOB_Subscription::update( $subscription->id, array(
             'status' => strtolower( $paypal_details['status'] ),
         ) );
 
@@ -239,7 +239,7 @@ class WC_Subscription_Endpoint {
             'success' => true,
             'data' => array(
                 'status' => $paypal_details['status'],
-                'redirect' => site_url( '/warcampaign/' ),
+                'redirect' => site_url( '/projectfob/' ),
             ),
         ), 200 );
     }
@@ -249,14 +249,14 @@ class WC_Subscription_Endpoint {
      */
     public function get_current_subscription( $request ) {
         $user_id = get_current_user_id();
-        $subscription = WC_Subscription::get_by_user_id( $user_id );
+        $subscription = PFOB_Subscription::get_by_user_id( $user_id );
 
         if ( ! $subscription ) {
             return new WP_Error( 'no_subscription', 'No active subscription found.', array( 'status' => 404 ) );
         }
 
-        $plan = WC_Subscription::get_user_plan( $user_id );
-        $usage = WC_Usage::get_all_current( $user_id );
+        $plan = PFOB_Subscription::get_user_plan( $user_id );
+        $usage = PFOB_Usage::get_all_current( $user_id );
 
         return new WP_REST_Response( array(
             'success' => true,
@@ -273,7 +273,7 @@ class WC_Subscription_Endpoint {
      */
     public function cancel_subscription( $request ) {
         $user_id = get_current_user_id();
-        $subscription = WC_Subscription::get_by_user_id( $user_id );
+        $subscription = PFOB_Subscription::get_by_user_id( $user_id );
 
         if ( ! $subscription ) {
             return new WP_Error( 'no_subscription', 'No active subscription found.', array( 'status' => 404 ) );
@@ -281,7 +281,7 @@ class WC_Subscription_Endpoint {
 
         // Cancel in PayPal
         if ( $subscription->paypal_subscription_id ) {
-            $result = WC_PayPal_Service::cancel_subscription( $subscription->paypal_subscription_id );
+            $result = PFOB_PayPal_Service::cancel_subscription( $subscription->paypal_subscription_id );
 
             if ( is_wp_error( $result ) ) {
                 return $result;
@@ -289,7 +289,7 @@ class WC_Subscription_Endpoint {
         }
 
         // Update local subscription
-        WC_Subscription::cancel( $subscription->id );
+        PFOB_Subscription::cancel( $subscription->id );
 
         return new WP_REST_Response( array(
             'success' => true,
@@ -302,7 +302,7 @@ class WC_Subscription_Endpoint {
      */
     public function get_billing_history( $request ) {
         $user_id = get_current_user_id();
-        $history = WC_Billing_History::get_by_user_id( $user_id, 50, 0 );
+        $history = PFOB_Billing_History::get_by_user_id( $user_id, 50, 0 );
 
         return new WP_REST_Response( array(
             'success' => true,
@@ -317,10 +317,10 @@ class WC_Subscription_Endpoint {
         $user_id = get_current_user_id();
 
         // Update all metrics
-        WC_Usage::update_all_metrics( $user_id );
+        PFOB_Usage::update_all_metrics( $user_id );
 
-        $usage = WC_Usage::get_all_current( $user_id );
-        $plan = WC_Subscription::get_user_plan( $user_id );
+        $usage = PFOB_Usage::get_all_current( $user_id );
+        $plan = PFOB_Subscription::get_user_plan( $user_id );
 
         $limits = array();
         if ( $plan ) {
@@ -329,8 +329,8 @@ class WC_Subscription_Endpoint {
                     $limits[ $feature ] = array(
                         'limit' => $limit === 999999 ? null : $limit,
                         'current' => $usage[ $feature ] ?? 0,
-                        'remaining' => WC_Usage::get_remaining( $user_id, $feature ),
-                        'percentage' => WC_Usage::get_usage_percentage( $user_id, $feature ),
+                        'remaining' => PFOB_Usage::get_remaining( $user_id, $feature ),
+                        'percentage' => PFOB_Usage::get_usage_percentage( $user_id, $feature ),
                     );
                 }
             }
@@ -349,14 +349,14 @@ class WC_Subscription_Endpoint {
         $user_id = get_current_user_id();
         $new_plan_id = $request->get_param( 'new_plan_id' );
 
-        $subscription = WC_Subscription::get_by_user_id( $user_id );
+        $subscription = PFOB_Subscription::get_by_user_id( $user_id );
 
         if ( ! $subscription ) {
             return new WP_Error( 'no_subscription', 'No active subscription found.', array( 'status' => 404 ) );
         }
 
         // Validate new plan
-        $plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+        $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
         if ( ! isset( $plans[ $new_plan_id ] ) ) {
             return new WP_Error( 'invalid_plan', 'Invalid subscription plan.', array( 'status' => 400 ) );
         }

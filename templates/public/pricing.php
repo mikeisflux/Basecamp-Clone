@@ -3,8 +3,8 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pricing - Warcampaign</title>
-    <link rel="stylesheet" href="<?php echo WC_PLUGIN_URL; ?>assets/css/style.css">
+    <title>Pricing - ProjectFOB</title>
+    <link rel="stylesheet" href="<?php echo PFOB_PLUGIN_URL; ?>assets/css/style.css">
     <style>
         body {
             margin: 0;
@@ -177,7 +177,7 @@
     <div class="pricing-container">
         <div class="pricing-header">
             <h1>Choose Your Plan</h1>
-            <p>Start your journey with Warcampaign today</p>
+            <p>Start your journey with ProjectFOB today</p>
         </div>
 
         <div class="pricing-grid" id="pricing-grid">
@@ -208,7 +208,7 @@
         // Load pricing plans
         async function loadPricing() {
             try {
-                const response = await fetch('/wp-json/warcampaign/v1/subscription/plans');
+                const response = await fetch('/wp-json/projectfob/v1/subscription/plans');
                 const result = await response.json();
 
                 if (result.success) {
@@ -291,7 +291,7 @@
             sessionStorage.setItem('selected_plan_name', planName);
 
             // Redirect to signup page
-            window.location.href = '<?php echo site_url( '/warcampaign/signup' ); ?>';
+            window.location.href = '<?php echo site_url( '/projectfob/signup' ); ?>';
         }
 
         // Load pricing on page load

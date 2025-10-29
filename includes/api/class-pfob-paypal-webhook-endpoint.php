@@ -4,13 +4,13 @@
  *
  * Handles PayPal subscription webhook events
  *
- * @package    Warcampaign
- * @subpackage Warcampaign/includes/api
+ * @package    ProjectFOB
+ * @subpackage ProjectFOB/includes/api
  */
 
-class WC_PayPal_Webhook_Endpoint {
+class PFOB_PayPal_Webhook_Endpoint {
 
-    protected $namespace = 'warcampaign/v1';
+    protected $namespace = 'projectfob/v1';
 
     /**
      * Register routes.
@@ -35,7 +35,7 @@ class WC_PayPal_Webhook_Endpoint {
         $body = $request->get_body();
 
         // Verify webhook signature
-        $verification = WC_PayPal_Service::verify_webhook_signature( $headers, $body );
+        $verification = PFOB_PayPal_Service::verify_webhook_signature( $headers, $body );
 
         if ( is_wp_error( $verification ) ) {
             error_log( 'PayPal webhook signature verification failed: ' . $verification->get_error_message() );
@@ -136,7 +136,7 @@ class WC_PayPal_Webhook_Endpoint {
             return;
         }
 
-        $subscription = WC_Subscription::get_by_paypal_id( $paypal_subscription_id );
+        $subscription = PFOB_Subscription::get_by_paypal_id( $paypal_subscription_id );
 
         if ( ! $subscription ) {
             error_log( "PayPal subscription {$paypal_subscription_id} activated but not found in database" );
@@ -144,7 +144,7 @@ class WC_PayPal_Webhook_Endpoint {
         }
 
         // Update subscription status
-        WC_Subscription::update( $subscription->id, array(
+        PFOB_Subscription::update( $subscription->id, array(
             'status' => 'active',
             'current_period_start' => current_time( 'mysql' ),
             'current_period_end' => date( 'Y-m-d H:i:s', strtotime( '+1 month' ) ),
@@ -175,14 +175,14 @@ class WC_PayPal_Webhook_Endpoint {
             return;
         }
 
-        $subscription = WC_Subscription::get_by_paypal_id( $paypal_subscription_id );
+        $subscription = PFOB_Subscription::get_by_paypal_id( $paypal_subscription_id );
 
         if ( ! $subscription ) {
             return;
         }
 
         // Fetch latest subscription details from PayPal
-        $paypal_details = WC_PayPal_Service::get_subscription( $paypal_subscription_id );
+        $paypal_details = PFOB_PayPal_Service::get_subscription( $paypal_subscription_id );
 
         if ( is_wp_error( $paypal_details ) ) {
             error_log( 'Failed to fetch PayPal subscription details: ' . $paypal_details->get_error_message() );
@@ -197,7 +197,7 @@ class WC_PayPal_Webhook_Endpoint {
         }
 
         if ( ! empty( $update_data ) ) {
-            WC_Subscription::update( $subscription->id, $update_data );
+            PFOB_Subscription::update( $subscription->id, $update_data );
         }
     }
 
@@ -214,14 +214,14 @@ class WC_PayPal_Webhook_Endpoint {
             return;
         }
 
-        $subscription = WC_Subscription::get_by_paypal_id( $paypal_subscription_id );
+        $subscription = PFOB_Subscription::get_by_paypal_id( $paypal_subscription_id );
 
         if ( ! $subscription ) {
             return;
         }
 
         // Update subscription
-        WC_Subscription::update( $subscription->id, array(
+        PFOB_Subscription::update( $subscription->id, array(
             'status' => 'canceled',
             'canceled_at' => current_time( 'mysql' ),
             'ended_at' => current_time( 'mysql' ),
@@ -252,14 +252,14 @@ class WC_PayPal_Webhook_Endpoint {
             return;
         }
 
-        $subscription = WC_Subscription::get_by_paypal_id( $paypal_subscription_id );
+        $subscription = PFOB_Subscription::get_by_paypal_id( $paypal_subscription_id );
 
         if ( ! $subscription ) {
             return;
         }
 
         // Update subscription
-        WC_Subscription::update( $subscription->id, array(
+        PFOB_Subscription::update( $subscription->id, array(
             'status' => 'suspended',
         ) );
 
@@ -288,14 +288,14 @@ class WC_PayPal_Webhook_Endpoint {
             return;
         }
 
-        $subscription = WC_Subscription::get_by_paypal_id( $paypal_subscription_id );
+        $subscription = PFOB_Subscription::get_by_paypal_id( $paypal_subscription_id );
 
         if ( ! $subscription ) {
             return;
         }
 
         // Update subscription
-        WC_Subscription::update( $subscription->id, array(
+        PFOB_Subscription::update( $subscription->id, array(
             'status' => 'expired',
             'ended_at' => current_time( 'mysql' ),
         ) );
@@ -329,7 +329,7 @@ class WC_PayPal_Webhook_Endpoint {
             return;
         }
 
-        $subscription = WC_Subscription::get_by_paypal_id( $billing_agreement_id );
+        $subscription = PFOB_Subscription::get_by_paypal_id( $billing_agreement_id );
 
         if ( ! $subscription ) {
             error_log( "Payment completed for unknown subscription {$billing_agreement_id}" );
@@ -337,7 +337,7 @@ class WC_PayPal_Webhook_Endpoint {
         }
 
         // Create billing history record
-        WC_Billing_History::create( array(
+        PFOB_Billing_History::create( array(
             'subscription_id' => $subscription->id,
             'user_id' => $subscription->user_id,
             'transaction_id' => $transaction_id,
@@ -351,7 +351,7 @@ class WC_PayPal_Webhook_Endpoint {
         ) );
 
         // Update subscription period
-        WC_Subscription::update( $subscription->id, array(
+        PFOB_Subscription::update( $subscription->id, array(
             'current_period_start' => current_time( 'mysql' ),
             'current_period_end' => date( 'Y-m-d H:i:s', strtotime( '+1 month' ) ),
         ) );
@@ -372,7 +372,7 @@ class WC_PayPal_Webhook_Endpoint {
         $currency = $resource['amount']['currency'] ?? 'USD';
 
         // Find the original payment
-        $original_payment = WC_Billing_History::get_by_transaction_id( $sale_id );
+        $original_payment = PFOB_Billing_History::get_by_transaction_id( $sale_id );
 
         if ( ! $original_payment ) {
             error_log( "Refund for unknown transaction {$sale_id}" );
@@ -380,7 +380,7 @@ class WC_PayPal_Webhook_Endpoint {
         }
 
         // Create refund record
-        WC_Billing_History::create( array(
+        PFOB_Billing_History::create( array(
             'subscription_id' => $original_payment->subscription_id,
             'user_id' => $original_payment->user_id,
             'transaction_id' => $refund_id,
@@ -410,14 +410,14 @@ class WC_PayPal_Webhook_Endpoint {
             return;
         }
 
-        $subscription = WC_Subscription::get_by_paypal_id( $paypal_subscription_id );
+        $subscription = PFOB_Subscription::get_by_paypal_id( $paypal_subscription_id );
 
         if ( ! $subscription ) {
             return;
         }
 
         // Create failed payment record
-        WC_Billing_History::create( array(
+        PFOB_Billing_History::create( array(
             'subscription_id' => $subscription->id,
             'user_id' => $subscription->user_id,
             'transaction_type' => 'payment',

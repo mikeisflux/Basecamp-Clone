@@ -4,11 +4,11 @@
  *
  * Handles PayPal REST API v2 integration for subscription billing
  *
- * @package    Warcampaign
- * @subpackage Warcampaign/includes/services
+ * @package    ProjectFOB
+ * @subpackage ProjectFOB/includes/services
  */
 
-class WC_PayPal_Service {
+class PFOB_PayPal_Service {
 
     /**
      * PayPal API base URL
@@ -22,8 +22,8 @@ class WC_PayPal_Service {
      * @return array|false Array with client_id and client_secret, or false if not set
      */
     private static function get_credentials() {
-        $client_id = get_option( 'wc_paypal_client_id' );
-        $client_secret = get_option( 'wc_paypal_client_secret' );
+        $client_id = get_option( 'pfob_paypal_client_id' );
+        $client_secret = get_option( 'pfob_paypal_client_secret' );
 
         if ( empty( $client_id ) || empty( $client_secret ) ) {
             return false;
@@ -32,7 +32,7 @@ class WC_PayPal_Service {
         return array(
             'client_id' => $client_id,
             'client_secret' => $client_secret,
-            'sandbox' => get_option( 'wc_paypal_sandbox_mode', false ),
+            'sandbox' => get_option( 'pfob_paypal_sandbox_mode', false ),
         );
     }
 
@@ -59,7 +59,7 @@ class WC_PayPal_Service {
         }
 
         // Check cache first
-        $cached_token = get_transient( 'wc_paypal_access_token' );
+        $cached_token = get_transient( 'pfob_paypal_access_token' );
         if ( $cached_token ) {
             return $cached_token;
         }
@@ -90,7 +90,7 @@ class WC_PayPal_Service {
         }
 
         // Cache token for 55 minutes (expires in 60 minutes)
-        set_transient( 'wc_paypal_access_token', $body['access_token'], 55 * MINUTE_IN_SECONDS );
+        set_transient( 'pfob_paypal_access_token', $body['access_token'], 55 * MINUTE_IN_SECONDS );
 
         return $body['access_token'];
     }
@@ -148,7 +148,7 @@ class WC_PayPal_Service {
      * @return array|WP_Error Array of plan IDs or WP_Error on failure
      */
     public static function sync_subscription_plans() {
-        $plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+        $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
         $plan_ids = array();
 
         foreach ( $plans as $plan_key => $plan_data ) {
@@ -162,7 +162,7 @@ class WC_PayPal_Service {
         }
 
         // Store plan IDs in WordPress options
-        update_option( 'wc_paypal_plan_ids', $plan_ids );
+        update_option( 'pfob_paypal_plan_ids', $plan_ids );
 
         return $plan_ids;
     }
@@ -176,7 +176,7 @@ class WC_PayPal_Service {
      */
     private static function create_or_update_plan( $plan_key, $plan_data ) {
         // Check if plan already exists
-        $existing_plan_ids = get_option( 'wc_paypal_plan_ids', array() );
+        $existing_plan_ids = get_option( 'pfob_paypal_plan_ids', array() );
 
         if ( isset( $existing_plan_ids[ $plan_key ] ) ) {
             // Plan exists, return existing ID
@@ -188,7 +188,7 @@ class WC_PayPal_Service {
             '/v1/catalogs/products',
             'POST',
             array(
-                'name' => 'Warcampaign ' . $plan_data['name'] . ' Plan',
+                'name' => 'ProjectFOB ' . $plan_data['name'] . ' Plan',
                 'description' => $plan_data['description'],
                 'type' => 'SERVICE',
                 'category' => 'SOFTWARE',
@@ -207,7 +207,7 @@ class WC_PayPal_Service {
             'POST',
             array(
                 'product_id' => $product_id,
-                'name' => 'Warcampaign ' . $plan_data['name'],
+                'name' => 'ProjectFOB ' . $plan_data['name'],
                 'description' => $plan_data['description'],
                 'status' => 'ACTIVE',
                 'billing_cycles' => array(
@@ -252,7 +252,7 @@ class WC_PayPal_Service {
      * @return array|WP_Error Response with approval URL or WP_Error on failure
      */
     public static function create_subscription( $user_id, $plan_key, $return_url, $cancel_url ) {
-        $plan_ids = get_option( 'wc_paypal_plan_ids', array() );
+        $plan_ids = get_option( 'pfob_paypal_plan_ids', array() );
 
         if ( ! isset( $plan_ids[ $plan_key ] ) ) {
             return new WP_Error( 'invalid_plan', 'Invalid subscription plan' );
@@ -276,7 +276,7 @@ class WC_PayPal_Service {
                     'email_address' => $user->user_email,
                 ),
                 'application_context' => array(
-                    'brand_name' => 'Warcampaign',
+                    'brand_name' => 'ProjectFOB',
                     'locale' => 'en-US',
                     'shipping_preference' => 'NO_SHIPPING',
                     'user_action' => 'SUBSCRIBE_NOW',
@@ -415,7 +415,7 @@ class WC_PayPal_Service {
      * @return bool|WP_Error True if valid, WP_Error if invalid
      */
     public static function verify_webhook_signature( $headers, $body ) {
-        $webhook_id = get_option( 'wc_paypal_webhook_id' );
+        $webhook_id = get_option( 'pfob_paypal_webhook_id' );
 
         if ( empty( $webhook_id ) ) {
             return new WP_Error( 'no_webhook_id', 'PayPal webhook ID not configured' );
@@ -455,12 +455,12 @@ class WC_PayPal_Service {
      * @return bool Success
      */
     public static function save_credentials( $client_id, $client_secret, $sandbox_mode = false ) {
-        update_option( 'wc_paypal_client_id', sanitize_text_field( $client_id ) );
-        update_option( 'wc_paypal_client_secret', sanitize_text_field( $client_secret ) );
-        update_option( 'wc_paypal_sandbox_mode', (bool) $sandbox_mode );
+        update_option( 'pfob_paypal_client_id', sanitize_text_field( $client_id ) );
+        update_option( 'pfob_paypal_client_secret', sanitize_text_field( $client_secret ) );
+        update_option( 'pfob_paypal_sandbox_mode', (bool) $sandbox_mode );
 
         // Clear cached token
-        delete_transient( 'wc_paypal_access_token' );
+        delete_transient( 'pfob_paypal_access_token' );
 
         return true;
     }

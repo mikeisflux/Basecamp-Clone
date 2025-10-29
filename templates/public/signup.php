@@ -3,8 +3,8 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sign Up - Warcampaign</title>
-    <link rel="stylesheet" href="<?php echo WC_PLUGIN_URL; ?>assets/css/style.css">
+    <title>Sign Up - ProjectFOB</title>
+    <link rel="stylesheet" href="<?php echo PFOB_PLUGIN_URL; ?>assets/css/style.css">
     <style>
         body {
             margin: 0;
@@ -169,7 +169,7 @@
     <div class="signup-container">
         <div class="signup-header">
             <h1>Create Your Account</h1>
-            <p>Join Warcampaign and start collaborating</p>
+            <p>Join ProjectFOB and start collaborating</p>
             <div class="plan-badge" id="plan-badge">Loading...</div>
         </div>
 
@@ -213,7 +213,7 @@
         </div>
 
         <div class="login-link">
-            Already have an account? <a href="<?php echo wp_login_url( site_url( '/warcampaign/' ) ); ?>">Log in</a>
+            Already have an account? <a href="<?php echo wp_login_url( site_url( '/projectfob/' ) ); ?>">Log in</a>
         </div>
     </div>
 
@@ -224,7 +224,7 @@
 
         if (!selectedPlan) {
             // Redirect back to pricing if no plan selected
-            window.location.href = '<?php echo site_url( '/warcampaign/pricing' ); ?>';
+            window.location.href = '<?php echo site_url( '/projectfob/pricing' ); ?>';
         } else {
             // Show selected plan
             document.getElementById('plan-badge').textContent = selectedPlanName + ' Plan';
@@ -253,7 +253,7 @@
             document.getElementById('submit-btn').disabled = true;
 
             try {
-                const response = await fetch('/wp-json/warcampaign/v1/subscription/register', {
+                const response = await fetch('/wp-json/projectfob/v1/subscription/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

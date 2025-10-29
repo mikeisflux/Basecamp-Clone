@@ -2,7 +2,7 @@
 /**
  * Admin Settings Page Template
  *
- * @package Warcampaign
+ * @package ProjectFOB
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,29 +10,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Get current settings
-$paypal_client_id = get_option( 'wc_paypal_client_id', '' );
-$paypal_client_secret = get_option( 'wc_paypal_client_secret', '' );
-$paypal_sandbox = get_option( 'wc_paypal_sandbox_mode', false );
-$paypal_webhook_id = get_option( 'wc_paypal_webhook_id', '' );
+$paypal_client_id = get_option( 'pfob_paypal_client_id', '' );
+$paypal_client_secret = get_option( 'pfob_paypal_client_secret', '' );
+$paypal_sandbox = get_option( 'pfob_paypal_sandbox_mode', false );
+$paypal_webhook_id = get_option( 'pfob_paypal_webhook_id', '' );
 
-$r2_access_key = get_option( 'wc_r2_access_key_id', '' );
-$r2_secret_key = get_option( 'wc_r2_secret_access_key', '' );
+$r2_access_key = get_option( 'pfob_r2_access_key_id', '' );
+$r2_secret_key = get_option( 'pfob_r2_secret_access_key', '' );
 
 $paypal_configured = ! empty( $paypal_client_id ) && ! empty( $paypal_client_secret );
 $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
 ?>
 
-<div class="wrap wc-admin-settings">
-    <h1>Warcampaign Settings</h1>
+<div class="wrap pfob-admin-settings">
+    <h1>ProjectFOB Settings</h1>
 
-    <?php settings_errors( 'wc_settings' ); ?>
+    <?php settings_errors( 'pfob_settings' ); ?>
 
-    <div class="wc-settings-container">
+    <div class="pfob-settings-container">
         <form method="post" action="">
-            <?php wp_nonce_field( 'wc_settings_save' ); ?>
+            <?php wp_nonce_field( 'pfob_settings_save' ); ?>
 
             <!-- PayPal Configuration -->
-            <div class="wc-settings-section">
+            <div class="pfob-settings-section">
                 <div class="section-header">
                     <h2>
                         <span class="dashicons dashicons-money-alt"></span>
@@ -49,12 +49,12 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
                 <table class="form-table">
                     <tr>
                         <th scope="row">
-                            <label for="wc_paypal_client_id">Client ID</label>
+                            <label for="pfob_paypal_client_id">Client ID</label>
                         </th>
                         <td>
                             <input type="text"
-                                   id="wc_paypal_client_id"
-                                   name="wc_paypal_client_id"
+                                   id="pfob_paypal_client_id"
+                                   name="pfob_paypal_client_id"
                                    value="<?php echo esc_attr( $paypal_client_id ); ?>"
                                    class="regular-text"
                                    placeholder="PayPal Client ID">
@@ -66,16 +66,16 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
 
                     <tr>
                         <th scope="row">
-                            <label for="wc_paypal_client_secret">Client Secret</label>
+                            <label for="pfob_paypal_client_secret">Client Secret</label>
                         </th>
                         <td>
                             <input type="password"
-                                   id="wc_paypal_client_secret"
-                                   name="wc_paypal_client_secret"
+                                   id="pfob_paypal_client_secret"
+                                   name="pfob_paypal_client_secret"
                                    value="<?php echo esc_attr( $paypal_client_secret ); ?>"
                                    class="regular-text"
                                    placeholder="PayPal Client Secret">
-                            <button type="button" class="button button-secondary" onclick="togglePasswordVisibility('wc_paypal_client_secret')">
+                            <button type="button" class="button button-secondary" onclick="togglePasswordVisibility('pfob_paypal_client_secret')">
                                 <span class="dashicons dashicons-visibility"></span> Show
                             </button>
                         </td>
@@ -86,7 +86,7 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
                         <td>
                             <label>
                                 <input type="checkbox"
-                                       name="wc_paypal_sandbox_mode"
+                                       name="pfob_paypal_sandbox_mode"
                                        value="1"
                                        <?php checked( $paypal_sandbox ); ?>>
                                 Enable Sandbox Mode (for testing)
@@ -99,17 +99,17 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
 
                     <tr>
                         <th scope="row">
-                            <label for="wc_paypal_webhook_id">Webhook ID</label>
+                            <label for="pfob_paypal_webhook_id">Webhook ID</label>
                         </th>
                         <td>
                             <input type="text"
-                                   id="wc_paypal_webhook_id"
-                                   name="wc_paypal_webhook_id"
+                                   id="pfob_paypal_webhook_id"
+                                   name="pfob_paypal_webhook_id"
                                    value="<?php echo esc_attr( $paypal_webhook_id ); ?>"
                                    class="regular-text"
                                    placeholder="Webhook ID (optional)">
                             <p class="description">
-                                <strong>Webhook URL:</strong> <code><?php echo esc_url( rest_url( 'warcampaign/v1/webhooks/paypal' ) ); ?></code><br>
+                                <strong>Webhook URL:</strong> <code><?php echo esc_url( rest_url( 'projectfob/v1/webhooks/paypal' ) ); ?></code><br>
                                 Add this URL in PayPal Developer Dashboard > Webhooks. Subscribe to all BILLING.SUBSCRIPTION.* events.
                             </p>
                         </td>
@@ -147,7 +147,7 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
             </div>
 
             <!-- Cloudflare R2 Configuration -->
-            <div class="wc-settings-section">
+            <div class="pfob-settings-section">
                 <div class="section-header">
                     <h2>
                         <span class="dashicons dashicons-cloud-upload"></span>
@@ -165,20 +165,20 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
                     <tr>
                         <th scope="row">Bucket Details</th>
                         <td>
-                            <p><strong>Bucket Name:</strong> <code>warcampaign</code></p>
-                            <p><strong>Endpoint:</strong> <code><?php echo esc_html( WC_R2_ENDPOINT ); ?></code></p>
+                            <p><strong>Bucket Name:</strong> <code>projectfob</code></p>
+                            <p><strong>Endpoint:</strong> <code><?php echo esc_html( PFOB_R2_ENDPOINT ); ?></code></p>
                             <p><strong>Location:</strong> Eastern North America (ENAM)</p>
                         </td>
                     </tr>
 
                     <tr>
                         <th scope="row">
-                            <label for="wc_r2_access_key_id">Access Key ID</label>
+                            <label for="pfob_r2_access_key_id">Access Key ID</label>
                         </th>
                         <td>
                             <input type="text"
-                                   id="wc_r2_access_key_id"
-                                   name="wc_r2_access_key_id"
+                                   id="pfob_r2_access_key_id"
+                                   name="pfob_r2_access_key_id"
                                    value="<?php echo esc_attr( $r2_access_key ); ?>"
                                    class="regular-text"
                                    placeholder="R2 Access Key ID">
@@ -190,16 +190,16 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
 
                     <tr>
                         <th scope="row">
-                            <label for="wc_r2_secret_access_key">Secret Access Key</label>
+                            <label for="pfob_r2_secret_access_key">Secret Access Key</label>
                         </th>
                         <td>
                             <input type="password"
-                                   id="wc_r2_secret_access_key"
-                                   name="wc_r2_secret_access_key"
+                                   id="pfob_r2_secret_access_key"
+                                   name="pfob_r2_secret_access_key"
                                    value="<?php echo esc_attr( $r2_secret_key ); ?>"
                                    class="regular-text"
                                    placeholder="R2 Secret Access Key">
-                            <button type="button" class="button button-secondary" onclick="togglePasswordVisibility('wc_r2_secret_access_key')">
+                            <button type="button" class="button button-secondary" onclick="togglePasswordVisibility('pfob_r2_secret_access_key')">
                                 <span class="dashicons dashicons-visibility"></span> Show
                             </button>
                         </td>
@@ -222,14 +222,14 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
 
             <!-- Save Button -->
             <p class="submit">
-                <button type="submit" name="wc_save_settings" class="button button-primary button-large">
+                <button type="submit" name="pfob_save_settings" class="button button-primary button-large">
                     <span class="dashicons dashicons-yes"></span> Save All Settings
                 </button>
             </p>
         </form>
 
         <!-- Help Section -->
-        <div class="wc-settings-section wc-help-section">
+        <div class="pfob-settings-section pfob-help-section">
             <h2><span class="dashicons dashicons-info"></span> Setup Guide</h2>
 
             <div class="help-grid">
@@ -260,7 +260,7 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
                     <ol>
                         <li>In PayPal Dashboard, go to Webhooks</li>
                         <li>Click "Add Webhook"</li>
-                        <li>Enter URL: <code><?php echo esc_url( rest_url( 'warcampaign/v1/webhooks/paypal' ) ); ?></code></li>
+                        <li>Enter URL: <code><?php echo esc_url( rest_url( 'projectfob/v1/webhooks/paypal' ) ); ?></code></li>
                         <li>Subscribe to: BILLING.SUBSCRIPTION.* and PAYMENT.SALE.*</li>
                         <li>Copy Webhook ID and paste above</li>
                     </ol>
@@ -273,7 +273,7 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
                         <li>Click "Test PayPal Connection"</li>
                         <li>Click "Sync Subscription Plans to PayPal"</li>
                         <li>Test R2 connection</li>
-                        <li>Visit <a href="<?php echo site_url( '/warcampaign/pricing' ); ?>" target="_blank"><?php echo site_url( '/warcampaign/pricing' ); ?></a></li>
+                        <li>Visit <a href="<?php echo site_url( '/projectfob/pricing' ); ?>" target="_blank"><?php echo site_url( '/projectfob/pricing' ); ?></a></li>
                     </ol>
                 </div>
             </div>
@@ -282,16 +282,16 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
 </div>
 
 <style>
-.wc-admin-settings {
+.pfob-admin-settings {
     max-width: 1200px;
 }
 
-.wc-settings-container {
+.pfob-settings-container {
     background: #fff;
     margin-top: 20px;
 }
 
-.wc-settings-section {
+.pfob-settings-section {
     background: #fff;
     border: 1px solid #ccd0d4;
     border-radius: 4px;
@@ -364,7 +364,7 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
     vertical-align: middle;
 }
 
-.wc-help-section {
+.pfob-help-section {
     background: #f8f9fa !important;
 }
 
@@ -429,11 +429,11 @@ jQuery(document).ready(function($) {
         $result.removeClass('success error').text('');
 
         $.ajax({
-            url: wcAdmin.ajaxurl,
+            url: pfobAdmin.ajaxurl,
             method: 'POST',
             data: {
-                action: 'wc_test_paypal_connection',
-                nonce: wcAdmin.nonce
+                action: 'pfob_test_paypal_connection',
+                nonce: pfobAdmin.nonce
             },
             success: function(response) {
                 if (response.success) {
@@ -460,11 +460,11 @@ jQuery(document).ready(function($) {
         $result.removeClass('success error').text('');
 
         $.ajax({
-            url: wcAdmin.ajaxurl,
+            url: pfobAdmin.ajaxurl,
             method: 'POST',
             data: {
-                action: 'wc_test_r2_connection',
-                nonce: wcAdmin.nonce
+                action: 'pfob_test_r2_connection',
+                nonce: pfobAdmin.nonce
             },
             success: function(response) {
                 if (response.success) {
@@ -491,11 +491,11 @@ jQuery(document).ready(function($) {
         $result.removeClass('success error').text('');
 
         $.ajax({
-            url: wcAdmin.ajaxurl,
+            url: pfobAdmin.ajaxurl,
             method: 'POST',
             data: {
-                action: 'wc_sync_paypal_plans',
-                nonce: wcAdmin.nonce
+                action: 'pfob_sync_paypal_plans',
+                nonce: pfobAdmin.nonce
             },
             success: function(response) {
                 if (response.success) {

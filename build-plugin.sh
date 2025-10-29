@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Warcampaign - WordPress Plugin Build Script
+# ProjectFOB - WordPress Plugin Build Script
 # Creates a production-ready zip file for WordPress plugin installation
 
 set -e
@@ -11,10 +11,10 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}=== Warcampaign - WordPress Plugin Builder ===${NC}\n"
+echo -e "${GREEN}=== ProjectFOB - WordPress Plugin Builder ===${NC}\n"
 
 # Configuration
-PLUGIN_SLUG="warcampaign"
+PLUGIN_SLUG="projectfob"
 VERSION="2.0.0"
 BUILD_DIR="build"
 DIST_DIR="dist"
@@ -31,7 +31,7 @@ mkdir -p ${DIST_DIR}
 echo -e "${YELLOW}Copying plugin files...${NC}"
 
 # Main plugin file
-cp warcampaign.php ${PLUGIN_DIR}/
+cp projectfob.php ${PLUGIN_DIR}/
 
 # Uninstall script (if exists)
 if [ -f "uninstall.php" ]; then
@@ -94,40 +94,40 @@ fi
 # Create installation guide
 echo -e "${YELLOW}Creating installation guide...${NC}"
 cat > ${PLUGIN_DIR}/INSTALLATION.txt << 'EOF'
-=== Warcampaign Installation Guide ===
+=== ProjectFOB Installation Guide ===
 
-Thank you for choosing Warcampaign - the complete SaaS project management platform!
+Thank you for choosing ProjectFOB - the complete SaaS project management platform!
 
 == Quick Start ==
 
 1. Upload the plugin:
    - Go to WordPress Admin > Plugins > Add New > Upload Plugin
-   - Choose the warcampaign-2.0.0.zip file
+   - Choose the projectfob-2.0.0.zip file
    - Click "Install Now"
    - Click "Activate Plugin"
 
 2. Configure PayPal (Required for subscriptions):
-   - Go to WordPress Admin > Warcampaign > Settings
+   - Go to WordPress Admin > ProjectFOB > Settings
    - Enter your PayPal Client ID and Client Secret
    - Get credentials from: https://developer.paypal.com/dashboard/applications
    - Your PayPal account: divinitycomicsinc@gmail.com
 
 3. Configure Cloudflare R2 (Required for file storage):
-   - Go to WordPress Admin > Warcampaign > Settings
+   - Go to WordPress Admin > ProjectFOB > Settings
    - Enter your R2 Access Key ID and Secret Access Key
-   - Bucket: warcampaign
+   - Bucket: projectfob
    - Endpoint: https://e17dbcdbd648aab85b2e0e8391896b12.r2.cloudflarestorage.com
 
 4. Set up PayPal Webhook:
    - In PayPal Developer Dashboard, add webhook URL:
-     https://your-site.com/wp-json/warcampaign/v1/webhooks/paypal
+     https://your-site.com/wp-json/projectfob/v1/webhooks/paypal
    - Subscribe to all "BILLING.SUBSCRIPTION.*" events
-   - Copy Webhook ID to Warcampaign settings
+   - Copy Webhook ID to ProjectFOB settings
 
 5. Access your site:
-   - Public pricing page: https://your-site.com/warcampaign/pricing
-   - User dashboard: https://your-site.com/warcampaign/
-   - Admin dashboard: WordPress Admin > Warcampaign
+   - Public pricing page: https://your-site.com/projectfob/pricing
+   - User dashboard: https://your-site.com/projectfob/
+   - Admin dashboard: WordPress Admin > ProjectFOB
 
 == Subscription Plans ==
 
@@ -154,8 +154,8 @@ Your platform offers 4 subscription tiers:
 == Support ==
 
 For support and documentation:
-- Email: support@warcampaign.com
-- Documentation: https://docs.warcampaign.com
+- Email: support@projectfob.com
+- Documentation: https://docs.projectfob.com
 
 == Technical Requirements ==
 
@@ -166,7 +166,7 @@ For support and documentation:
 - PayPal Business Account
 - Cloudflare R2 Account
 
-Enjoy Warcampaign!
+Enjoy ProjectFOB!
 EOF
 
 # Create zip file
@@ -181,7 +181,7 @@ FILESIZE=$(du -h "${DIST_DIR}/${PLUGIN_SLUG}-${VERSION}.zip" | cut -f1)
 # Success message
 echo -e "\n${GREEN}✓ Build complete!${NC}"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "Plugin:   ${GREEN}Warcampaign${NC}"
+echo -e "Plugin:   ${GREEN}ProjectFOB${NC}"
 echo -e "Version:  ${GREEN}${VERSION}${NC}"
 echo -e "Location: ${GREEN}${DIST_DIR}/${PLUGIN_SLUG}-${VERSION}.zip${NC}"
 echo -e "Size:     ${GREEN}${FILESIZE}${NC}"
@@ -195,11 +195,11 @@ echo -e "  2. Click 'Upload Plugin'"
 echo -e "  3. Choose: ${DIST_DIR}/${PLUGIN_SLUG}-${VERSION}.zip"
 echo -e "  4. Click 'Install Now' then 'Activate'"
 echo -e "  5. Configure PayPal & R2 in settings"
-echo -e "  6. Access at: /warcampaign/pricing\n"
+echo -e "  6. Access at: /projectfob/pricing\n"
 
 echo -e "${YELLOW}Important:${NC}"
 echo -e "  • PayPal account: divinitycomicsinc@gmail.com"
-echo -e "  • R2 Bucket: warcampaign"
+echo -e "  • R2 Bucket: projectfob"
 echo -e "  • SSL certificate required"
 echo -e "  • Set up PayPal webhook for subscriptions\n"
 

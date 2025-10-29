@@ -2,7 +2,7 @@
 /**
  * Admin Billing & Revenue Page
  *
- * @package Warcampaign
+ * @package ProjectFOB
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,21 +13,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 $start_of_month = date( 'Y-m-01' );
 $end_of_month = date( 'Y-m-t' );
 
-$stats = WC_Billing_History::get_statistics( $start_of_month, $end_of_month );
-$total_revenue = WC_Billing_History::get_total_revenue();
-$monthly_revenue = WC_Billing_History::get_total_revenue( $start_of_month, $end_of_month );
-$revenue_by_month = WC_Billing_History::get_revenue_by_period( date( 'Y-01-01' ), date( 'Y-12-31' ), 'month' );
+$stats = PFOB_Billing_History::get_statistics( $start_of_month, $end_of_month );
+$total_revenue = PFOB_Billing_History::get_total_revenue();
+$monthly_revenue = PFOB_Billing_History::get_total_revenue( $start_of_month, $end_of_month );
+$revenue_by_month = PFOB_Billing_History::get_revenue_by_period( date( 'Y-01-01' ), date( 'Y-12-31' ), 'month' );
 
 // Get recent transactions
-$recent_transactions = WC_Billing_History::get_recent( 50 );
+$recent_transactions = PFOB_Billing_History::get_recent( 50 );
 ?>
 
-<div class="wrap wc-admin-billing">
+<div class="wrap pfob-admin-billing">
     <h1>Billing & Revenue</h1>
 
     <!-- Revenue Stats -->
-    <div class="wc-stats-grid">
-        <div class="wc-stat-card">
+    <div class="pfob-stats-grid">
+        <div class="pfob-stat-card">
             <div class="stat-icon" style="background: #28a745;">
                 <span class="dashicons dashicons-chart-line"></span>
             </div>
@@ -37,7 +37,7 @@ $recent_transactions = WC_Billing_History::get_recent( 50 );
             </div>
         </div>
 
-        <div class="wc-stat-card">
+        <div class="pfob-stat-card">
             <div class="stat-icon" style="background: #2271b1;">
                 <span class="dashicons dashicons-calendar-alt"></span>
             </div>
@@ -47,7 +47,7 @@ $recent_transactions = WC_Billing_History::get_recent( 50 );
             </div>
         </div>
 
-        <div class="wc-stat-card">
+        <div class="pfob-stat-card">
             <div class="stat-icon" style="background: #ffc107;">
                 <span class="dashicons dashicons-money-alt"></span>
             </div>
@@ -57,7 +57,7 @@ $recent_transactions = WC_Billing_History::get_recent( 50 );
             </div>
         </div>
 
-        <div class="wc-stat-card">
+        <div class="pfob-stat-card">
             <div class="stat-icon" style="background: #17a2b8;">
                 <span class="dashicons dashicons-chart-bar"></span>
             </div>
@@ -70,9 +70,9 @@ $recent_transactions = WC_Billing_History::get_recent( 50 );
 
     <!-- Revenue by Month Chart -->
     <?php if ( ! empty( $revenue_by_month ) ) : ?>
-        <div class="wc-admin-section">
+        <div class="pfob-admin-section">
             <h2>Revenue by Month (<?php echo date( 'Y' ); ?>)</h2>
-            <div class="wc-revenue-chart">
+            <div class="pfob-revenue-chart">
                 <?php
                 $max_revenue = 0;
                 foreach ( $revenue_by_month as $month_data ) {
@@ -96,7 +96,7 @@ $recent_transactions = WC_Billing_History::get_recent( 50 );
     <?php endif; ?>
 
     <!-- Recent Transactions -->
-    <div class="wc-admin-section">
+    <div class="pfob-admin-section">
         <h2>Recent Transactions</h2>
         <?php if ( ! empty( $recent_transactions ) ) : ?>
             <table class="wp-list-table widefat fixed striped">
@@ -163,14 +163,14 @@ $recent_transactions = WC_Billing_History::get_recent( 50 );
 </div>
 
 <style>
-.wc-stats-grid {
+.pfob-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     margin: 20px 0;
 }
 
-.wc-stat-card {
+.pfob-stat-card {
     background: white;
     border: 1px solid #ccd0d4;
     border-radius: 4px;
@@ -214,7 +214,7 @@ $recent_transactions = WC_Billing_History::get_recent( 50 );
     color: #1d2327;
 }
 
-.wc-admin-section {
+.pfob-admin-section {
     background: white;
     border: 1px solid #ccd0d4;
     border-radius: 4px;
@@ -222,11 +222,11 @@ $recent_transactions = WC_Billing_History::get_recent( 50 );
     margin: 20px 0;
 }
 
-.wc-admin-section h2 {
+.pfob-admin-section h2 {
     margin-top: 0;
 }
 
-.wc-revenue-chart {
+.pfob-revenue-chart {
     padding: 20px;
 }
 

@@ -2,11 +2,11 @@
 /**
  * Billing History model class.
  *
- * @package    Warcampaign
- * @subpackage Warcampaign/includes/models
+ * @package    ProjectFOB
+ * @subpackage ProjectFOB/includes/models
  */
 
-class WC_Billing_History {
+class PFOB_Billing_History {
 
     /**
      * Create a new billing record.
@@ -27,7 +27,7 @@ class WC_Billing_History {
             $data['transaction_date'] = current_time( 'mysql' );
         }
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
 
         $wpdb->insert(
             $table_name,
@@ -51,7 +51,7 @@ class WC_Billing_History {
     public static function get( $id ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
         $record = $wpdb->get_row(
             $wpdb->prepare( "SELECT * FROM {$table_name} WHERE id = %d", $id )
         );
@@ -74,7 +74,7 @@ class WC_Billing_History {
     public static function get_by_user_id( $user_id, $limit = 50, $offset = 0 ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
 
         $results = $wpdb->get_results(
             $wpdb->prepare(
@@ -107,7 +107,7 @@ class WC_Billing_History {
     public static function get_by_subscription_id( $subscription_id ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
 
         $results = $wpdb->get_results(
             $wpdb->prepare(
@@ -137,7 +137,7 @@ class WC_Billing_History {
     public static function get_by_transaction_id( $transaction_id ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
         $record = $wpdb->get_row(
             $wpdb->prepare( "SELECT * FROM {$table_name} WHERE transaction_id = %s", $transaction_id )
         );
@@ -164,7 +164,7 @@ class WC_Billing_History {
             $data['metadata'] = wp_json_encode( $data['metadata'] );
         }
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
 
         return $wpdb->update(
             $table_name,
@@ -183,7 +183,7 @@ class WC_Billing_History {
     public static function get_total_revenue( $start_date = null, $end_date = null ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
 
         $sql = "SELECT SUM(amount) FROM {$table_name} WHERE status = 'completed'";
 
@@ -209,7 +209,7 @@ class WC_Billing_History {
     public static function get_revenue_by_period( $start_date, $end_date, $group_by = 'month' ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
 
         $date_format = array(
             'day' => '%Y-%m-%d',
@@ -247,7 +247,7 @@ class WC_Billing_History {
     public static function get_failed_payments( $days = 30 ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
         $date = date( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
 
         return $wpdb->get_results(
@@ -270,7 +270,7 @@ class WC_Billing_History {
     public static function get_recent( $limit = 20 ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
 
         $results = $wpdb->get_results(
             $wpdb->prepare(
@@ -301,7 +301,7 @@ class WC_Billing_History {
     public static function get_statistics( $start_date = null, $end_date = null ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_billing_history';
+        $table_name = $wpdb->prefix . 'pfob_billing_history';
 
         $where = array( "status = 'completed'" );
         $params = array();

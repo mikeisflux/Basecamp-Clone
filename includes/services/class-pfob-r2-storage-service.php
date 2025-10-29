@@ -4,11 +4,11 @@
  *
  * Handles file uploads and downloads using Cloudflare R2 S3-compatible API
  *
- * @package    Warcampaign
- * @subpackage Warcampaign/includes/services
+ * @package    ProjectFOB
+ * @subpackage ProjectFOB/includes/services
  */
 
-class WC_R2_Storage_Service {
+class PFOB_R2_Storage_Service {
 
     /**
      * Get R2 credentials from WordPress options
@@ -16,8 +16,8 @@ class WC_R2_Storage_Service {
      * @return array|false Array with access_key_id, secret_access_key, or false if not set
      */
     private static function get_credentials() {
-        $access_key_id = get_option( 'wc_r2_access_key_id' );
-        $secret_access_key = get_option( 'wc_r2_secret_access_key' );
+        $access_key_id = get_option( 'pfob_r2_access_key_id' );
+        $secret_access_key = get_option( 'pfob_r2_secret_access_key' );
 
         if ( empty( $access_key_id ) || empty( $secret_access_key ) ) {
             return false;
@@ -108,14 +108,14 @@ class WC_R2_Storage_Service {
             return new WP_Error( 'no_credentials', 'R2 credentials not configured' );
         }
 
-        $url = WC_R2_ENDPOINT . '/' . WC_R2_BUCKET . $path;
+        $url = PFOB_R2_ENDPOINT . '/' . PFOB_R2_BUCKET . $path;
 
         // Generate signature
         $auth_headers = self::generate_signature( $method, $url, array(), $body );
 
         $headers = array_merge(
             array(
-                'Host' => wp_parse_url( WC_R2_ENDPOINT, PHP_URL_HOST ),
+                'Host' => wp_parse_url( PFOB_R2_ENDPOINT, PHP_URL_HOST ),
             ),
             $auth_headers,
             $extra_headers
@@ -187,7 +187,7 @@ class WC_R2_Storage_Service {
         }
 
         return array(
-            'url' => WC_R2_ENDPOINT . '/' . WC_R2_BUCKET . '/' . $object_key,
+            'url' => PFOB_R2_ENDPOINT . '/' . PFOB_R2_BUCKET . '/' . $object_key,
             'object_key' => $object_key,
             'size' => filesize( $file_path ),
             'content_type' => $content_type,
@@ -298,7 +298,7 @@ class WC_R2_Storage_Service {
         $datetime = gmdate( 'Ymd\THis\Z', $timestamp );
 
         // Build canonical request
-        $canonical_uri = '/' . WC_R2_BUCKET . '/' . $object_key;
+        $canonical_uri = '/' . PFOB_R2_BUCKET . '/' . $object_key;
         $credential = $credentials['access_key_id'] . '/' . $date . '/auto/s3/aws4_request';
 
         $canonical_querystring = http_build_query( array(
@@ -309,7 +309,7 @@ class WC_R2_Storage_Service {
             'X-Amz-SignedHeaders' => 'host',
         ) );
 
-        $canonical_headers = 'host:' . wp_parse_url( WC_R2_ENDPOINT, PHP_URL_HOST );
+        $canonical_headers = 'host:' . wp_parse_url( PFOB_R2_ENDPOINT, PHP_URL_HOST );
 
         $canonical_request = "GET\n{$canonical_uri}\n{$canonical_querystring}\n{$canonical_headers}\n\nhost\nUNSIGNED-PAYLOAD";
 
@@ -323,7 +323,7 @@ class WC_R2_Storage_Service {
         $k_signing = hash_hmac( 'sha256', 'aws4_request', $k_service, true );
         $signature = hash_hmac( 'sha256', $string_to_sign, $k_signing );
 
-        return WC_R2_ENDPOINT . $canonical_uri . '?' . $canonical_querystring . '&X-Amz-Signature=' . $signature;
+        return PFOB_R2_ENDPOINT . $canonical_uri . '?' . $canonical_querystring . '&X-Amz-Signature=' . $signature;
     }
 
     /**
@@ -405,8 +405,8 @@ class WC_R2_Storage_Service {
      * @return bool Success
      */
     public static function save_credentials( $access_key_id, $secret_access_key ) {
-        update_option( 'wc_r2_access_key_id', sanitize_text_field( $access_key_id ) );
-        update_option( 'wc_r2_secret_access_key', sanitize_text_field( $secret_access_key ) );
+        update_option( 'pfob_r2_access_key_id', sanitize_text_field( $access_key_id ) );
+        update_option( 'pfob_r2_secret_access_key', sanitize_text_field( $secret_access_key ) );
 
         return true;
     }
@@ -449,7 +449,7 @@ class WC_R2_Storage_Service {
      * @return string Object key
      */
     public static function extract_object_key_from_url( $url ) {
-        $bucket_path = '/' . WC_R2_BUCKET . '/';
+        $bucket_path = '/' . PFOB_R2_BUCKET . '/';
         $pos = strpos( $url, $bucket_path );
 
         if ( $pos === false ) {

@@ -2,11 +2,11 @@
 /**
  * Usage Tracking model class.
  *
- * @package    Warcampaign
- * @subpackage Warcampaign/includes/models
+ * @package    ProjectFOB
+ * @subpackage ProjectFOB/includes/models
  */
 
-class WC_Usage {
+class PFOB_Usage {
 
     /**
      * Record or update usage metric.
@@ -19,7 +19,7 @@ class WC_Usage {
     public static function record( $user_id, $metric_type, $value ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_usage_tracking';
+        $table_name = $wpdb->prefix . 'pfob_usage_tracking';
 
         // Get current period (month)
         $period_start = date( 'Y-m-01 00:00:00' );
@@ -79,7 +79,7 @@ class WC_Usage {
     public static function get_current( $user_id, $metric_type ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_usage_tracking';
+        $table_name = $wpdb->prefix . 'pfob_usage_tracking';
         $period_start = date( 'Y-m-01 00:00:00' );
 
         $value = $wpdb->get_var(
@@ -106,7 +106,7 @@ class WC_Usage {
     public static function get_all_current( $user_id ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_usage_tracking';
+        $table_name = $wpdb->prefix . 'pfob_usage_tracking';
         $period_start = date( 'Y-m-01 00:00:00' );
 
         $results = $wpdb->get_results(
@@ -168,7 +168,7 @@ class WC_Usage {
      * @return bool True if limit reached, false otherwise.
      */
     public static function is_limit_reached( $user_id, $metric_type ) {
-        $limit = WC_Subscription::get_feature_limit( $user_id, $metric_type );
+        $limit = PFOB_Subscription::get_feature_limit( $user_id, $metric_type );
 
         // Null means unlimited
         if ( $limit === null ) {
@@ -188,7 +188,7 @@ class WC_Usage {
      * @return int|null Remaining allowance or null if unlimited.
      */
     public static function get_remaining( $user_id, $metric_type ) {
-        $limit = WC_Subscription::get_feature_limit( $user_id, $metric_type );
+        $limit = PFOB_Subscription::get_feature_limit( $user_id, $metric_type );
 
         // Null means unlimited
         if ( $limit === null ) {
@@ -208,7 +208,7 @@ class WC_Usage {
      * @return float|null Percentage (0-100) or null if unlimited.
      */
     public static function get_usage_percentage( $user_id, $metric_type ) {
-        $limit = WC_Subscription::get_feature_limit( $user_id, $metric_type );
+        $limit = PFOB_Subscription::get_feature_limit( $user_id, $metric_type );
 
         // Null means unlimited
         if ( $limit === null ) {
@@ -235,7 +235,7 @@ class WC_Usage {
     public static function get_history( $user_id, $metric_type, $months = 12 ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_usage_tracking';
+        $table_name = $wpdb->prefix . 'pfob_usage_tracking';
         $start_date = date( 'Y-m-01 00:00:00', strtotime( "-{$months} months" ) );
 
         return $wpdb->get_results(
@@ -260,8 +260,8 @@ class WC_Usage {
      */
     public static function update_storage_usage( $user_id ) {
         // Get total storage from R2
-        if ( WC_R2_Storage_Service::is_configured() ) {
-            $storage_bytes = WC_R2_Storage_Service::get_user_storage_usage( $user_id );
+        if ( PFOB_R2_Storage_Service::is_configured() ) {
+            $storage_bytes = PFOB_R2_Storage_Service::get_user_storage_usage( $user_id );
         } else {
             // Fallback to local files
             $storage_bytes = self::calculate_local_storage_usage( $user_id );
@@ -354,10 +354,10 @@ class WC_Usage {
     public static function get_users_nearing_limits( $metric_type, $threshold = 80 ) {
         global $wpdb;
 
-        $subscriptions_table = $wpdb->prefix . 'wc_subscriptions';
-        $usage_table = $wpdb->prefix . 'wc_usage_tracking';
+        $subscriptions_table = $wpdb->prefix . 'pfob_subscriptions';
+        $usage_table = $wpdb->prefix . 'pfob_usage_tracking';
 
-        $plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+        $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
 
         $users_nearing_limit = array();
 

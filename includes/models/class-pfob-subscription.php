@@ -2,11 +2,11 @@
 /**
  * Subscription model class.
  *
- * @package    Warcampaign
- * @subpackage Warcampaign/includes/models
+ * @package    ProjectFOB
+ * @subpackage ProjectFOB/includes/models
  */
 
-class WC_Subscription {
+class PFOB_Subscription {
 
     /**
      * Create a new subscription.
@@ -31,7 +31,7 @@ class WC_Subscription {
             $data['metadata'] = wp_json_encode( $data['metadata'] );
         }
 
-        $table_name = $wpdb->prefix . 'wc_subscriptions';
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
 
         $wpdb->insert(
             $table_name,
@@ -69,7 +69,7 @@ class WC_Subscription {
     public static function get( $subscription_id ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_subscriptions';
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
         $subscription = $wpdb->get_row(
             $wpdb->prepare( "SELECT * FROM {$table_name} WHERE id = %d", $subscription_id )
         );
@@ -90,7 +90,7 @@ class WC_Subscription {
     public static function get_by_user_id( $user_id ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_subscriptions';
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
         $subscription = $wpdb->get_row(
             $wpdb->prepare( "SELECT * FROM {$table_name} WHERE user_id = %d ORDER BY created_at DESC LIMIT 1", $user_id )
         );
@@ -111,7 +111,7 @@ class WC_Subscription {
     public static function get_by_paypal_id( $paypal_subscription_id ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_subscriptions';
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
         $subscription = $wpdb->get_row(
             $wpdb->prepare( "SELECT * FROM {$table_name} WHERE paypal_subscription_id = %s", $paypal_subscription_id )
         );
@@ -140,7 +140,7 @@ class WC_Subscription {
 
         $data['updated_at'] = current_time( 'mysql' );
 
-        $table_name = $wpdb->prefix . 'wc_subscriptions';
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
 
         return $wpdb->update(
             $table_name,
@@ -170,7 +170,7 @@ class WC_Subscription {
     public static function get_active_subscriptions() {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_subscriptions';
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
 
         return $wpdb->get_results(
             "SELECT * FROM {$table_name} WHERE status IN ('active', 'trialing') ORDER BY created_at DESC"
@@ -186,7 +186,7 @@ class WC_Subscription {
     public static function get_expiring_soon( $days = 7 ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_subscriptions';
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
         $future_date = date( 'Y-m-d H:i:s', strtotime( "+{$days} days" ) );
 
         return $wpdb->get_results(
@@ -229,7 +229,7 @@ class WC_Subscription {
             return null;
         }
 
-        $plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+        $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
 
         return $plans[ $subscription->plan_id ] ?? null;
     }
@@ -283,7 +283,7 @@ class WC_Subscription {
     public static function get_statistics() {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wc_subscriptions';
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
 
         $stats = array();
 
@@ -303,7 +303,7 @@ class WC_Subscription {
         );
 
         // Monthly recurring revenue (MRR)
-        $plans = include WC_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+        $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
         $mrr = 0;
         foreach ( $stats['by_plan'] as $plan_stat ) {
             if ( isset( $plans[ $plan_stat->plan_id ] ) ) {

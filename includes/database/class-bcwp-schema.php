@@ -374,7 +374,7 @@ class BCWP_Schema {
         dbDelta( $sql );
 
         // Subscriptions table (SaaS billing)
-        $sql = "CREATE TABLE {$prefix}wc_subscriptions (
+        $sql = "CREATE TABLE {$prefix}pfob_subscriptions (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id BIGINT UNSIGNED NOT NULL,
             plan_id VARCHAR(50) NOT NULL,
@@ -399,7 +399,7 @@ class BCWP_Schema {
         dbDelta( $sql );
 
         // Billing history table
-        $sql = "CREATE TABLE {$prefix}wc_billing_history (
+        $sql = "CREATE TABLE {$prefix}pfob_billing_history (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             subscription_id BIGINT UNSIGNED NOT NULL,
             user_id BIGINT UNSIGNED NOT NULL,
@@ -425,7 +425,7 @@ class BCWP_Schema {
         dbDelta( $sql );
 
         // Usage tracking table
-        $sql = "CREATE TABLE {$prefix}wc_usage_tracking (
+        $sql = "CREATE TABLE {$prefix}pfob_usage_tracking (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id BIGINT UNSIGNED NOT NULL,
             metric_type VARCHAR(50) NOT NULL,
@@ -446,7 +446,7 @@ class BCWP_Schema {
 
         // Store database version
         update_option( 'bcwp_db_version', BCWP_VERSION );
-        update_option( 'wc_db_version', WC_VERSION );
+        update_option( 'pfob_db_version', PFOB_VERSION );
     }
 
     /**
@@ -457,9 +457,9 @@ class BCWP_Schema {
         $prefix = $wpdb->prefix;
 
         $tables = array(
-            'wc_usage_tracking',
-            'wc_billing_history',
-            'wc_subscriptions',
+            'pfob_usage_tracking',
+            'pfob_billing_history',
+            'pfob_subscriptions',
             'bcwp_invitations',
             'bcwp_companies',
             'bcwp_comments',
@@ -483,6 +483,6 @@ class BCWP_Schema {
         }
 
         delete_option( 'bcwp_db_version' );
-        delete_option( 'wc_db_version' );
+        delete_option( 'pfob_db_version' );
     }
 }

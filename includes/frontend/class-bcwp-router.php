@@ -16,13 +16,13 @@ class BCWP_Router {
 
     public function add_rewrite_rules() {
         // Public Subscription Pages (No Auth Required)
-        add_rewrite_rule( '^warcampaign/pricing/?$', 'index.php?wc_public_page=pricing', 'top' );
-        add_rewrite_rule( '^warcampaign/signup/?$', 'index.php?wc_public_page=signup', 'top' );
-        add_rewrite_rule( '^warcampaign/subscription/success/?$', 'index.php?wc_public_page=subscription-success', 'top' );
-        add_rewrite_rule( '^warcampaign/subscription/cancel/?$', 'index.php?wc_public_page=subscription-cancel', 'top' );
+        add_rewrite_rule( '^projectfob/pricing/?$', 'index.php?pfob_public_page=pricing', 'top' );
+        add_rewrite_rule( '^projectfob/signup/?$', 'index.php?pfob_public_page=signup', 'top' );
+        add_rewrite_rule( '^projectfob/subscription/success/?$', 'index.php?pfob_public_page=subscription-success', 'top' );
+        add_rewrite_rule( '^projectfob/subscription/cancel/?$', 'index.php?pfob_public_page=subscription-cancel', 'top' );
 
-        // Warcampaign App Routes (changed from /basecamp to /warcampaign)
-        add_rewrite_rule( '^warcampaign/?$', 'index.php?bcwp_page=dashboard', 'top' );
+        // ProjectFOB App Routes (changed from /basecamp to /projectfob)
+        add_rewrite_rule( '^projectfob/?$', 'index.php?bcwp_page=dashboard', 'top' );
 
         // Legacy Basecamp routes for backward compatibility
         add_rewrite_rule( '^basecamp/?$', 'index.php?bcwp_page=dashboard', 'top' );
@@ -70,13 +70,13 @@ class BCWP_Router {
         $vars[] = 'bcwp_page';
         $vars[] = 'bcwp_project';
         $vars[] = 'bcwp_item';
-        $vars[] = 'wc_public_page';
+        $vars[] = 'pfob_public_page';
         return $vars;
     }
 
     public function route_request() {
         // Handle public pages (no auth required)
-        $public_page = get_query_var( 'wc_public_page' );
+        $public_page = get_query_var( 'pfob_public_page' );
         if ( ! empty( $public_page ) ) {
             $this->route_public_page( $public_page );
             return;
@@ -159,7 +159,7 @@ class BCWP_Router {
      * @param string $page Public page identifier.
      */
     private function route_public_page( $page ) {
-        $template_dir = WC_PLUGIN_DIR . 'templates/public/';
+        $template_dir = PFOB_PLUGIN_DIR . 'templates/public/';
 
         $templates = array(
             'pricing'              => $template_dir . 'pricing.php',
