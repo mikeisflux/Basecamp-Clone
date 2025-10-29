@@ -73,20 +73,50 @@ register_activation_hook( __FILE__, 'activate_projectfob' );
 register_deactivation_hook( __FILE__, 'deactivate_projectfob' );
 
 /**
- * The core plugin class.
+ * Load database helper classes
  */
-require PFOB_PLUGIN_DIR . 'includes/class-pfob-core.php';
+require_once PFOB_PLUGIN_DIR . 'includes/database/class-pfob-database.php';
 
 /**
- * Load SaaS subscription system
+ * Load all model classes
  */
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-project.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-message.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-todo.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-event.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-document.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-chat.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-card.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-comment.php';
+require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-activity.php';
 require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-subscription.php';
 require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-billing-history.php';
 require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-usage.php';
+
+/**
+ * Load all service classes
+ */
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-auth-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-permission-service.php';
 require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-paypal-service.php';
 require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-r2-storage-service.php';
-require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-paypal-webhook-endpoint.php';
-require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-subscription-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-notification-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-email-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-search-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-analytics-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-digest-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-file-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-google-calendar-service.php';
+require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-websocket-service.php';
+
+/**
+ * Load REST API base class
+ */
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-rest-api.php';
+
+/**
+ * Load all REST API endpoint classes
+ */
 require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-projects-endpoint.php';
 require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-messages-endpoint.php';
 require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-todos-endpoint.php';
@@ -98,6 +128,13 @@ require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-import-export-endpoint.p
 require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-settings-endpoint.php';
 require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-analytics-endpoint.php';
 require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-calendar-integration-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-paypal-webhook-endpoint.php';
+require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-subscription-endpoint.php';
+
+/**
+ * The core plugin class.
+ */
+require PFOB_PLUGIN_DIR . 'includes/class-pfob-core.php';
 
 /**
  * Load admin settings (if in admin area)
