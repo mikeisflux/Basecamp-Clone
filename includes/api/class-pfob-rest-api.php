@@ -23,6 +23,7 @@ class PFOB_REST_API {
             new PFOB_Settings_Endpoint(),
             new PFOB_Analytics_Endpoint(),
             new PFOB_Calendar_Integration_Endpoint(),
+            new PFOB_Notifications_Endpoint(),
             new PFOB_PayPal_Webhook_Endpoint(),
             new PFOB_Subscription_Endpoint(),
         );

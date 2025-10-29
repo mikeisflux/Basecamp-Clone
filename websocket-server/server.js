@@ -1,5 +1,5 @@
 /**
- * Basecamp WP WebSocket Server
+ * ProjectFOB WebSocket Server
  *
  * Provides real-time functionality for:
  * - Chat messages
@@ -319,7 +319,7 @@ app.get('/stats', (req, res) => {
 // Start server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`\n🚀 Basecamp WP WebSocket Server running on port ${PORT}`);
+    console.log(`\n🚀 ProjectFOB WebSocket Server running on port ${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/health`);
     console.log(`📈 Stats: http://localhost:${PORT}/stats\n`);
 });
