@@ -3,7 +3,7 @@
  * Plugin Name: ProjectFOB
  * Plugin URI: https://projectfob.com
  * Description: Every great plan deploys from the FOB. Complete project management and team collaboration SaaS platform with real-time features, subscriptions, and cloud storage.
- * Version: 2.0.6
+ * Version: 2.0.7
  * Author: Divinity Comics Inc
  * Author URI: https://projectfob.com
  * License: GPL-2.0+
@@ -22,7 +22,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version.
  */
-define( 'PFOB_VERSION', '2.0.6' );
+define( 'PFOB_VERSION', '2.0.7' );
 
 /**
  * Plugin directory path.
@@ -110,8 +110,10 @@ require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-google-calendar-ser
 require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-websocket-service.php';
 
 /**
- * Load frontend helper classes (needed by API endpoints)
+ * Load frontend helper classes (needed by Core and API endpoints)
  */
+require_once PFOB_PLUGIN_DIR . 'includes/frontend/class-pfob-router.php';
+require_once PFOB_PLUGIN_DIR . 'includes/frontend/class-pfob-assets.php';
 require_once PFOB_PLUGIN_DIR . 'includes/frontend/class-pfob-template.php';
 
 /**

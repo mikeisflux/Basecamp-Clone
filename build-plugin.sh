@@ -15,7 +15,7 @@ echo -e "${GREEN}=== ProjectFOB - WordPress Plugin Builder ===${NC}\n"
 
 # Configuration
 PLUGIN_SLUG="projectfob"
-VERSION="2.0.6"
+VERSION="2.0.7"
 BUILD_DIR="build"
 DIST_DIR="dist"
 PLUGIN_DIR="${BUILD_DIR}/${PLUGIN_SLUG}"
@@ -102,7 +102,7 @@ Thank you for choosing ProjectFOB - the complete SaaS project management platfor
 
 1. Upload the plugin:
    - Go to WordPress Admin > Plugins > Add New > Upload Plugin
-   - Choose the projectfob-2.0.6.zip file
+   - Choose the projectfob-2.0.7.zip file
    - Click "Install Now"
    - Click "Activate Plugin"
 
