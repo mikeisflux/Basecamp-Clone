@@ -4,7 +4,7 @@
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pricing - ProjectFOB</title>
-    <link rel="stylesheet" href="<?php echo PFOB_PLUGIN_URL; ?>assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo PFOB_PLUGIN_URL; ?>assets/css/frontend.css?ver=<?php echo PFOB_VERSION; ?>">
     <style>
         body {
             margin: 0;
@@ -208,7 +208,7 @@
         // Load pricing plans
         async function loadPricing() {
             try {
-                const response = await fetch('/wp-json/projectfob/v1/subscription/plans');
+                const response = await fetch('/wp-json/pfob/v1/subscription/plans');
                 const result = await response.json();
 
                 if (result.success) {

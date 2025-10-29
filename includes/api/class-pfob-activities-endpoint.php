@@ -5,7 +5,7 @@
  * Handles activity feed and polling
  */
 
-class PFOB_Activities_Endpoint {
+class PFOB_Activities_Endpoint extends PFOB_REST_API {
 
     /**
      * Register routes

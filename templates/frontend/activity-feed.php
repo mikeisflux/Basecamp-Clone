@@ -304,7 +304,7 @@ function escapeHtml(text) {
 // Poll every 10 seconds
 setInterval(pollNewActivities, 10000);
 </script>
-<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js?ver=<?php echo PFOB_VERSION; ?>"></script>
 
 </body>
 </html>

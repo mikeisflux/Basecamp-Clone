@@ -441,7 +441,7 @@ if (docsContainer) {
     });
 }
 </script>
-<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js?ver=<?php echo PFOB_VERSION; ?>"></script>
 
 </body>
 </html>
