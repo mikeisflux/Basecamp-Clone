@@ -1,0 +1,179 @@
+/*
+Theme Name: ProjectFOB
+Theme URI: https://projectfob.com
+Author: Divinity Comics Inc
+Author URI: https://projectfob.com
+Description: Official theme for ProjectFOB - Every great plan deploys from the FOB. A modern SaaS theme designed for project management platforms.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.4
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: projectfob-theme
+Tags: saas, business, project-management, subscription, modern
+
+ProjectFOB Theme, Copyright 2025 Divinity Comics Inc
+ProjectFOB is distributed under the terms of the GNU GPL
+*/
+
+/* ==========================================================================
+   Global Styles
+   ========================================================================== */
+
+:root {
+    --pfob-primary: #667eea;
+    --pfob-secondary: #764ba2;
+    --pfob-accent: #f093fb;
+    --pfob-dark: #1a202c;
+    --pfob-gray: #4a5568;
+    --pfob-light: #f7fafc;
+    --pfob-success: #48bb78;
+    --pfob-warning: #ed8936;
+    --pfob-danger: #f56565;
+    --pfob-spacing: 20px;
+    --pfob-radius: 8px;
+    --pfob-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--pfob-dark);
+    background: var(--pfob-light);
+}
+
+a {
+    color: var(--pfob-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: var(--pfob-secondary);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+h1 { font-size: 3rem; }
+h2 { font-size: 2.5rem; }
+h3 { font-size: 2rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p {
+    margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--pfob-spacing);
+}
+
+.container-wide {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--pfob-spacing);
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: var(--pfob-radius);
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 16px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--pfob-primary), var(--pfob-secondary));
+    color: white;
+    box-shadow: var(--pfob-shadow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    color: white;
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--pfob-primary);
+    border: 2px solid var(--pfob-primary);
+}
+
+.btn-secondary:hover {
+    background: var(--pfob-primary);
+    color: white;
+}
+
+.btn-large {
+    padding: 16px 40px;
+    font-size: 18px;
+}
+
+/* ==========================================================================
+   Cards
+   ========================================================================== */
+
+.card {
+    background: white;
+    border-radius: var(--pfob-radius);
+    padding: var(--pfob-spacing);
+    box-shadow: var(--pfob-shadow);
+    margin-bottom: var(--pfob-spacing);
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 2rem; }
+.mt-4 { margin-top: 3rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 2rem; }
+.mb-4 { margin-bottom: 3rem; }
+
+.py-4 { padding-top: 3rem; padding-bottom: 3rem; }
+.py-5 { padding-top: 4rem; padding-bottom: 4rem; }
