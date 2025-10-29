@@ -31,12 +31,13 @@ class PFOB_Activator {
         // Set default options
         self::set_default_options();
 
-        // Register rewrite rules BEFORE flushing
+        // Register rewrite rules and flush
         require_once PFOB_PLUGIN_DIR . 'includes/frontend/class-pfob-router.php';
         PFOB_Router::register_rewrite_rules();
-
-        // Flush rewrite rules (now they're registered)
         flush_rewrite_rules();
+
+        // Set a flag to flush rewrite rules on next load
+        update_option( 'pfob_flush_rewrite_rules', '1' );
 
         // Set activation timestamp
         update_option( 'pfob_activation_time', current_time( 'timestamp' ) );

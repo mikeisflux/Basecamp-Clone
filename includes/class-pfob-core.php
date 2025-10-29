@@ -91,6 +91,19 @@ class PFOB_Core {
 
         // Register REST API routes
         add_action( 'rest_api_init', array( $rest_api, 'register_routes' ) );
+
+        // Flush rewrite rules if needed (after activation)
+        add_action( 'init', array( $this, 'maybe_flush_rewrite_rules' ), 999 );
+    }
+
+    /**
+     * Flush rewrite rules if flag is set (after activation).
+     */
+    public function maybe_flush_rewrite_rules() {
+        if ( get_option( 'pfob_flush_rewrite_rules' ) === '1' ) {
+            flush_rewrite_rules();
+            delete_option( 'pfob_flush_rewrite_rules' );
+        }
     }
 
     /**
