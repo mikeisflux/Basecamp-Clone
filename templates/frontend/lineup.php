@@ -5,10 +5,10 @@
 
 $user_id = get_current_user_id();
 
-BCWP_Template::header( 'Lineup' );
+PFOB_Template::header( 'Lineup' );
 
 // Get user's projects
-$user_projects = BCWP_Project::get_user_projects( $user_id );
+$user_projects = PFOB_Project::get_user_projects( $user_id );
 
 // Get upcoming items (next 90 days)
 $start_date = date( 'Y-m-d' );
@@ -18,7 +18,7 @@ $lineup_items = array();
 
 // Get todos with due dates
 foreach ( $user_projects as $project ) {
-    $todos = BCWP_Todo::get_user_assigned_items( $user_id, $project->id );
+    $todos = PFOB_Todo::get_user_assigned_items( $user_id, $project->id );
     foreach ( $todos as $todo ) {
         if ( ! empty( $todo->due_date ) && ! $todo->is_completed ) {
             $lineup_items[] = array(
@@ -37,7 +37,7 @@ foreach ( $user_projects as $project ) {
 
 // Get events
 foreach ( $user_projects as $project ) {
-    $events = BCWP_Event::get_project_events( $project->id, $start_date, $end_date );
+    $events = PFOB_Event::get_project_events( $project->id, $start_date, $end_date );
     foreach ( $events as $event ) {
         $lineup_items[] = array(
             'type'       => 'event',
@@ -93,18 +93,18 @@ foreach ( $lineup_items as $item ) {
 }
 ?>
 
-<div class="bcwp-container">
-    <?php BCWP_Template::navigation(); ?>
+<div class="pfob-container">
+    <?php PFOB_Template::navigation(); ?>
 
-    <main class="bcwp-main bcwp-lineup">
+    <main class="pfob-main pfob-lineup">
 
-        <div class="bcwp-page-header">
+        <div class="pfob-page-header">
             <h1>Lineup</h1>
-            <p class="bcwp-subtitle">Your upcoming work across all projects</p>
+            <p class="pfob-subtitle">Your upcoming work across all projects</p>
         </div>
 
-        <div class="bcwp-lineup-filters">
-            <select id="project-filter" class="bcwp-select">
+        <div class="pfob-lineup-filters">
+            <select id="project-filter" class="pfob-select">
                 <option value="">All Projects</option>
                 <?php foreach ( $user_projects as $project ) : ?>
                     <option value="<?php echo $project->id; ?>">
@@ -113,7 +113,7 @@ foreach ( $lineup_items as $item ) {
                 <?php endforeach; ?>
             </select>
 
-            <select id="type-filter" class="bcwp-select">
+            <select id="type-filter" class="pfob-select">
                 <option value="">All Types</option>
                 <option value="todo">To-dos</option>
                 <option value="event">Events</option>
@@ -121,90 +121,90 @@ foreach ( $lineup_items as $item ) {
         </div>
 
         <?php if ( empty( $lineup_items ) ) : ?>
-            <div class="bcwp-empty-state">
+            <div class="pfob-empty-state">
                 <p>Nothing scheduled yet. Add due dates to your to-dos or create events!</p>
             </div>
         <?php else : ?>
 
             <?php if ( ! empty( $grouped['overdue'] ) ) : ?>
-                <div class="bcwp-lineup-section bcwp-lineup-overdue">
-                    <h2 class="bcwp-lineup-heading">
-                        <span class="bcwp-lineup-icon">⚠️</span>
+                <div class="pfob-lineup-section pfob-lineup-overdue">
+                    <h2 class="pfob-lineup-heading">
+                        <span class="pfob-lineup-icon">⚠️</span>
                         Overdue (<?php echo count( $grouped['overdue'] ); ?>)
                     </h2>
-                    <div class="bcwp-lineup-items">
+                    <div class="pfob-lineup-items">
                         <?php foreach ( $grouped['overdue'] as $item ) : ?>
-                            <?php include BCWP_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
+                            <?php include PFOB_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
             <?php endif; ?>
 
             <?php if ( ! empty( $grouped['today'] ) ) : ?>
-                <div class="bcwp-lineup-section">
-                    <h2 class="bcwp-lineup-heading">
-                        <span class="bcwp-lineup-icon">📍</span>
+                <div class="pfob-lineup-section">
+                    <h2 class="pfob-lineup-heading">
+                        <span class="pfob-lineup-icon">📍</span>
                         Today - <?php echo date( 'l, F j' ); ?>
                     </h2>
-                    <div class="bcwp-lineup-items">
+                    <div class="pfob-lineup-items">
                         <?php foreach ( $grouped['today'] as $item ) : ?>
-                            <?php include BCWP_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
+                            <?php include PFOB_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
             <?php endif; ?>
 
             <?php if ( ! empty( $grouped['tomorrow'] ) ) : ?>
-                <div class="bcwp-lineup-section">
-                    <h2 class="bcwp-lineup-heading">
-                        <span class="bcwp-lineup-icon">📌</span>
+                <div class="pfob-lineup-section">
+                    <h2 class="pfob-lineup-heading">
+                        <span class="pfob-lineup-icon">📌</span>
                         Tomorrow - <?php echo date( 'l, F j', strtotime( 'tomorrow' ) ); ?>
                     </h2>
-                    <div class="bcwp-lineup-items">
+                    <div class="pfob-lineup-items">
                         <?php foreach ( $grouped['tomorrow'] as $item ) : ?>
-                            <?php include BCWP_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
+                            <?php include PFOB_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
             <?php endif; ?>
 
             <?php if ( ! empty( $grouped['this_week'] ) ) : ?>
-                <div class="bcwp-lineup-section">
-                    <h2 class="bcwp-lineup-heading">
-                        <span class="bcwp-lineup-icon">📅</span>
+                <div class="pfob-lineup-section">
+                    <h2 class="pfob-lineup-heading">
+                        <span class="pfob-lineup-icon">📅</span>
                         This Week
                     </h2>
-                    <div class="bcwp-lineup-items">
+                    <div class="pfob-lineup-items">
                         <?php foreach ( $grouped['this_week'] as $item ) : ?>
-                            <?php include BCWP_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
+                            <?php include PFOB_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
             <?php endif; ?>
 
             <?php if ( ! empty( $grouped['next_week'] ) ) : ?>
-                <div class="bcwp-lineup-section">
-                    <h2 class="bcwp-lineup-heading">
-                        <span class="bcwp-lineup-icon">📆</span>
+                <div class="pfob-lineup-section">
+                    <h2 class="pfob-lineup-heading">
+                        <span class="pfob-lineup-icon">📆</span>
                         Next Week
                     </h2>
-                    <div class="bcwp-lineup-items">
+                    <div class="pfob-lineup-items">
                         <?php foreach ( $grouped['next_week'] as $item ) : ?>
-                            <?php include BCWP_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
+                            <?php include PFOB_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
             <?php endif; ?>
 
             <?php if ( ! empty( $grouped['later'] ) ) : ?>
-                <div class="bcwp-lineup-section">
-                    <h2 class="bcwp-lineup-heading">
-                        <span class="bcwp-lineup-icon">🔮</span>
+                <div class="pfob-lineup-section">
+                    <h2 class="pfob-lineup-heading">
+                        <span class="pfob-lineup-icon">🔮</span>
                         Later (<?php echo count( $grouped['later'] ); ?>)
                     </h2>
-                    <div class="bcwp-lineup-items">
+                    <div class="pfob-lineup-items">
                         <?php foreach ( $grouped['later'] as $item ) : ?>
-                            <?php include BCWP_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
+                            <?php include PFOB_PLUGIN_DIR . 'templates/partials/lineup-item.php'; ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -216,8 +216,8 @@ foreach ( $lineup_items as $item ) {
 </div>
 
 <script>
-const bcwpData = {
-    restUrl: '<?php echo rest_url( 'bcwp/v1' ); ?>',
+const pfobData = {
+    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
 };
 
@@ -233,7 +233,7 @@ document.getElementById('type-filter').addEventListener('change', (e) => {
 function applyFilters() {
     const projectId = document.getElementById('project-filter').value;
     const type = document.getElementById('type-filter').value;
-    const items = document.querySelectorAll('.bcwp-lineup-item');
+    const items = document.querySelectorAll('.pfob-lineup-item');
 
     items.forEach(item => {
         let show = true;
@@ -250,14 +250,14 @@ function applyFilters() {
     });
 
     // Hide empty sections
-    document.querySelectorAll('.bcwp-lineup-section').forEach(section => {
-        const visibleItems = Array.from(section.querySelectorAll('.bcwp-lineup-item'))
+    document.querySelectorAll('.pfob-lineup-section').forEach(section => {
+        const visibleItems = Array.from(section.querySelectorAll('.pfob-lineup-item'))
             .filter(item => item.style.display !== 'none');
         section.style.display = visibleItems.length > 0 ? 'block' : 'none';
     });
 }
 </script>
-<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
 
 </body>
 </html>

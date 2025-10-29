@@ -38,14 +38,14 @@ const decoded = jwt.verify(token, secret, {
 
 ### 2. ⛔ CRITICAL BUG: Wrong Metadata Storage
 **Severity:** Critical (Feature Breaking)
-**File:** `includes/services/class-bcwp-google-calendar-service.php`
+**File:** `includes/services/class-pfob-google-calendar-service.php`
 **Impact:** Google Calendar sync completely non-functional
 
 **Problem:**
 ```php
 // WRONG - Events are in custom tables, not WordPress posts
-$google_event_id = get_post_meta( $event->id, 'bcwp_google_event_id_' . $user_id, true );
-update_post_meta( $event->id, 'bcwp_google_event_id_' . $user_id, $body['id'] );
+$google_event_id = get_post_meta( $event->id, 'pfob_google_event_id_' . $user_id, true );
+update_post_meta( $event->id, 'pfob_google_event_id_' . $user_id, $body['id'] );
 ```
 
 **Fix Applied:**
@@ -56,7 +56,7 @@ $google_event_id = $metadata['google_calendar_ids'][ $user_id ] ?? null;
 
 // Store in metadata column
 $metadata['google_calendar_ids'][ $user_id ] = $body['id'];
-BCWP_Event::update( $event->id, array(
+PFOB_Event::update( $event->id, array(
     'metadata' => json_encode( $metadata )
 ) );
 ```
@@ -73,7 +73,7 @@ BCWP_Event::update( $event->id, array(
 
 ### 3. 🔒 SECURITY IMPROVEMENT: JWT Base64URL Encoding
 **Severity:** Medium (Standards Compliance)
-**File:** `includes/services/class-bcwp-websocket-service.php`
+**File:** `includes/services/class-pfob-websocket-service.php`
 **Impact:** JWT tokens may fail with certain characters
 
 **Problem:**
@@ -240,8 +240,8 @@ All packages scanned against npm audit database - 0 vulnerabilities found.
 
 1. `websocket-server/server.js` - JWT verification fix
 2. `websocket-server/.env.example` - Documentation update
-3. `includes/services/class-bcwp-websocket-service.php` - Base64url encoding
-4. `includes/services/class-bcwp-google-calendar-service.php` - Metadata storage fix
+3. `includes/services/class-pfob-websocket-service.php` - Base64url encoding
+4. `includes/services/class-pfob-google-calendar-service.php` - Metadata storage fix
 
 ---
 

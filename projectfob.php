@@ -54,27 +54,19 @@ define( 'PFOB_PLAN_BUSINESS', 'business' );
 define( 'PFOB_PLAN_ENTERPRISE', 'enterprise' );
 
 /**
- * Backward compatibility constants for BCWP classes
- */
-define( 'BCWP_VERSION', PFOB_VERSION );
-define( 'BCWP_PLUGIN_DIR', PFOB_PLUGIN_DIR );
-define( 'BCWP_PLUGIN_URL', PFOB_PLUGIN_URL );
-define( 'BCWP_PLUGIN_BASENAME', PFOB_PLUGIN_BASENAME );
-
-/**
  * The code that runs during plugin activation.
  */
 function activate_projectfob() {
-    require_once PFOB_PLUGIN_DIR . 'includes/class-bcwp-activator.php';
-    BCWP_Activator::activate();
+    require_once PFOB_PLUGIN_DIR . 'includes/class-pfob-activator.php';
+    PFOB_Activator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
  */
 function deactivate_projectfob() {
-    require_once PFOB_PLUGIN_DIR . 'includes/class-bcwp-deactivator.php';
-    BCWP_Deactivator::deactivate();
+    require_once PFOB_PLUGIN_DIR . 'includes/class-pfob-deactivator.php';
+    PFOB_Deactivator::deactivate();
 }
 
 register_activation_hook( __FILE__, 'activate_projectfob' );
@@ -83,7 +75,7 @@ register_deactivation_hook( __FILE__, 'deactivate_projectfob' );
 /**
  * The core plugin class.
  */
-require PFOB_PLUGIN_DIR . 'includes/class-bcwp-core.php';
+require PFOB_PLUGIN_DIR . 'includes/class-pfob-core.php';
 
 /**
  * Load SaaS subscription system
@@ -107,7 +99,7 @@ if ( is_admin() ) {
  * Begins execution of the plugin.
  */
 function run_projectfob() {
-    $plugin = new BCWP_Core();
+    $plugin = new PFOB_Core();
     $plugin->run();
 }
 

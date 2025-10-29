@@ -3,85 +3,85 @@
  * To-dos - Task management
  */
 
-global $bcwp_project;
+global $pfob_project;
 
-BCWP_Template::header( $bcwp_project->name . ' - To-dos' );
+PFOB_Template::header( $pfob_project->name . ' - To-dos' );
 
-$todo_lists = BCWP_Todo::get_project_lists( $bcwp_project->id );
+$todo_lists = PFOB_Todo::get_project_lists( $pfob_project->id );
 ?>
 
-<div class="bcwp-container">
-    <?php BCWP_Template::navigation(); ?>
+<div class="pfob-container">
+    <?php PFOB_Template::navigation(); ?>
 
-    <main class="bcwp-main bcwp-todos">
+    <main class="pfob-main pfob-todos">
 
-        <div class="bcwp-page-header">
+        <div class="pfob-page-header">
             <h1>To-dos</h1>
-            <button class="bcwp-btn bcwp-btn-primary" id="new-todo-list-btn">
+            <button class="pfob-btn pfob-btn-primary" id="new-todo-list-btn">
                 New List
             </button>
         </div>
 
-        <div class="bcwp-todo-lists" id="todo-lists-container">
+        <div class="pfob-todo-lists" id="todo-lists-container">
             <?php if ( empty( $todo_lists ) ) : ?>
-                <div class="bcwp-empty-state">
+                <div class="pfob-empty-state">
                     <h3>No to-do lists yet</h3>
                     <p>Create your first to-do list to start tracking tasks.</p>
-                    <button class="bcwp-btn bcwp-btn-primary" onclick="document.getElementById('new-todo-list-btn').click()">
+                    <button class="pfob-btn pfob-btn-primary" onclick="document.getElementById('new-todo-list-btn').click()">
                         Create First List
                     </button>
                 </div>
             <?php else : ?>
                 <?php foreach ( $todo_lists as $list ) : ?>
                     <?php
-                    $items = BCWP_Todo::get_list_items( $list->id );
+                    $items = PFOB_Todo::get_list_items( $list->id );
                     $completed_count = count( array_filter( $items, function( $item ) {
                         return $item->is_completed;
                     } ) );
                     $total_count = count( $items );
                     ?>
-                    <div class="bcwp-todo-list-card" data-list-id="<?php echo $list->id; ?>">
-                        <div class="bcwp-list-header">
+                    <div class="pfob-todo-list-card" data-list-id="<?php echo $list->id; ?>">
+                        <div class="pfob-list-header">
                             <div>
                                 <h3><?php echo esc_html( $list->name ); ?></h3>
                                 <?php if ( $list->description ) : ?>
-                                    <p class="bcwp-list-description"><?php echo esc_html( $list->description ); ?></p>
+                                    <p class="pfob-list-description"><?php echo esc_html( $list->description ); ?></p>
                                 <?php endif; ?>
-                                <span class="bcwp-list-progress"><?php echo $completed_count; ?>/<?php echo $total_count; ?> completed</span>
+                                <span class="pfob-list-progress"><?php echo $completed_count; ?>/<?php echo $total_count; ?> completed</span>
                             </div>
-                            <button class="bcwp-btn-icon bcwp-add-todo-btn" data-list-id="<?php echo $list->id; ?>" title="Add to-do">
+                            <button class="pfob-btn-icon pfob-add-todo-btn" data-list-id="<?php echo $list->id; ?>" title="Add to-do">
                                 +
                             </button>
                         </div>
 
-                        <div class="bcwp-todo-items" id="todo-items-<?php echo $list->id; ?>">
+                        <div class="pfob-todo-items" id="todo-items-<?php echo $list->id; ?>">
                             <?php if ( empty( $items ) ) : ?>
-                                <p class="bcwp-empty-text">No items yet</p>
+                                <p class="pfob-empty-text">No items yet</p>
                             <?php else : ?>
                                 <?php foreach ( $items as $item ) : ?>
-                                    <div class="bcwp-todo-item <?php echo $item->is_completed ? 'bcwp-completed' : ''; ?>"
+                                    <div class="pfob-todo-item <?php echo $item->is_completed ? 'pfob-completed' : ''; ?>"
                                          data-todo-id="<?php echo $item->id; ?>"
                                          draggable="true">
-                                        <div class="bcwp-todo-main">
+                                        <div class="pfob-todo-main">
                                             <input type="checkbox"
-                                                   class="bcwp-todo-checkbox"
+                                                   class="pfob-todo-checkbox"
                                                    <?php checked( $item->is_completed, 1 ); ?>>
-                                            <div class="bcwp-todo-content">
-                                                <span class="bcwp-todo-text"><?php echo esc_html( $item->content ); ?></span>
+                                            <div class="pfob-todo-content">
+                                                <span class="pfob-todo-text"><?php echo esc_html( $item->content ); ?></span>
                                                 <?php if ( $item->assignee_id ) : ?>
-                                                    <span class="bcwp-todo-assignee">
-                                                        <?php echo BCWP_Template::user_avatar( $item->assignee_id, 24 ); ?>
-                                                        <?php echo esc_html( BCWP_Auth_Service::get_user_display_name( $item->assignee_id ) ); ?>
+                                                    <span class="pfob-todo-assignee">
+                                                        <?php echo PFOB_Template::user_avatar( $item->assignee_id, 24 ); ?>
+                                                        <?php echo esc_html( PFOB_Auth_Service::get_user_display_name( $item->assignee_id ) ); ?>
                                                     </span>
                                                 <?php endif; ?>
                                                 <?php if ( $item->due_date ) : ?>
-                                                    <span class="bcwp-todo-due">Due <?php echo date( 'M j', strtotime( $item->due_date ) ); ?></span>
+                                                    <span class="pfob-todo-due">Due <?php echo date( 'M j', strtotime( $item->due_date ) ); ?></span>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
-                                        <div class="bcwp-todo-actions">
-                                            <button class="bcwp-btn-icon bcwp-edit-todo-btn" title="Edit">✎</button>
-                                            <button class="bcwp-btn-icon bcwp-delete-todo-btn" title="Delete">×</button>
+                                        <div class="pfob-todo-actions">
+                                            <button class="pfob-btn-icon pfob-edit-todo-btn" title="Edit">✎</button>
+                                            <button class="pfob-btn-icon pfob-delete-todo-btn" title="Delete">×</button>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -96,19 +96,19 @@ $todo_lists = BCWP_Todo::get_project_lists( $bcwp_project->id );
 </div>
 
 <script>
-const bcwpData = {
+const pfobData = {
     ajaxUrl: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
-    restUrl: '<?php echo rest_url( 'bcwp/v1' ); ?>',
+    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
-    projectId: <?php echo $bcwp_project->id; ?>,
+    projectId: <?php echo $pfob_project->id; ?>,
     currentUser: <?php echo json_encode( array(
         'id' => get_current_user_id(),
         'name' => wp_get_current_user()->display_name,
     ) ); ?>
 };
 </script>
-<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/todos.js"></script>
-<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/todos.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
 
 </body>
 </html>

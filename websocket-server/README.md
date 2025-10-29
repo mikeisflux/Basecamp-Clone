@@ -16,7 +16,7 @@ Real-time WebSocket server for the Basecamp WordPress Clone, providing instant u
 
 - Node.js 16+ and npm
 - WebSocket server access (port 3000 by default)
-- WordPress with Basecamp WP Pro plugin installed
+- WordPress with ProjectFOB plugin installed
 
 ## Installation
 
@@ -46,7 +46,7 @@ JWT_SECRET=your-jwt-secret
 
 ### 3. Configure WordPress
 
-In WordPress admin, go to **Settings → Basecamp WP Pro → WebSocket** and configure:
+In WordPress admin, go to **Settings → ProjectFOB → WebSocket** and configure:
 
 - **Enable WebSocket**: Check to enable real-time features
 - **WebSocket URL**: `http://localhost:3000` (or your server URL)
@@ -168,7 +168,7 @@ The WebSocket client automatically initializes when enabled:
 
 ```javascript
 // WebSocket config is passed from PHP
-const ws = new BasecampWebSocket(bcwpData.websocket);
+const ws = new BasecampWebSocket(pfobData.websocket);
 
 // Listen for events
 ws.on('chat-message', (data) => {

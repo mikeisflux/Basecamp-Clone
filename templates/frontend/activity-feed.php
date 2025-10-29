@@ -5,27 +5,27 @@
 
 $user_id = get_current_user_id();
 
-BCWP_Template::header( 'Activity' );
+PFOB_Template::header( 'Activity' );
 
 // Get user's projects for filtering
-$user_projects = BCWP_Project::get_user_projects( $user_id );
+$user_projects = PFOB_Project::get_user_projects( $user_id );
 
 // Get recent activities
-$activities = BCWP_Activity::get_user_timeline( $user_id, 50 );
+$activities = PFOB_Activity::get_user_timeline( $user_id, 50 );
 ?>
 
-<div class="bcwp-container">
-    <?php BCWP_Template::navigation(); ?>
+<div class="pfob-container">
+    <?php PFOB_Template::navigation(); ?>
 
-    <main class="bcwp-main bcwp-activity-feed">
+    <main class="pfob-main pfob-activity-feed">
 
-        <div class="bcwp-page-header">
+        <div class="pfob-page-header">
             <h1>Activity</h1>
-            <p class="bcwp-subtitle">Recent activity across your projects</p>
+            <p class="pfob-subtitle">Recent activity across your projects</p>
         </div>
 
-        <div class="bcwp-activity-filters">
-            <select id="project-filter" class="bcwp-select">
+        <div class="pfob-activity-filters">
+            <select id="project-filter" class="pfob-select">
                 <option value="">All Projects</option>
                 <?php foreach ( $user_projects as $project ) : ?>
                     <option value="<?php echo $project->id; ?>">
@@ -34,7 +34,7 @@ $activities = BCWP_Activity::get_user_timeline( $user_id, 50 );
                 <?php endforeach; ?>
             </select>
 
-            <select id="type-filter" class="bcwp-select">
+            <select id="type-filter" class="pfob-select">
                 <option value="">All Types</option>
                 <option value="message">Messages</option>
                 <option value="todo">To-dos</option>
@@ -45,7 +45,7 @@ $activities = BCWP_Activity::get_user_timeline( $user_id, 50 );
                 <option value="comment">Comments</option>
             </select>
 
-            <select id="action-filter" class="bcwp-select">
+            <select id="action-filter" class="pfob-select">
                 <option value="">All Actions</option>
                 <option value="created">Created</option>
                 <option value="updated">Updated</option>
@@ -56,37 +56,37 @@ $activities = BCWP_Activity::get_user_timeline( $user_id, 50 );
             </select>
         </div>
 
-        <div class="bcwp-activity-list" id="activity-list">
+        <div class="pfob-activity-list" id="activity-list">
             <?php if ( empty( $activities ) ) : ?>
-                <div class="bcwp-empty-state">
+                <div class="pfob-empty-state">
                     <p>No activity yet. Start working on your projects!</p>
                 </div>
             <?php else : ?>
                 <?php foreach ( $activities as $activity ) : ?>
-                    <div class="bcwp-activity-item"
+                    <div class="pfob-activity-item"
                          data-id="<?php echo $activity->id; ?>"
                          data-project-id="<?php echo $activity->project_id; ?>"
                          data-type="<?php echo esc_attr( $activity->subject_type ); ?>"
                          data-action="<?php echo esc_attr( $activity->action_type ); ?>">
 
-                        <div class="bcwp-activity-icon">
-                            <?php echo BCWP_Activity::get_icon( $activity ); ?>
+                        <div class="pfob-activity-icon">
+                            <?php echo PFOB_Activity::get_icon( $activity ); ?>
                         </div>
 
-                        <div class="bcwp-activity-content">
-                            <div class="bcwp-activity-header">
-                                <div class="bcwp-activity-avatar">
-                                    <?php echo BCWP_Template::user_avatar( $activity->user_id, 32 ); ?>
+                        <div class="pfob-activity-content">
+                            <div class="pfob-activity-header">
+                                <div class="pfob-activity-avatar">
+                                    <?php echo PFOB_Template::user_avatar( $activity->user_id, 32 ); ?>
                                 </div>
-                                <div class="bcwp-activity-description">
-                                    <?php echo esc_html( BCWP_Activity::format_description( $activity ) ); ?>
+                                <div class="pfob-activity-description">
+                                    <?php echo esc_html( PFOB_Activity::format_description( $activity ) ); ?>
                                 </div>
                             </div>
 
                             <?php if ( $activity->project_id ) : ?>
-                                <?php $project = BCWP_Project::get( $activity->project_id ); ?>
+                                <?php $project = PFOB_Project::get( $activity->project_id ); ?>
                                 <?php if ( $project ) : ?>
-                                    <div class="bcwp-activity-project">
+                                    <div class="pfob-activity-project">
                                         in <a href="<?php echo home_url( '/projectfob/projects/' . $project->slug ); ?>">
                                             <?php echo esc_html( $project->name ); ?>
                                         </a>
@@ -94,13 +94,13 @@ $activities = BCWP_Activity::get_user_timeline( $user_id, 50 );
                                 <?php endif; ?>
                             <?php endif; ?>
 
-                            <div class="bcwp-activity-meta">
-                                <span class="bcwp-activity-time">
-                                    <?php echo BCWP_Template::format_date( $activity->created_at ); ?>
+                            <div class="pfob-activity-meta">
+                                <span class="pfob-activity-time">
+                                    <?php echo PFOB_Template::format_date( $activity->created_at ); ?>
                                 </span>
-                                <?php $link = BCWP_Activity::get_link( $activity ); ?>
+                                <?php $link = PFOB_Activity::get_link( $activity ); ?>
                                 <?php if ( $link ) : ?>
-                                    <a href="<?php echo esc_url( $link ); ?>" class="bcwp-activity-link">
+                                    <a href="<?php echo esc_url( $link ); ?>" class="pfob-activity-link">
                                         View
                                     </a>
                                 <?php endif; ?>
@@ -112,8 +112,8 @@ $activities = BCWP_Activity::get_user_timeline( $user_id, 50 );
         </div>
 
         <?php if ( count( $activities ) >= 50 ) : ?>
-            <div class="bcwp-load-more">
-                <button class="bcwp-btn bcwp-btn-secondary" id="load-more-btn">
+            <div class="pfob-load-more">
+                <button class="pfob-btn pfob-btn-secondary" id="load-more-btn">
                     Load More
                 </button>
             </div>
@@ -123,8 +123,8 @@ $activities = BCWP_Activity::get_user_timeline( $user_id, 50 );
 </div>
 
 <script>
-const bcwpData = {
-    restUrl: '<?php echo rest_url( 'bcwp/v1' ); ?>',
+const pfobData = {
+    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
     userId: <?php echo $user_id; ?>
 };
@@ -154,7 +154,7 @@ document.getElementById('action-filter').addEventListener('change', (e) => {
 });
 
 function applyFilters() {
-    const items = document.querySelectorAll('.bcwp-activity-item');
+    const items = document.querySelectorAll('.pfob-activity-item');
 
     items.forEach(item => {
         let show = true;
@@ -176,11 +176,11 @@ function applyFilters() {
 
     // Check if any items are visible
     const visibleItems = Array.from(items).filter(item => item.style.display !== 'none');
-    const emptyState = document.querySelector('.bcwp-empty-state');
+    const emptyState = document.querySelector('.pfob-empty-state');
 
     if (visibleItems.length === 0 && !emptyState) {
         const list = document.getElementById('activity-list');
-        list.innerHTML = '<div class="bcwp-empty-state"><p>No activity matches your filters.</p></div>';
+        list.innerHTML = '<div class="pfob-empty-state"><p>No activity matches your filters.</p></div>';
     }
 }
 
@@ -192,8 +192,8 @@ document.getElementById('load-more-btn')?.addEventListener('click', async () => 
 
     try {
         const response = await fetch(
-            `${bcwpData.restUrl}/activities?offset=${currentOffset}&limit=50`,
-            { headers: { 'X-WP-Nonce': bcwpData.nonce } }
+            `${pfobData.restUrl}/activities?offset=${currentOffset}&limit=50`,
+            { headers: { 'X-WP-Nonce': pfobData.nonce } }
         );
 
         const result = await response.json();
@@ -225,8 +225,8 @@ document.getElementById('load-more-btn')?.addEventListener('click', async () => 
 async function pollNewActivities() {
     try {
         const response = await fetch(
-            `${bcwpData.restUrl}/activities/poll?since_id=${lastActivityId}`,
-            { headers: { 'X-WP-Nonce': bcwpData.nonce } }
+            `${pfobData.restUrl}/activities/poll?since_id=${lastActivityId}`,
+            { headers: { 'X-WP-Nonce': pfobData.nonce } }
         );
 
         const result = await response.json();
@@ -244,7 +244,7 @@ async function pollNewActivities() {
 
 function prependActivity(activity) {
     const list = document.getElementById('activity-list');
-    const emptyState = list.querySelector('.bcwp-empty-state');
+    const emptyState = list.querySelector('.pfob-empty-state');
     if (emptyState) {
         emptyState.remove();
     }
@@ -253,8 +253,8 @@ function prependActivity(activity) {
     list.insertBefore(item, list.firstChild);
 
     // Highlight new item
-    item.classList.add('bcwp-activity-new');
-    setTimeout(() => item.classList.remove('bcwp-activity-new'), 2000);
+    item.classList.add('pfob-activity-new');
+    setTimeout(() => item.classList.remove('pfob-activity-new'), 2000);
 }
 
 function appendActivity(activity) {
@@ -265,29 +265,29 @@ function appendActivity(activity) {
 
 function createActivityElement(activity) {
     const div = document.createElement('div');
-    div.className = 'bcwp-activity-item';
+    div.className = 'pfob-activity-item';
     div.dataset.id = activity.id;
     div.dataset.projectId = activity.project_id || '';
     div.dataset.type = activity.subject_type;
     div.dataset.action = activity.action_type;
 
     div.innerHTML = `
-        <div class="bcwp-activity-icon">${escapeHtml(activity.icon)}</div>
-        <div class="bcwp-activity-content">
-            <div class="bcwp-activity-header">
-                <div class="bcwp-activity-avatar">
-                    <img src="${activity.user_avatar}" alt="" class="bcwp-avatar" width="32" height="32">
+        <div class="pfob-activity-icon">${escapeHtml(activity.icon)}</div>
+        <div class="pfob-activity-content">
+            <div class="pfob-activity-header">
+                <div class="pfob-activity-avatar">
+                    <img src="${activity.user_avatar}" alt="" class="pfob-avatar" width="32" height="32">
                 </div>
-                <div class="bcwp-activity-description">${escapeHtml(activity.description)}</div>
+                <div class="pfob-activity-description">${escapeHtml(activity.description)}</div>
             </div>
             ${activity.project_name ? `
-                <div class="bcwp-activity-project">
+                <div class="pfob-activity-project">
                     in <a href="${activity.project_url}">${escapeHtml(activity.project_name)}</a>
                 </div>
             ` : ''}
-            <div class="bcwp-activity-meta">
-                <span class="bcwp-activity-time">${activity.time_ago}</span>
-                ${activity.link ? `<a href="${activity.link}" class="bcwp-activity-link">View</a>` : ''}
+            <div class="pfob-activity-meta">
+                <span class="pfob-activity-time">${activity.time_ago}</span>
+                ${activity.link ? `<a href="${activity.link}" class="pfob-activity-link">View</a>` : ''}
             </div>
         </div>
     `;
@@ -304,7 +304,7 @@ function escapeHtml(text) {
 // Poll every 10 seconds
 setInterval(pollNewActivities, 10000);
 </script>
-<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
 
 </body>
 </html>

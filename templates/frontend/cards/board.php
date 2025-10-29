@@ -3,11 +3,11 @@
  * Card Table - Kanban Board
  */
 
-global $bcwp_project;
+global $pfob_project;
 
-BCWP_Template::header( $bcwp_project->name . ' - Card Table' );
+PFOB_Template::header( $pfob_project->name . ' - Card Table' );
 
-$columns = BCWP_Card::get_project_columns( $bcwp_project->id );
+$columns = PFOB_Card::get_project_columns( $pfob_project->id );
 
 // Create default columns if none exist
 if ( empty( $columns ) ) {
@@ -18,83 +18,83 @@ if ( empty( $columns ) ) {
     );
 
     foreach ( $default_columns as $index => $col ) {
-        BCWP_Database::insert( 'card_columns', array(
-            'project_id' => $bcwp_project->id,
+        PFOB_Database::insert( 'card_columns', array(
+            'project_id' => $pfob_project->id,
             'name'       => $col['name'],
             'position'   => $index,
             'color'      => $col['color'],
         ) );
     }
 
-    $columns = BCWP_Card::get_project_columns( $bcwp_project->id );
+    $columns = PFOB_Card::get_project_columns( $pfob_project->id );
 }
 
 ?>
 
-<div class="bcwp-container">
-    <?php BCWP_Template::navigation(); ?>
+<div class="pfob-container">
+    <?php PFOB_Template::navigation(); ?>
 
-    <main class="bcwp-main bcwp-card-table">
+    <main class="pfob-main pfob-card-table">
 
-        <div class="bcwp-page-header">
+        <div class="pfob-page-header">
             <h1>Card Table</h1>
-            <button class="bcwp-btn bcwp-btn-primary" id="new-column-btn">
+            <button class="pfob-btn pfob-btn-primary" id="new-column-btn">
                 Add Column
             </button>
         </div>
 
-        <div class="bcwp-kanban-board" id="kanban-board">
+        <div class="pfob-kanban-board" id="kanban-board">
             <?php foreach ( $columns as $column ) : ?>
-                <?php $cards = BCWP_Card::get_column_cards( $column->id ); ?>
-                <div class="bcwp-kanban-column" data-column-id="<?php echo $column->id; ?>">
-                    <div class="bcwp-column-header" style="background-color: <?php echo esc_attr( $column->color ); ?>">
+                <?php $cards = PFOB_Card::get_column_cards( $column->id ); ?>
+                <div class="pfob-kanban-column" data-column-id="<?php echo $column->id; ?>">
+                    <div class="pfob-column-header" style="background-color: <?php echo esc_attr( $column->color ); ?>">
                         <h3><?php echo esc_html( $column->name ); ?></h3>
-                        <div class="bcwp-column-actions">
-                            <span class="bcwp-card-count"><?php echo count( $cards ); ?></span>
-                            <button class="bcwp-btn-icon bcwp-add-card-btn"
+                        <div class="pfob-column-actions">
+                            <span class="pfob-card-count"><?php echo count( $cards ); ?></span>
+                            <button class="pfob-btn-icon pfob-add-card-btn"
                                     data-column-id="<?php echo $column->id; ?>"
                                     title="Add card">
                                 +
                             </button>
-                            <button class="bcwp-btn-icon bcwp-column-menu-btn"
+                            <button class="pfob-btn-icon pfob-column-menu-btn"
                                     title="Column options">
                                 ⋮
                             </button>
                         </div>
                     </div>
 
-                    <div class="bcwp-column-cards"
+                    <div class="pfob-column-cards"
                          data-column-id="<?php echo $column->id; ?>"
                          ondragover="event.preventDefault()"
                          ondrop="handleCardDrop(event)">
 
                         <?php if ( empty( $cards ) ) : ?>
-                            <p class="bcwp-empty-column">No cards yet</p>
+                            <p class="pfob-empty-column">No cards yet</p>
                         <?php else : ?>
                             <?php foreach ( $cards as $card ) : ?>
-                                <div class="bcwp-kanban-card"
+                                <div class="pfob-kanban-card"
                                      data-card-id="<?php echo $card->id; ?>"
                                      draggable="true"
                                      ondragstart="handleCardDragStart(event)">
 
-                                    <div class="bcwp-card-content">
+                                    <div class="pfob-card-content">
                                         <h4><?php echo esc_html( $card->title ); ?></h4>
 
                                         <?php if ( $card->description ) : ?>
-                                            <p class="bcwp-card-description">
+                                            <p class="pfob-card-description">
                                                 <?php echo esc_html( wp_trim_words( $card->description, 15 ) ); ?>
                                             </p>
                                         <?php endif; ?>
 
-                                        <div class="bcwp-card-meta">
+                                        <div class="pfob-card-meta">
                                             <?php if ( $card->assignee_id ) : ?>
-                                                <div class="bcwp-card-assignee">
-                                                    <?php echo BCWP_Template::user_avatar( $card->assignee_id, 24 ); ?>
+                                                <div class="pfob-card-assignee">
+                                                    <?php echo PFOB_Template::user_avatar( $card->assignee_id, 24 ); ?>
                                                 </div>
                                             <?php endif; ?>
 
                                             <?php if ( $card->due_date ) : ?>
-                                                <span class="bcwp-card-due <?php echo strtotime( $card->due_date ) < time() ? 'bcwp-overdue' : ''; ?>">
+                                                <span class="pfob-card-due <?php echo strtotime( $card->due_date ) < time() ? 'pfob-overdue' : ''; ?>">
                                                     <?php echo date( 'M j', strtotime( $card->due_date ) ); ?>
                                                 </span>
                                             <?php endif; ?>
@@ -103,22 +103,22 @@ if ( empty( $columns ) ) {
                                             $tags = ! empty( $card->tags ) ? json_decode( $card->tags, true ) : array();
                                             if ( ! empty( $tags ) ) :
                                             ?>
-                                                <div class="bcwp-card-tags">
+                                                <div class="pfob-card-tags">
                                                     <?php foreach ( $tags as $tag ) : ?>
-                                                        <span class="bcwp-tag"><?php echo esc_html( $tag ); ?></span>
+                                                        <span class="pfob-tag"><?php echo esc_html( $tag ); ?></span>
                                                     <?php endforeach; ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
                                     </div>
 
-                                    <div class="bcwp-card-actions">
-                                        <button class="bcwp-btn-icon bcwp-edit-card-btn"
+                                    <div class="pfob-card-actions">
+                                        <button class="pfob-btn-icon pfob-edit-card-btn"
                                                 onclick="editCard(<?php echo $card->id; ?>)"
                                                 title="Edit">
                                             ✎
                                         </button>
-                                        <button class="bcwp-btn-icon bcwp-delete-card-btn"
+                                        <button class="pfob-btn-icon pfob-delete-card-btn"
                                                 onclick="deleteCard(<?php echo $card->id; ?>)"
                                                 title="Delete">
                                             ×
@@ -136,10 +136,10 @@ if ( empty( $columns ) ) {
 </div>
 
 <script>
-const bcwpData = {
-    restUrl: '<?php echo rest_url( 'bcwp/v1' ); ?>',
+const pfobData = {
+    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
-    projectId: <?php echo $bcwp_project->id; ?>,
+    projectId: <?php echo $pfob_project->id; ?>,
     currentUser: <?php echo json_encode( array(
         'id' => get_current_user_id(),
         'name' => wp_get_current_user()->display_name,
@@ -150,7 +150,7 @@ let draggedCard = null;
 
 function handleCardDragStart(e) {
     draggedCard = e.target;
-    e.target.classList.add('bcwp-dragging');
+    e.target.classList.add('pfob-dragging');
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', e.target.innerHTML);
 }
@@ -167,11 +167,11 @@ async function handleCardDrop(e) {
 
     // Move card to new column
     try {
-        const response = await fetch(`${bcwpData.restUrl}/cards/${cardId}`, {
+        const response = await fetch(`${pfobData.restUrl}/cards/${cardId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'X-WP-Nonce': bcwpData.nonce
+                'X-WP-Nonce': pfobData.nonce
             },
             body: JSON.stringify({
                 column_id: columnId
@@ -180,14 +180,14 @@ async function handleCardDrop(e) {
 
         if (response.ok) {
             // Remove "no cards" message if it exists
-            const emptyMessage = targetColumn.querySelector('.bcwp-empty-column');
+            const emptyMessage = targetColumn.querySelector('.pfob-empty-column');
             if (emptyMessage) {
                 emptyMessage.remove();
             }
 
             // Append card to new column
             targetColumn.appendChild(draggedCard);
-            draggedCard.classList.remove('bcwp-dragging');
+            draggedCard.classList.remove('pfob-dragging');
 
             // Update card counts
             updateCardCounts();
@@ -200,14 +200,14 @@ async function handleCardDrop(e) {
 }
 
 function updateCardCounts() {
-    document.querySelectorAll('.bcwp-kanban-column').forEach(column => {
-        const count = column.querySelectorAll('.bcwp-kanban-card').length;
-        column.querySelector('.bcwp-card-count').textContent = count;
+    document.querySelectorAll('.pfob-kanban-column').forEach(column => {
+        const count = column.querySelectorAll('.pfob-kanban-card').length;
+        column.querySelector('.pfob-card-count').textContent = count;
     });
 }
 
 // Add card buttons
-document.querySelectorAll('.bcwp-add-card-btn').forEach(btn => {
+document.querySelectorAll('.pfob-add-card-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const columnId = btn.dataset.columnId;
         showCreateCardModal(columnId);
@@ -221,40 +221,40 @@ document.getElementById('new-column-btn')?.addEventListener('click', () => {
 
 function showCreateCardModal(columnId) {
     const modal = document.createElement('div');
-    modal.className = 'bcwp-modal';
+    modal.className = 'pfob-modal';
     modal.innerHTML = `
-        <div class="bcwp-modal-content">
-            <div class="bcwp-modal-header">
+        <div class="pfob-modal-content">
+            <div class="pfob-modal-header">
                 <h2>New Card</h2>
-                <button class="bcwp-modal-close">&times;</button>
+                <button class="pfob-modal-close">&times;</button>
             </div>
-            <div class="bcwp-modal-body">
+            <div class="pfob-modal-body">
                 <form id="create-card-form">
-                    <div class="bcwp-form-group">
+                    <div class="pfob-form-group">
                         <label>Title *</label>
                         <input type="text" name="title" required placeholder="Card title">
                     </div>
-                    <div class="bcwp-form-group">
+                    <div class="pfob-form-group">
                         <label>Description</label>
                         <textarea name="description" rows="3" placeholder="Card description"></textarea>
                     </div>
-                    <div class="bcwp-form-group">
+                    <div class="pfob-form-group">
                         <label>Assign to</label>
                         <select name="assignee_id">
                             <option value="">Unassigned</option>
                         </select>
                     </div>
-                    <div class="bcwp-form-group">
+                    <div class="pfob-form-group">
                         <label>Due Date</label>
                         <input type="date" name="due_date">
                     </div>
-                    <div class="bcwp-form-group">
+                    <div class="pfob-form-group">
                         <label>Tags (comma-separated)</label>
                         <input type="text" name="tags" placeholder="bug, feature, urgent">
                     </div>
-                    <div class="bcwp-form-actions">
-                        <button type="submit" class="bcwp-btn bcwp-btn-primary">Create Card</button>
-                        <button type="button" class="bcwp-btn bcwp-btn-secondary bcwp-modal-close">Cancel</button>
+                    <div class="pfob-form-actions">
+                        <button type="submit" class="pfob-btn pfob-btn-primary">Create Card</button>
+                        <button type="button" class="pfob-btn pfob-btn-secondary pfob-modal-close">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -263,7 +263,7 @@ function showCreateCardModal(columnId) {
 
     document.body.appendChild(modal);
 
-    modal.querySelectorAll('.bcwp-modal-close').forEach(btn => {
+    modal.querySelectorAll('.pfob-modal-close').forEach(btn => {
         btn.addEventListener('click', () => modal.remove());
     });
 
@@ -288,11 +288,11 @@ function showCreateCardModal(columnId) {
         };
 
         try {
-            const response = await fetch(`${bcwpData.restUrl}/projects/${bcwpData.projectId}/cards`, {
+            const response = await fetch(`${pfobData.restUrl}/projects/${pfobData.projectId}/cards`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-WP-Nonce': bcwpData.nonce
+                    'X-WP-Nonce': pfobData.nonce
                 },
                 body: JSON.stringify(data)
             });
@@ -309,26 +309,26 @@ function showCreateCardModal(columnId) {
 
 function showCreateColumnModal() {
     const modal = document.createElement('div');
-    modal.className = 'bcwp-modal';
+    modal.className = 'pfob-modal';
     modal.innerHTML = `
-        <div class="bcwp-modal-content">
-            <div class="bcwp-modal-header">
+        <div class="pfob-modal-content">
+            <div class="pfob-modal-header">
                 <h2>New Column</h2>
-                <button class="bcwp-modal-close">&times;</button>
+                <button class="pfob-modal-close">&times;</button>
             </div>
-            <div class="bcwp-modal-body">
+            <div class="pfob-modal-body">
                 <form id="create-column-form">
-                    <div class="bcwp-form-group">
+                    <div class="pfob-form-group">
                         <label>Column Name *</label>
                         <input type="text" name="name" required placeholder="e.g. Testing">
                     </div>
-                    <div class="bcwp-form-group">
+                    <div class="pfob-form-group">
                         <label>Color</label>
                         <input type="color" name="color" value="#E3E3E3">
                     </div>
-                    <div class="bcwp-form-actions">
-                        <button type="submit" class="bcwp-btn bcwp-btn-primary">Create Column</button>
-                        <button type="button" class="bcwp-btn bcwp-btn-secondary bcwp-modal-close">Cancel</button>
+                    <div class="pfob-form-actions">
+                        <button type="submit" class="pfob-btn pfob-btn-primary">Create Column</button>
+                        <button type="button" class="pfob-btn pfob-btn-secondary pfob-modal-close">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -337,7 +337,7 @@ function showCreateColumnModal() {
 
     document.body.appendChild(modal);
 
-    modal.querySelectorAll('.bcwp-modal-close').forEach(btn => {
+    modal.querySelectorAll('.pfob-modal-close').forEach(btn => {
         btn.addEventListener('click', () => modal.remove());
     });
 
@@ -351,11 +351,11 @@ function showCreateColumnModal() {
         };
 
         try {
-            const response = await fetch(`${bcwpData.restUrl}/projects/${bcwpData.projectId}/columns`, {
+            const response = await fetch(`${pfobData.restUrl}/projects/${pfobData.projectId}/columns`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-WP-Nonce': bcwpData.nonce
+                    'X-WP-Nonce': pfobData.nonce
                 },
                 body: JSON.stringify(data)
             });
@@ -372,8 +372,8 @@ function showCreateColumnModal() {
 
 async function loadProjectMembers(selectElement) {
     try {
-        const response = await fetch(`${bcwpData.restUrl}/projects/${bcwpData.projectId}/members`, {
-            headers: { 'X-WP-Nonce': bcwpData.nonce }
+        const response = await fetch(`${pfobData.restUrl}/projects/${pfobData.projectId}/members`, {
+            headers: { 'X-WP-Nonce': pfobData.nonce }
         });
 
         const result = await response.json();
@@ -400,9 +400,9 @@ async function deleteCard(cardId) {
     if (!confirm('Delete this card?')) return;
 
     try {
-        const response = await fetch(`${bcwpData.restUrl}/cards/${cardId}`, {
+        const response = await fetch(`${pfobData.restUrl}/cards/${cardId}`, {
             method: 'DELETE',
-            headers: { 'X-WP-Nonce': bcwpData.nonce }
+            headers: { 'X-WP-Nonce': pfobData.nonce }
         });
 
         if (response.ok) {
@@ -414,7 +414,7 @@ async function deleteCard(cardId) {
     }
 }
 </script>
-<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
 
 </body>
 </html>

@@ -1,14 +1,14 @@
 /**
- * Basecamp WP Pro - Todos JavaScript
+ * ProjectFOB - Todos JavaScript
  */
 
 class TodoManager {
     constructor() {
-        if (typeof bcwpData === 'undefined') return;
+        if (typeof pfobData === 'undefined') return;
 
-        this.restUrl = bcwpData.restUrl;
-        this.nonce = bcwpData.nonce;
-        this.projectId = bcwpData.projectId;
+        this.restUrl = pfobData.restUrl;
+        this.nonce = pfobData.nonce;
+        this.projectId = pfobData.projectId;
 
         this.init();
     }
@@ -26,7 +26,7 @@ class TodoManager {
         }
 
         // Add todo buttons
-        document.querySelectorAll('.bcwp-add-todo-btn').forEach(btn => {
+        document.querySelectorAll('.pfob-add-todo-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const listId = e.target.dataset.listId;
                 this.showCreateTodoModal(listId);
@@ -34,27 +34,27 @@ class TodoManager {
         });
 
         // Todo checkboxes
-        document.querySelectorAll('.bcwp-todo-checkbox').forEach(checkbox => {
+        document.querySelectorAll('.pfob-todo-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
-                const todoItem = e.target.closest('.bcwp-todo-item');
+                const todoItem = e.target.closest('.pfob-todo-item');
                 const todoId = todoItem.dataset.todoId;
                 this.toggleTodo(todoId, e.target.checked);
             });
         });
 
         // Edit buttons
-        document.querySelectorAll('.bcwp-edit-todo-btn').forEach(btn => {
+        document.querySelectorAll('.pfob-edit-todo-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const todoItem = e.target.closest('.bcwp-todo-item');
+                const todoItem = e.target.closest('.pfob-todo-item');
                 const todoId = todoItem.dataset.todoId;
                 this.showEditTodoModal(todoId);
             });
         });
 
         // Delete buttons
-        document.querySelectorAll('.bcwp-delete-todo-btn').forEach(btn => {
+        document.querySelectorAll('.pfob-delete-todo-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const todoItem = e.target.closest('.bcwp-todo-item');
+                const todoItem = e.target.closest('.pfob-todo-item');
                 const todoId = todoItem.dataset.todoId;
                 this.deleteTodo(todoId);
             });
@@ -63,30 +63,30 @@ class TodoManager {
 
     showCreateListModal() {
         const modal = document.createElement('div');
-        modal.className = 'bcwp-modal';
+        modal.className = 'pfob-modal';
         modal.innerHTML = `
-            <div class="bcwp-modal-content">
-                <div class="bcwp-modal-header">
+            <div class="pfob-modal-content">
+                <div class="pfob-modal-header">
                     <h2>New To-do List</h2>
-                    <button class="bcwp-modal-close">&times;</button>
+                    <button class="pfob-modal-close">&times;</button>
                 </div>
-                <div class="bcwp-modal-body">
+                <div class="pfob-modal-body">
                     <form id="create-list-form">
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="list-name">List Name *</label>
                             <input type="text" id="list-name" name="name" required
                                    placeholder="e.g. Launch Tasks">
                         </div>
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="list-description">Description (optional)</label>
                             <textarea id="list-description" name="description" rows="3"
                                       placeholder="What's this list for?"></textarea>
                         </div>
-                        <div class="bcwp-form-actions">
-                            <button type="submit" class="bcwp-btn bcwp-btn-primary">
+                        <div class="pfob-form-actions">
+                            <button type="submit" class="pfob-btn pfob-btn-primary">
                                 Create List
                             </button>
-                            <button type="button" class="bcwp-btn bcwp-btn-secondary bcwp-modal-close">
+                            <button type="button" class="pfob-btn pfob-btn-secondary pfob-modal-close">
                                 Cancel
                             </button>
                         </div>
@@ -97,7 +97,7 @@ class TodoManager {
 
         document.body.appendChild(modal);
 
-        modal.querySelectorAll('.bcwp-modal-close').forEach(btn => {
+        modal.querySelectorAll('.pfob-modal-close').forEach(btn => {
             btn.addEventListener('click', () => modal.remove());
         });
 
@@ -132,7 +132,7 @@ class TodoManager {
             const result = await response.json();
 
             if (result.success) {
-                document.querySelector('.bcwp-modal')?.remove();
+                document.querySelector('.pfob-modal')?.remove();
                 window.location.reload();
             }
         } catch (error) {
@@ -143,40 +143,40 @@ class TodoManager {
 
     showCreateTodoModal(listId) {
         const modal = document.createElement('div');
-        modal.className = 'bcwp-modal';
+        modal.className = 'pfob-modal';
         modal.innerHTML = `
-            <div class="bcwp-modal-content">
-                <div class="bcwp-modal-header">
+            <div class="pfob-modal-content">
+                <div class="pfob-modal-header">
                     <h2>New To-do</h2>
-                    <button class="bcwp-modal-close">&times;</button>
+                    <button class="pfob-modal-close">&times;</button>
                 </div>
-                <div class="bcwp-modal-body">
+                <div class="pfob-modal-body">
                     <form id="create-todo-form">
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="todo-content">What needs to be done? *</label>
                             <input type="text" id="todo-content" name="content" required
                                    placeholder="e.g. Review design mockups">
                         </div>
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="todo-description">Notes (optional)</label>
                             <textarea id="todo-description" name="description" rows="2"></textarea>
                         </div>
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="todo-due-date">Due Date (optional)</label>
                             <input type="date" id="todo-due-date" name="due_date">
                         </div>
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="todo-assignee">Assign to (optional)</label>
                             <select id="todo-assignee" name="assignee_id">
                                 <option value="">Unassigned</option>
                                 <!-- Will be populated via JavaScript -->
                             </select>
                         </div>
-                        <div class="bcwp-form-actions">
-                            <button type="submit" class="bcwp-btn bcwp-btn-primary">
+                        <div class="pfob-form-actions">
+                            <button type="submit" class="pfob-btn pfob-btn-primary">
                                 Add To-do
                             </button>
-                            <button type="button" class="bcwp-btn bcwp-btn-secondary bcwp-modal-close">
+                            <button type="button" class="pfob-btn pfob-btn-secondary pfob-modal-close">
                                 Cancel
                             </button>
                         </div>
@@ -187,7 +187,7 @@ class TodoManager {
 
         document.body.appendChild(modal);
 
-        modal.querySelectorAll('.bcwp-modal-close').forEach(btn => {
+        modal.querySelectorAll('.pfob-modal-close').forEach(btn => {
             btn.addEventListener('click', () => modal.remove());
         });
 
@@ -249,7 +249,7 @@ class TodoManager {
             const result = await response.json();
 
             if (result.success) {
-                document.querySelector('.bcwp-modal')?.remove();
+                document.querySelector('.pfob-modal')?.remove();
                 window.location.reload();
             }
         } catch (error) {
@@ -275,7 +275,7 @@ class TodoManager {
 
             if (response.ok) {
                 const todoItem = document.querySelector(`[data-todo-id="${todoId}"]`);
-                todoItem.classList.toggle('bcwp-completed', isCompleted);
+                todoItem.classList.toggle('pfob-completed', isCompleted);
             }
         } catch (error) {
             console.error('Failed to toggle todo:', error);
@@ -304,17 +304,17 @@ class TodoManager {
     }
 
     initDragAndDrop() {
-        const todoItems = document.querySelectorAll('.bcwp-todo-item[draggable="true"]');
+        const todoItems = document.querySelectorAll('.pfob-todo-item[draggable="true"]');
 
         todoItems.forEach(item => {
             item.addEventListener('dragstart', (e) => {
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('text/plain', item.dataset.todoId);
-                item.classList.add('bcwp-dragging');
+                item.classList.add('pfob-dragging');
             });
 
             item.addEventListener('dragend', (e) => {
-                item.classList.remove('bcwp-dragging');
+                item.classList.remove('pfob-dragging');
             });
 
             item.addEventListener('dragover', (e) => {

@@ -151,7 +151,7 @@ class PFOB_PayPal_Webhook_Endpoint {
         ) );
 
         // Log activity
-        BCWP_Database::insert( 'activities', array(
+        PFOB_Database::insert( 'activities', array(
             'user_id'      => $subscription->user_id,
             'action_type'  => 'subscription.activated',
             'subject_type' => 'subscription',
@@ -228,7 +228,7 @@ class PFOB_PayPal_Webhook_Endpoint {
         ) );
 
         // Log activity
-        BCWP_Database::insert( 'activities', array(
+        PFOB_Database::insert( 'activities', array(
             'user_id'      => $subscription->user_id,
             'action_type'  => 'subscription.canceled',
             'subject_type' => 'subscription',
@@ -264,7 +264,7 @@ class PFOB_PayPal_Webhook_Endpoint {
         ) );
 
         // Log activity
-        BCWP_Database::insert( 'activities', array(
+        PFOB_Database::insert( 'activities', array(
             'user_id'      => $subscription->user_id,
             'action_type'  => 'subscription.suspended',
             'subject_type' => 'subscription',
@@ -301,7 +301,7 @@ class PFOB_PayPal_Webhook_Endpoint {
         ) );
 
         // Log activity
-        BCWP_Database::insert( 'activities', array(
+        PFOB_Database::insert( 'activities', array(
             'user_id'      => $subscription->user_id,
             'action_type'  => 'subscription.expired',
             'subject_type' => 'subscription',
@@ -430,7 +430,7 @@ class PFOB_PayPal_Webhook_Endpoint {
         ) );
 
         // Log activity
-        BCWP_Database::insert( 'activities', array(
+        PFOB_Database::insert( 'activities', array(
             'user_id'      => $subscription->user_id,
             'action_type'  => 'subscription.payment_failed',
             'subject_type' => 'subscription',

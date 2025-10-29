@@ -151,7 +151,7 @@ $wpdb->prepare(
 
 ✅ **Nonce Verification**
 ```php
-'X-WP-Nonce': bcwpData.nonce
+'X-WP-Nonce': pfobData.nonce
 ```
 
 ## CSS (Modern Standards)
@@ -160,7 +160,7 @@ $wpdb->prepare(
 
 ✅ **CSS Grid Layout**
 ```css
-.bcwp-stats-grid {
+.pfob-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
@@ -169,7 +169,7 @@ $wpdb->prepare(
 
 ✅ **Flexbox**
 ```css
-.bcwp-header {
+.pfob-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -186,11 +186,11 @@ $wpdb->prepare(
 
 ✅ **Modern Transitions**
 ```css
-.bcwp-card {
+.pfob-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.bcwp-card:hover {
+.pfob-card:hover {
     transform: translateY(-2px);
 }
 ```
@@ -198,7 +198,7 @@ $wpdb->prepare(
 ✅ **Responsive Design**
 ```css
 @media (max-width: 768px) {
-    .bcwp-grid {
+    .pfob-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -221,8 +221,8 @@ $wpdb->prepare(
 
 ✅ **MVC-like Structure**
 ```
-Models:      class-bcwp-project.php
-Controllers: class-bcwp-projects-endpoint.php
+Models:      class-pfob-project.php
+Controllers: class-pfob-projects-endpoint.php
 Views:       templates/frontend/
 Services:    includes/services/
 ```

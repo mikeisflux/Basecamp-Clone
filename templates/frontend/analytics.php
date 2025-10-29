@@ -5,18 +5,18 @@
 
 $user_id = get_current_user_id();
 
-BCWP_Template::header( 'Analytics Dashboard' );
+PFOB_Template::header( 'Analytics Dashboard' );
 ?>
 
-<div class="bcwp-container">
-    <?php BCWP_Template::navigation(); ?>
+<div class="pfob-container">
+    <?php PFOB_Template::navigation(); ?>
 
-    <main class="bcwp-main bcwp-analytics">
+    <main class="pfob-main pfob-analytics">
 
-        <header class="bcwp-page-header">
+        <header class="pfob-page-header">
             <h1>📊 Analytics Dashboard</h1>
-            <div class="bcwp-analytics-controls">
-                <select id="time-range-select" class="bcwp-select">
+            <div class="pfob-analytics-controls">
+                <select id="time-range-select" class="pfob-select">
                     <option value="7">Last 7 days</option>
                     <option value="30" selected>Last 30 days</option>
                     <option value="90">Last 90 days</option>
@@ -24,33 +24,33 @@ BCWP_Template::header( 'Analytics Dashboard' );
             </div>
         </header>
 
-        <div id="loading-state" class="bcwp-loading">
-            <div class="bcwp-spinner"></div>
+        <div id="loading-state" class="pfob-loading">
+            <div class="pfob-spinner"></div>
             <p>Loading analytics...</p>
         </div>
 
         <div id="analytics-content" style="display: none;">
 
             <!-- Workspace Overview -->
-            <section class="bcwp-analytics-section">
+            <section class="pfob-analytics-section">
                 <h2>Workspace Overview</h2>
-                <div class="bcwp-stats-grid" id="workspace-stats">
+                <div class="pfob-stats-grid" id="workspace-stats">
                     <!-- Stats will be populated by JavaScript -->
                 </div>
             </section>
 
             <!-- Your Personal Stats -->
-            <section class="bcwp-analytics-section">
+            <section class="pfob-analytics-section">
                 <h2>Your Performance</h2>
-                <div class="bcwp-stats-grid" id="user-stats">
+                <div class="pfob-stats-grid" id="user-stats">
                     <!-- Stats will be populated by JavaScript -->
                 </div>
             </section>
 
             <!-- Project Breakdown -->
-            <section class="bcwp-analytics-section">
+            <section class="pfob-analytics-section">
                 <h2>Projects Overview</h2>
-                <div class="bcwp-projects-table" id="projects-table">
+                <div class="pfob-projects-table" id="projects-table">
                     <!-- Table will be populated by JavaScript -->
                 </div>
             </section>
@@ -63,8 +63,8 @@ BCWP_Template::header( 'Analytics Dashboard' );
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script>
-const bcwpData = {
-    restUrl: '<?php echo rest_url( 'bcwp/v1' ); ?>',
+const pfobData = {
+    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
 };
 
@@ -84,14 +84,14 @@ async function loadAnalytics() {
     try {
         // Load all analytics data in parallel
         const [workspace, user, projects] = await Promise.all([
-            fetch(`${bcwpData.restUrl}/analytics/workspace?days=${currentDays}`, {
-                headers: { 'X-WP-Nonce': bcwpData.nonce }
+            fetch(`${pfobData.restUrl}/analytics/workspace?days=${currentDays}`, {
+                headers: { 'X-WP-Nonce': pfobData.nonce }
             }).then(r => r.json()),
-            fetch(`${bcwpData.restUrl}/analytics/user?days=${currentDays}`, {
-                headers: { 'X-WP-Nonce': bcwpData.nonce }
+            fetch(`${pfobData.restUrl}/analytics/user?days=${currentDays}`, {
+                headers: { 'X-WP-Nonce': pfobData.nonce }
             }).then(r => r.json()),
-            fetch(`${bcwpData.restUrl}/analytics/projects?days=${currentDays}`, {
-                headers: { 'X-WP-Nonce': bcwpData.nonce }
+            fetch(`${pfobData.restUrl}/analytics/projects?days=${currentDays}`, {
+                headers: { 'X-WP-Nonce': pfobData.nonce }
             }).then(r => r.json()),
         ]);
 
@@ -105,42 +105,42 @@ async function loadAnalytics() {
         }
     } catch (error) {
         console.error('Failed to load analytics:', error);
-        document.getElementById('loading-state').innerHTML = '<p class="bcwp-error">Failed to load analytics</p>';
+        document.getElementById('loading-state').innerHTML = '<p class="pfob-error">Failed to load analytics</p>';
     }
 }
 
 function renderWorkspaceStats(data) {
     const container = document.getElementById('workspace-stats');
     container.innerHTML = `
-        <div class="bcwp-stat-card">
-            <div class="bcwp-stat-icon">📁</div>
-            <div class="bcwp-stat-value">${data.total_projects}</div>
-            <div class="bcwp-stat-label">Total Projects</div>
+        <div class="pfob-stat-card">
+            <div class="pfob-stat-icon">📁</div>
+            <div class="pfob-stat-value">${data.total_projects}</div>
+            <div class="pfob-stat-label">Total Projects</div>
         </div>
-        <div class="bcwp-stat-card">
-            <div class="bcwp-stat-icon">👥</div>
-            <div class="bcwp-stat-value">${data.total_users}</div>
-            <div class="bcwp-stat-label">Team Members</div>
+        <div class="pfob-stat-card">
+            <div class="pfob-stat-icon">👥</div>
+            <div class="pfob-stat-value">${data.total_users}</div>
+            <div class="pfob-stat-label">Team Members</div>
         </div>
-        <div class="bcwp-stat-card">
-            <div class="bcwp-stat-icon">💬</div>
-            <div class="bcwp-stat-value">${data.total_messages}</div>
-            <div class="bcwp-stat-label">Total Messages</div>
+        <div class="pfob-stat-card">
+            <div class="pfob-stat-icon">💬</div>
+            <div class="pfob-stat-value">${data.total_messages}</div>
+            <div class="pfob-stat-label">Total Messages</div>
         </div>
-        <div class="bcwp-stat-card">
-            <div class="bcwp-stat-icon">✅</div>
-            <div class="bcwp-stat-value">${data.completed_todos}/${data.total_todos}</div>
-            <div class="bcwp-stat-label">Completed To-dos</div>
+        <div class="pfob-stat-card">
+            <div class="pfob-stat-icon">✅</div>
+            <div class="pfob-stat-value">${data.completed_todos}/${data.total_todos}</div>
+            <div class="pfob-stat-label">Completed To-dos</div>
         </div>
-        <div class="bcwp-stat-card">
-            <div class="bcwp-stat-icon">⚡</div>
-            <div class="bcwp-stat-value">${data.recent_activity}</div>
-            <div class="bcwp-stat-label">Recent Activities</div>
+        <div class="pfob-stat-card">
+            <div class="pfob-stat-icon">⚡</div>
+            <div class="pfob-stat-value">${data.recent_activity}</div>
+            <div class="pfob-stat-label">Recent Activities</div>
         </div>
-        <div class="bcwp-stat-card">
-            <div class="bcwp-stat-icon">🔥</div>
-            <div class="bcwp-stat-value">${data.most_active_project || 'None'}</div>
-            <div class="bcwp-stat-label">Most Active Project</div>
+        <div class="pfob-stat-card">
+            <div class="pfob-stat-icon">🔥</div>
+            <div class="pfob-stat-value">${data.most_active_project || 'None'}</div>
+            <div class="pfob-stat-label">Most Active Project</div>
         </div>
     `;
 }
@@ -148,30 +148,30 @@ function renderWorkspaceStats(data) {
 function renderUserStats(data) {
     const container = document.getElementById('user-stats');
     container.innerHTML = `
-        <div class="bcwp-stat-card bcwp-stat-card-highlight">
-            <div class="bcwp-stat-icon">🎯</div>
-            <div class="bcwp-stat-value">${data.assigned_todos}</div>
-            <div class="bcwp-stat-label">Assigned To-dos</div>
+        <div class="pfob-stat-card pfob-stat-card-highlight">
+            <div class="pfob-stat-icon">🎯</div>
+            <div class="pfob-stat-value">${data.assigned_todos}</div>
+            <div class="pfob-stat-label">Assigned To-dos</div>
         </div>
-        <div class="bcwp-stat-card bcwp-stat-card-success">
-            <div class="bcwp-stat-icon">✓</div>
-            <div class="bcwp-stat-value">${data.completed_todos}</div>
-            <div class="bcwp-stat-label">Completed</div>
+        <div class="pfob-stat-card pfob-stat-card-success">
+            <div class="pfob-stat-icon">✓</div>
+            <div class="pfob-stat-value">${data.completed_todos}</div>
+            <div class="pfob-stat-label">Completed</div>
         </div>
-        <div class="bcwp-stat-card">
-            <div class="bcwp-stat-icon">📈</div>
-            <div class="bcwp-stat-value">${data.completion_rate}%</div>
-            <div class="bcwp-stat-label">Completion Rate</div>
+        <div class="pfob-stat-card">
+            <div class="pfob-stat-icon">📈</div>
+            <div class="pfob-stat-value">${data.completion_rate}%</div>
+            <div class="pfob-stat-label">Completion Rate</div>
         </div>
-        <div class="bcwp-stat-card">
-            <div class="bcwp-stat-icon">📝</div>
-            <div class="bcwp-stat-value">${data.messages_created}</div>
-            <div class="bcwp-stat-label">Messages Created</div>
+        <div class="pfob-stat-card">
+            <div class="pfob-stat-icon">📝</div>
+            <div class="pfob-stat-value">${data.messages_created}</div>
+            <div class="pfob-stat-label">Messages Created</div>
         </div>
-        <div class="bcwp-stat-card">
-            <div class="bcwp-stat-icon">💭</div>
-            <div class="bcwp-stat-value">${data.comments_made}</div>
-            <div class="bcwp-stat-label">Comments Made</div>
+        <div class="pfob-stat-card">
+            <div class="pfob-stat-icon">💭</div>
+            <div class="pfob-stat-value">${data.comments_made}</div>
+            <div class="pfob-stat-label">Comments Made</div>
         </div>
     `;
 }
@@ -180,12 +180,12 @@ function renderProjectsTable(data) {
     const container = document.getElementById('projects-table');
 
     if (data.length === 0) {
-        container.innerHTML = '<p class="bcwp-empty">No projects found</p>';
+        container.innerHTML = '<p class="pfob-empty">No projects found</p>';
         return;
     }
 
     let html = `
-        <table class="bcwp-table">
+        <table class="pfob-table">
             <thead>
                 <tr>
                     <th>Project</th>
@@ -214,9 +214,9 @@ function renderProjectsTable(data) {
                 <td>${stats.total_todos}</td>
                 <td>${stats.completed_todos}</td>
                 <td>
-                    <div class="bcwp-progress-bar">
-                        <div class="bcwp-progress-fill" style="width: ${completionRate}%"></div>
-                        <span class="bcwp-progress-text">${completionRate}%</span>
+                    <div class="pfob-progress-bar">
+                        <div class="pfob-progress-fill" style="width: ${completionRate}%"></div>
+                        <span class="pfob-progress-text">${completionRate}%</span>
                     </div>
                 </td>
                 <td>${stats.total_documents}</td>
@@ -245,31 +245,31 @@ loadAnalytics();
 </script>
 
 <style>
-.bcwp-analytics {
+.pfob-analytics {
     max-width: 1400px;
     margin: 0 auto;
 }
 
-.bcwp-page-header {
+.pfob-page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
 }
 
-.bcwp-analytics-controls {
+.pfob-analytics-controls {
     display: flex;
     gap: 15px;
     align-items: center;
 }
 
-.bcwp-loading {
+.pfob-loading {
     text-align: center;
     padding: 60px 20px;
     color: #666;
 }
 
-.bcwp-spinner {
+.pfob-spinner {
     width: 40px;
     height: 40px;
     margin: 0 auto 20px;
@@ -284,7 +284,7 @@ loadAnalytics();
     100% { transform: rotate(360deg); }
 }
 
-.bcwp-analytics-section {
+.pfob-analytics-section {
     background: white;
     border-radius: 8px;
     padding: 30px;
@@ -292,19 +292,19 @@ loadAnalytics();
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.bcwp-analytics-section h2 {
+.pfob-analytics-section h2 {
     margin: 0 0 20px 0;
     font-size: 20px;
     color: #333;
 }
 
-.bcwp-stats-grid {
+.pfob-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
 }
 
-.bcwp-stat-card {
+.pfob-stat-card {
     background: #f8f9fa;
     border-radius: 8px;
     padding: 25px;
@@ -313,64 +313,64 @@ loadAnalytics();
     transition: all 0.3s;
 }
 
-.bcwp-stat-card:hover {
+.pfob-stat-card:hover {
     border-color: #2d9061;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.bcwp-stat-card-highlight {
+.pfob-stat-card-highlight {
     background: #fff3cd;
     border-color: #ffc107;
 }
 
-.bcwp-stat-card-success {
+.pfob-stat-card-success {
     background: #d4edda;
     border-color: #28a745;
 }
 
-.bcwp-stat-icon {
+.pfob-stat-icon {
     font-size: 36px;
     margin-bottom: 10px;
 }
 
-.bcwp-stat-value {
+.pfob-stat-value {
     font-size: 32px;
     font-weight: bold;
     color: #2d9061;
     margin-bottom: 5px;
 }
 
-.bcwp-stat-label {
+.pfob-stat-label {
     font-size: 14px;
     color: #666;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.bcwp-chart-container {
+.pfob-chart-container {
     position: relative;
     height: 300px;
     margin-top: 20px;
 }
 
-.bcwp-projects-table {
+.pfob-projects-table {
     overflow-x: auto;
 }
 
-.bcwp-table {
+.pfob-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.bcwp-table th,
-.bcwp-table td {
+.pfob-table th,
+.pfob-table td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
 }
 
-.bcwp-table th {
+.pfob-table th {
     background: #f8f9fa;
     font-weight: 600;
     color: #666;
@@ -379,11 +379,11 @@ loadAnalytics();
     letter-spacing: 0.5px;
 }
 
-.bcwp-table tbody tr:hover {
+.pfob-table tbody tr:hover {
     background: #f8f9fa;
 }
 
-.bcwp-progress-bar {
+.pfob-progress-bar {
     position: relative;
     height: 24px;
     background: #e0e0e0;
@@ -392,7 +392,7 @@ loadAnalytics();
     min-width: 100px;
 }
 
-.bcwp-progress-fill {
+.pfob-progress-fill {
     position: absolute;
     top: 0;
     left: 0;
@@ -401,7 +401,7 @@ loadAnalytics();
     transition: width 0.5s ease;
 }
 
-.bcwp-progress-text {
+.pfob-progress-text {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -411,46 +411,46 @@ loadAnalytics();
     color: #333;
 }
 
-.bcwp-empty {
+.pfob-empty {
     text-align: center;
     padding: 40px;
     color: #999;
     font-style: italic;
 }
 
-.bcwp-error {
+.pfob-error {
     text-align: center;
     padding: 40px;
     color: #dc3545;
 }
 
 @media (max-width: 768px) {
-    .bcwp-page-header {
+    .pfob-page-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
     }
 
-    .bcwp-stats-grid {
+    .pfob-stats-grid {
         grid-template-columns: 1fr;
     }
 
-    .bcwp-analytics-section {
+    .pfob-analytics-section {
         padding: 20px;
     }
 
-    .bcwp-table {
+    .pfob-table {
         font-size: 14px;
     }
 
-    .bcwp-table th,
-    .bcwp-table td {
+    .pfob-table th,
+    .pfob-table td {
         padding: 8px;
     }
 }
 </style>
 
-<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
 
 </body>
 </html>

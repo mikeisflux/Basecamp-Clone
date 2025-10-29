@@ -284,14 +284,14 @@ class PFOB_Usage {
     private static function calculate_local_storage_usage( $user_id ) {
         global $wpdb;
 
-        $documents_table = BCWP_Database::get_table_name( 'documents' );
+        $documents_table = PFOB_Database::get_table_name( 'documents' );
 
         // Get all documents for projects the user is a member of
         $total_size = $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT SUM(d.file_size)
                 FROM {$documents_table} d
-                INNER JOIN " . BCWP_Database::get_table_name( 'project_members' ) . " pm
+                INNER JOIN " . PFOB_Database::get_table_name( 'project_members' ) . " pm
                 ON d.project_id = pm.project_id
                 WHERE pm.user_id = %d
                 AND d.file_size IS NOT NULL",
@@ -311,8 +311,8 @@ class PFOB_Usage {
     public static function update_project_count( $user_id ) {
         global $wpdb;
 
-        $project_members_table = BCWP_Database::get_table_name( 'project_members' );
-        $projects_table = BCWP_Database::get_table_name( 'projects' );
+        $project_members_table = PFOB_Database::get_table_name( 'project_members' );
+        $projects_table = PFOB_Database::get_table_name( 'projects' );
 
         $count = $wpdb->get_var(
             $wpdb->prepare(

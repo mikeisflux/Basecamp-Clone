@@ -1,10 +1,10 @@
-# Basecamp WP Pro
+# ProjectFOB
 
 A complete Basecamp clone built as a single WordPress plugin with no third-party dependencies.
 
 ## Description
 
-Basecamp WP Pro transforms WordPress into a fully-featured project management system inspired by Basecamp. It provides a custom interface with all the tools teams need to collaborate, communicate, and manage projects effectively.
+ProjectFOB transforms WordPress into a fully-featured project management system inspired by Basecamp. It provides a custom interface with all the tools teams need to collaborate, communicate, and manage projects effectively.
 
 ## Features
 
@@ -148,9 +148,9 @@ The plugin uses CSS variables for easy customization. Override these in your the
 
 ```css
 :root {
-    --bcwp-primary-color: #2d9061;
-    --bcwp-background-color: #f7f6f3;
-    --bcwp-text-color: #1d1d1d;
+    --pfob-primary-color: #2d9061;
+    --pfob-background-color: #f7f6f3;
+    --pfob-text-color: #1d1d1d;
 }
 ```
 

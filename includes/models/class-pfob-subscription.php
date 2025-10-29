@@ -48,7 +48,7 @@ class PFOB_Subscription {
 
         if ( $subscription_id ) {
             // Log activity
-            BCWP_Database::insert( 'activities', array(
+            PFOB_Database::insert( 'activities', array(
                 'user_id'      => $data['user_id'],
                 'action_type'  => 'subscription.created',
                 'subject_type' => 'subscription',

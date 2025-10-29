@@ -3,55 +3,55 @@
  * Message board template
  */
 
-global $bcwp_project;
+global $pfob_project;
 
-BCWP_Template::header( $bcwp_project->name . ' - Messages' );
+PFOB_Template::header( $pfob_project->name . ' - Messages' );
 
-$messages = BCWP_Message::get_project_messages( $bcwp_project->id );
+$messages = PFOB_Message::get_project_messages( $pfob_project->id );
 ?>
 
-<div class="bcwp-container">
-    <?php BCWP_Template::navigation(); ?>
+<div class="pfob-container">
+    <?php PFOB_Template::navigation(); ?>
 
-    <main class="bcwp-main bcwp-messages">
+    <main class="pfob-main pfob-messages">
 
-        <div class="bcwp-page-header">
+        <div class="pfob-page-header">
             <h1>Message Board</h1>
-            <button class="bcwp-btn bcwp-btn-primary" id="new-message-btn">
+            <button class="pfob-btn pfob-btn-primary" id="new-message-btn">
                 New Message
             </button>
         </div>
 
-        <div class="bcwp-messages-list">
+        <div class="pfob-messages-list">
             <?php if ( empty( $messages ) ) : ?>
-                <div class="bcwp-empty-state">
+                <div class="pfob-empty-state">
                     <h3>No messages yet</h3>
                     <p>Post the first message to get the conversation started.</p>
-                    <button class="bcwp-btn bcwp-btn-primary" onclick="document.getElementById('new-message-btn').click()">
+                    <button class="pfob-btn pfob-btn-primary" onclick="document.getElementById('new-message-btn').click()">
                         Post First Message
                     </button>
                 </div>
             <?php else : ?>
                 <?php foreach ( $messages as $message ) : ?>
-                    <div class="bcwp-message-card <?php echo $message->is_pinned ? 'bcwp-pinned' : ''; ?>">
-                        <div class="bcwp-message-header">
-                            <div class="bcwp-message-author">
-                                <?php echo BCWP_Template::user_avatar( $message->author_id, 40 ); ?>
+                    <div class="pfob-message-card <?php echo $message->is_pinned ? 'pfob-pinned' : ''; ?>">
+                        <div class="pfob-message-header">
+                            <div class="pfob-message-author">
+                                <?php echo PFOB_Template::user_avatar( $message->author_id, 40 ); ?>
                                 <div>
-                                    <strong><?php echo esc_html( BCWP_Auth_Service::get_user_display_name( $message->author_id ) ); ?></strong>
-                                    <span class="bcwp-message-date"><?php echo BCWP_Template::format_date( $message->created_at ); ?></span>
+                                    <strong><?php echo esc_html( PFOB_Auth_Service::get_user_display_name( $message->author_id ) ); ?></strong>
+                                    <span class="pfob-message-date"><?php echo PFOB_Template::format_date( $message->created_at ); ?></span>
                                 </div>
                             </div>
                             <?php if ( $message->is_pinned ) : ?>
-                                <span class="bcwp-pinned-badge">Pinned</span>
+                                <span class="pfob-pinned-badge">Pinned</span>
                             <?php endif; ?>
                         </div>
-                        <h3 class="bcwp-message-title">
-                            <a href="<?php echo home_url( '/projectfob/projects/' . $bcwp_project->slug . '/messages/' . $message->id . '/' ); ?>">
+                        <h3 class="pfob-message-title">
+                            <a href="<?php echo home_url( '/projectfob/projects/' . $pfob_project->slug . '/messages/' . $message->id . '/' ); ?>">
                                 <?php echo esc_html( $message->title ); ?>
                             </a>
                         </h3>
-                        <div class="bcwp-message-excerpt">
+                        <div class="pfob-message-excerpt">
                             <?php echo wp_trim_words( $message->content, 50 ); ?>
                         </div>
                     </div>
@@ -63,18 +63,18 @@ $messages = BCWP_Message::get_project_messages( $bcwp_project->id );
 </div>
 
 <script>
-const bcwpData = {
+const pfobData = {
     ajaxUrl: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
-    restUrl: '<?php echo rest_url( 'bcwp/v1' ); ?>',
+    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
-    projectId: <?php echo $bcwp_project->id; ?>,
+    projectId: <?php echo $pfob_project->id; ?>,
     currentUser: <?php echo json_encode( array(
         'id' => get_current_user_id(),
         'name' => wp_get_current_user()->display_name,
     ) ); ?>
 };
 </script>
-<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
 
 </body>
 </html>

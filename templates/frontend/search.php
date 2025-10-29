@@ -3,32 +3,32 @@
  * Universal Search
  */
 
-BCWP_Template::header( 'Search' );
+PFOB_Template::header( 'Search' );
 ?>
 
-<div class="bcwp-container">
-    <?php BCWP_Template::navigation(); ?>
+<div class="pfob-container">
+    <?php PFOB_Template::navigation(); ?>
 
-    <main class="bcwp-main bcwp-search">
+    <main class="pfob-main pfob-search">
 
-        <div class="bcwp-page-header">
+        <div class="pfob-page-header">
             <h1>Search</h1>
-            <p class="bcwp-subtitle">Search across all your projects and content</p>
+            <p class="pfob-subtitle">Search across all your projects and content</p>
         </div>
 
-        <div class="bcwp-search-container">
-            <div class="bcwp-search-input-wrapper">
-                <span class="bcwp-search-icon">🔍</span>
+        <div class="pfob-search-container">
+            <div class="pfob-search-input-wrapper">
+                <span class="pfob-search-icon">🔍</span>
                 <input type="text"
                        id="search-input"
-                       class="bcwp-search-input"
+                       class="pfob-search-input"
                        placeholder="Search for projects, messages, todos, files..."
                        autocomplete="off"
                        autofocus>
-                <button id="clear-search" class="bcwp-search-clear" style="display: none;">×</button>
+                <button id="clear-search" class="pfob-search-clear" style="display: none;">×</button>
             </div>
 
-            <div class="bcwp-search-filters">
+            <div class="pfob-search-filters">
                 <label>
                     <input type="checkbox" name="type" value="projects" checked> Projects
                 </label>
@@ -49,11 +49,11 @@ BCWP_Template::header( 'Search' );
                 </label>
             </div>
 
-            <div id="search-status" class="bcwp-search-status"></div>
+            <div id="search-status" class="pfob-search-status"></div>
 
-            <div id="search-results" class="bcwp-search-results"></div>
+            <div id="search-results" class="pfob-search-results"></div>
 
-            <div class="bcwp-search-empty" id="search-empty">
+            <div class="pfob-search-empty" id="search-empty">
                 <p>Start typing to search across all your content...</p>
             </div>
         </div>
@@ -62,8 +62,8 @@ BCWP_Template::header( 'Search' );
 </div>
 
 <script>
-const bcwpData = {
-    restUrl: '<?php echo rest_url( 'bcwp/v1' ); ?>',
+const pfobData = {
+    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
 };
 
@@ -123,8 +123,8 @@ async function performSearch(query) {
 
     try {
         const response = await fetch(
-            `${bcwpData.restUrl}/search?q=${encodeURIComponent(query)}&types=${selectedTypes}`,
-            { headers: { 'X-WP-Nonce': bcwpData.nonce } }
+            `${pfobData.restUrl}/search?q=${encodeURIComponent(query)}&types=${selectedTypes}`,
+            { headers: { 'X-WP-Nonce': pfobData.nonce } }
         );
 
         const result = await response.json();
@@ -136,7 +136,7 @@ async function performSearch(query) {
                 : '';
 
             if (result.total === 0) {
-                searchResults.innerHTML = '<div class="bcwp-no-results"><p>No results found for "' + escapeHtml(query) + '"</p></div>';
+                searchResults.innerHTML = '<div class="pfob-no-results"><p>No results found for "' + escapeHtml(query) + '"</p></div>';
             }
         }
     } catch (error) {
@@ -164,20 +164,20 @@ function displayResults(data, total) {
 
     typeOrder.forEach(type => {
         if (data[type] && data[type].length > 0) {
-            html += `<div class="bcwp-search-group">
-                <h3 class="bcwp-search-group-title">${typeLabels[type]} (${data[type].length})</h3>
-                <div class="bcwp-search-items">`;
+            html += `<div class="pfob-search-group">
+                <h3 class="pfob-search-group-title">${typeLabels[type]} (${data[type].length})</h3>
+                <div class="pfob-search-items">`;
 
             data[type].forEach(item => {
                 html += `
-                    <a href="${item.url}" class="bcwp-search-item">
-                        <div class="bcwp-search-item-icon">${item.icon}</div>
-                        <div class="bcwp-search-item-content">
-                            <div class="bcwp-search-item-title">${escapeHtml(item.title)}</div>
-                            ${item.excerpt ? `<div class="bcwp-search-item-excerpt">${escapeHtml(item.excerpt)}</div>` : ''}
-                            ${item.project ? `<div class="bcwp-search-item-meta">${escapeHtml(item.project)}</div>` : ''}
-                            ${item.date ? `<div class="bcwp-search-item-meta">${escapeHtml(item.date)}</div>` : ''}
-                            ${item.filesize ? `<div class="bcwp-search-item-meta">${escapeHtml(item.filesize)}</div>` : ''}
+                    <a href="${item.url}" class="pfob-search-item">
+                        <div class="pfob-search-item-icon">${item.icon}</div>
+                        <div class="pfob-search-item-content">
+                            <div class="pfob-search-item-title">${escapeHtml(item.title)}</div>
+                            ${item.excerpt ? `<div class="pfob-search-item-excerpt">${escapeHtml(item.excerpt)}</div>` : ''}
+                            ${item.project ? `<div class="pfob-search-item-meta">${escapeHtml(item.project)}</div>` : ''}
+                            ${item.date ? `<div class="pfob-search-item-meta">${escapeHtml(item.date)}</div>` : ''}
+                            ${item.filesize ? `<div class="pfob-search-item-meta">${escapeHtml(item.filesize)}</div>` : ''}
                         </div>
                     </a>
                 `;
@@ -207,7 +207,7 @@ searchInput.addEventListener('keydown', (e) => {
     }
 });
 </script>
-<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
 
 </body>
 </html>

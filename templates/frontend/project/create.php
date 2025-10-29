@@ -6,44 +6,44 @@
 $user_id = get_current_user_id();
 $users = get_users( array( 'orderby' => 'display_name' ) );
 
-BCWP_Template::header( 'Create New Project' );
+PFOB_Template::header( 'Create New Project' );
 ?>
 
-<div class="bcwp-container">
-    <main class="bcwp-main bcwp-create-project">
+<div class="pfob-container">
+    <main class="pfob-main pfob-create-project">
 
-        <div class="bcwp-wizard-container">
-            <div class="bcwp-wizard-header">
+        <div class="pfob-wizard-container">
+            <div class="pfob-wizard-header">
                 <h1>Create a new project</h1>
-                <p class="bcwp-subtitle">Set up your project in a few simple steps</p>
+                <p class="pfob-subtitle">Set up your project in a few simple steps</p>
             </div>
 
-            <div class="bcwp-wizard-steps">
-                <div class="bcwp-wizard-step active" data-step="1">
-                    <div class="bcwp-step-number">1</div>
-                    <div class="bcwp-step-label">Basic Info</div>
+            <div class="pfob-wizard-steps">
+                <div class="pfob-wizard-step active" data-step="1">
+                    <div class="pfob-step-number">1</div>
+                    <div class="pfob-step-label">Basic Info</div>
                 </div>
-                <div class="bcwp-wizard-step" data-step="2">
-                    <div class="bcwp-step-number">2</div>
-                    <div class="bcwp-step-label">Choose Tools</div>
+                <div class="pfob-wizard-step" data-step="2">
+                    <div class="pfob-step-number">2</div>
+                    <div class="pfob-step-label">Choose Tools</div>
                 </div>
-                <div class="bcwp-wizard-step" data-step="3">
-                    <div class="bcwp-step-number">3</div>
-                    <div class="bcwp-step-label">Add Team</div>
+                <div class="pfob-wizard-step" data-step="3">
+                    <div class="pfob-step-number">3</div>
+                    <div class="pfob-step-label">Add Team</div>
                 </div>
-                <div class="bcwp-wizard-step" data-step="4">
-                    <div class="bcwp-step-number">4</div>
-                    <div class="bcwp-step-label">Review</div>
+                <div class="pfob-wizard-step" data-step="4">
+                    <div class="pfob-step-number">4</div>
+                    <div class="pfob-step-label">Review</div>
                 </div>
             </div>
 
             <form id="project-wizard-form">
 
                 <!-- Step 1: Basic Info -->
-                <div class="bcwp-wizard-content active" data-step="1">
+                <div class="pfob-wizard-content active" data-step="1">
                     <h2>What's this project about?</h2>
 
-                    <div class="bcwp-form-group">
+                    <div class="pfob-form-group">
                         <label for="project-name">Project name *</label>
                         <input type="text"
                                id="project-name"
@@ -54,7 +54,7 @@ BCWP_Template::header( 'Create New Project' );
                         <small>Give your project a clear, memorable name</small>
                     </div>
 
-                    <div class="bcwp-form-group">
+                    <div class="pfob-form-group">
                         <label for="project-description">Description (optional)</label>
                         <textarea id="project-description"
                                   name="description"
@@ -63,144 +63,144 @@ BCWP_Template::header( 'Create New Project' );
                         <small>What's the purpose or goal of this project?</small>
                     </div>
 
-                    <div class="bcwp-wizard-actions">
-                        <a href="<?php echo home_url( '/projectfob/dashboard' ); ?>" class="bcwp-btn bcwp-btn-secondary">
+                    <div class="pfob-wizard-actions">
+                        <a href="<?php echo home_url( '/projectfob/dashboard' ); ?>" class="pfob-btn pfob-btn-secondary">
                             Cancel
                         </a>
-                        <button type="button" class="bcwp-btn bcwp-btn-primary" data-next-step>
+                        <button type="button" class="pfob-btn pfob-btn-primary" data-next-step>
                             Next: Choose Tools
                         </button>
                     </div>
                 </div>
 
                 <!-- Step 2: Choose Tools -->
-                <div class="bcwp-wizard-content" data-step="2">
+                <div class="pfob-wizard-content" data-step="2">
                     <h2>Which tools do you want to use?</h2>
-                    <p class="bcwp-step-description">Select the Basecamp tools you need for this project. You can always add or remove tools later.</p>
+                    <p class="pfob-step-description">Select the Basecamp tools you need for this project. You can always add or remove tools later.</p>
 
-                    <div class="bcwp-tools-grid">
-                        <label class="bcwp-tool-card">
+                    <div class="pfob-tools-grid">
+                        <label class="pfob-tool-card">
                             <input type="checkbox" name="tools[]" value="messages" checked>
-                            <div class="bcwp-tool-icon">💬</div>
-                            <div class="bcwp-tool-name">Message Board</div>
-                            <div class="bcwp-tool-description">Post announcements, pitch ideas, progress updates, etc.</div>
+                            <div class="pfob-tool-icon">💬</div>
+                            <div class="pfob-tool-name">Message Board</div>
+                            <div class="pfob-tool-description">Post announcements, pitch ideas, progress updates, etc.</div>
                         </label>
 
-                        <label class="bcwp-tool-card">
+                        <label class="pfob-tool-card">
                             <input type="checkbox" name="tools[]" value="todos" checked>
-                            <div class="bcwp-tool-icon">✅</div>
-                            <div class="bcwp-tool-name">To-dos</div>
-                            <div class="bcwp-tool-description">Make lists of work, assign tasks, and track progress</div>
+                            <div class="pfob-tool-icon">✅</div>
+                            <div class="pfob-tool-name">To-dos</div>
+                            <div class="pfob-tool-description">Make lists of work, assign tasks, and track progress</div>
                         </label>
 
-                        <label class="bcwp-tool-card">
+                        <label class="pfob-tool-card">
                             <input type="checkbox" name="tools[]" value="documents" checked>
-                            <div class="bcwp-tool-icon">📄</div>
-                            <div class="bcwp-tool-name">Documents & Files</div>
-                            <div class="bcwp-tool-description">Share docs, files, images, and other assets</div>
+                            <div class="pfob-tool-icon">📄</div>
+                            <div class="pfob-tool-name">Documents & Files</div>
+                            <div class="pfob-tool-description">Share docs, files, images, and other assets</div>
                         </label>
 
-                        <label class="bcwp-tool-card">
+                        <label class="pfob-tool-card">
                             <input type="checkbox" name="tools[]" value="chat" checked>
-                            <div class="bcwp-tool-icon">💬</div>
-                            <div class="bcwp-tool-name">Campfire</div>
-                            <div class="bcwp-tool-description">Group chat for quick, casual conversations</div>
+                            <div class="pfob-tool-icon">💬</div>
+                            <div class="pfob-tool-name">Campfire</div>
+                            <div class="pfob-tool-description">Group chat for quick, casual conversations</div>
                         </label>
 
-                        <label class="bcwp-tool-card">
+                        <label class="pfob-tool-card">
                             <input type="checkbox" name="tools[]" value="schedule" checked>
-                            <div class="bcwp-tool-icon">📅</div>
-                            <div class="bcwp-tool-name">Schedule</div>
-                            <div class="bcwp-tool-description">Set important dates and track events</div>
+                            <div class="pfob-tool-icon">📅</div>
+                            <div class="pfob-tool-name">Schedule</div>
+                            <div class="pfob-tool-description">Set important dates and track events</div>
                         </label>
 
-                        <label class="bcwp-tool-card">
+                        <label class="pfob-tool-card">
                             <input type="checkbox" name="tools[]" value="cards" checked>
-                            <div class="bcwp-tool-icon">🎴</div>
-                            <div class="bcwp-tool-name">Card Table</div>
-                            <div class="bcwp-tool-description">Visual workflow management with kanban boards</div>
+                            <div class="pfob-tool-icon">🎴</div>
+                            <div class="pfob-tool-name">Card Table</div>
+                            <div class="pfob-tool-description">Visual workflow management with kanban boards</div>
                         </label>
                     </div>
 
-                    <div class="bcwp-wizard-actions">
-                        <button type="button" class="bcwp-btn bcwp-btn-secondary" data-prev-step>
+                    <div class="pfob-wizard-actions">
+                        <button type="button" class="pfob-btn pfob-btn-secondary" data-prev-step>
                             Back
                         </button>
-                        <button type="button" class="bcwp-btn bcwp-btn-primary" data-next-step>
+                        <button type="button" class="pfob-btn pfob-btn-primary" data-next-step>
                             Next: Add Team
                         </button>
                     </div>
                 </div>
 
                 <!-- Step 3: Add Team -->
-                <div class="bcwp-wizard-content" data-step="3">
+                <div class="pfob-wizard-content" data-step="3">
                     <h2>Who should be on this project?</h2>
-                    <p class="bcwp-step-description">Add people to your project team. You can add more later.</p>
+                    <p class="pfob-step-description">Add people to your project team. You can add more later.</p>
 
-                    <div class="bcwp-team-list">
-                        <div class="bcwp-team-member">
+                    <div class="pfob-team-list">
+                        <div class="pfob-team-member">
                             <?php echo get_avatar( $user_id, 40 ); ?>
                             <div>
                                 <strong><?php echo wp_get_current_user()->display_name; ?></strong> (You)
-                                <span class="bcwp-member-role">Admin</span>
+                                <span class="pfob-member-role">Admin</span>
                             </div>
                         </div>
 
                         <?php foreach ( $users as $user ) : ?>
                             <?php if ( $user->ID == $user_id ) continue; ?>
-                            <label class="bcwp-team-member bcwp-team-member-selectable">
+                            <label class="pfob-team-member pfob-team-member-selectable">
                                 <input type="checkbox" name="members[]" value="<?php echo $user->ID; ?>">
                                 <?php echo get_avatar( $user->ID, 40 ); ?>
                                 <div>
                                     <strong><?php echo esc_html( $user->display_name ); ?></strong>
-                                    <span class="bcwp-member-email"><?php echo esc_html( $user->user_email ); ?></span>
+                                    <span class="pfob-member-email"><?php echo esc_html( $user->user_email ); ?></span>
                                 </div>
                             </label>
                         <?php endforeach; ?>
                     </div>
 
-                    <div class="bcwp-wizard-actions">
-                        <button type="button" class="bcwp-btn bcwp-btn-secondary" data-prev-step>
+                    <div class="pfob-wizard-actions">
+                        <button type="button" class="pfob-btn pfob-btn-secondary" data-prev-step>
                             Back
                         </button>
-                        <button type="button" class="bcwp-btn bcwp-btn-primary" data-next-step>
+                        <button type="button" class="pfob-btn pfob-btn-primary" data-next-step>
                             Next: Review
                         </button>
                     </div>
                 </div>
 
                 <!-- Step 4: Review -->
-                <div class="bcwp-wizard-content" data-step="4">
+                <div class="pfob-wizard-content" data-step="4">
                     <h2>Review your project</h2>
-                    <p class="bcwp-step-description">Everything look good? Create your project to get started!</p>
+                    <p class="pfob-step-description">Everything look good? Create your project to get started!</p>
 
-                    <div class="bcwp-review-section">
+                    <div class="pfob-review-section">
                         <h3>Project Details</h3>
-                        <div class="bcwp-review-item">
+                        <div class="pfob-review-item">
                             <strong>Name:</strong>
                             <span id="review-name">-</span>
                         </div>
-                        <div class="bcwp-review-item">
+                        <div class="pfob-review-item">
                             <strong>Description:</strong>
                             <span id="review-description">-</span>
                         </div>
                     </div>
 
-                    <div class="bcwp-review-section">
+                    <div class="pfob-review-section">
                         <h3>Tools Enabled</h3>
-                        <div id="review-tools" class="bcwp-review-tools"></div>
+                        <div id="review-tools" class="pfob-review-tools"></div>
                     </div>
 
-                    <div class="bcwp-review-section">
+                    <div class="pfob-review-section">
                         <h3>Team Members</h3>
-                        <div id="review-team" class="bcwp-review-team"></div>
+                        <div id="review-team" class="pfob-review-team"></div>
                     </div>
 
-                    <div class="bcwp-wizard-actions">
-                        <button type="button" class="bcwp-btn bcwp-btn-secondary" data-prev-step>
+                    <div class="pfob-wizard-actions">
+                        <button type="button" class="pfob-btn pfob-btn-secondary" data-prev-step>
                             Back
                         </button>
-                        <button type="submit" class="bcwp-btn bcwp-btn-primary">
+                        <button type="submit" class="pfob-btn pfob-btn-primary">
                             Create Project
                         </button>
                     </div>
@@ -213,8 +213,8 @@ BCWP_Template::header( 'Create New Project' );
 </div>
 
 <script>
-const bcwpData = {
-    restUrl: '<?php echo rest_url( 'bcwp/v1' ); ?>',
+const pfobData = {
+    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
 };
 
@@ -235,16 +235,16 @@ document.querySelectorAll('[data-prev-step]').forEach(btn => {
 
 function goToStep(step) {
     // Hide current step
-    document.querySelector(`.bcwp-wizard-content[data-step="${currentStep}"]`)?.classList.remove('active');
-    document.querySelector(`.bcwp-wizard-step[data-step="${currentStep}"]`)?.classList.remove('active');
+    document.querySelector(`.pfob-wizard-content[data-step="${currentStep}"]`)?.classList.remove('active');
+    document.querySelector(`.pfob-wizard-step[data-step="${currentStep}"]`)?.classList.remove('active');
 
     // Show new step
-    document.querySelector(`.bcwp-wizard-content[data-step="${step}"]`)?.classList.add('active');
-    document.querySelector(`.bcwp-wizard-step[data-step="${step}"]`)?.classList.add('active');
+    document.querySelector(`.pfob-wizard-content[data-step="${step}"]`)?.classList.add('active');
+    document.querySelector(`.pfob-wizard-step[data-step="${step}"]`)?.classList.add('active');
 
     // Mark previous steps as completed
     for (let i = 1; i < step; i++) {
-        document.querySelector(`.bcwp-wizard-step[data-step="${i}"]`)?.classList.add('completed');
+        document.querySelector(`.pfob-wizard-step[data-step="${i}"]`)?.classList.add('completed');
     }
 
     currentStep = step;
@@ -278,16 +278,16 @@ function populateReview() {
 
     // Tools
     const tools = Array.from(document.querySelectorAll('input[name="tools[]"]:checked'))
-        .map(cb => cb.closest('.bcwp-tool-card').querySelector('.bcwp-tool-name').textContent);
+        .map(cb => cb.closest('.pfob-tool-card').querySelector('.pfob-tool-name').textContent);
     document.getElementById('review-tools').innerHTML = tools.length > 0
-        ? tools.map(t => `<span class="bcwp-review-tag">${t}</span>`).join('')
-        : '<span class="bcwp-text-light">No tools selected</span>';
+        ? tools.map(t => `<span class="pfob-review-tag">${t}</span>`).join('')
+        : '<span class="pfob-text-light">No tools selected</span>';
 
     // Team members
     const members = Array.from(document.querySelectorAll('input[name="members[]"]:checked'))
-        .map(cb => cb.closest('.bcwp-team-member').querySelector('strong').textContent);
+        .map(cb => cb.closest('.pfob-team-member').querySelector('strong').textContent);
     members.unshift('<?php echo wp_get_current_user()->display_name; ?> (You)');
-    document.getElementById('review-team').innerHTML = members.map(m => `<span class="bcwp-review-tag">${m}</span>`).join('');
+    document.getElementById('review-team').innerHTML = members.map(m => `<span class="pfob-review-tag">${m}</span>`).join('');
 }
 
 // Form submission
@@ -307,11 +307,11 @@ document.getElementById('project-wizard-form').addEventListener('submit', async 
     submitBtn.textContent = 'Creating...';
 
     try {
-        const response = await fetch(bcwpData.restUrl + '/projects', {
+        const response = await fetch(pfobData.restUrl + '/projects', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-WP-Nonce': bcwpData.nonce
+                'X-WP-Nonce': pfobData.nonce
             },
             body: JSON.stringify(data)
         });
@@ -333,7 +333,7 @@ document.getElementById('project-wizard-form').addEventListener('submit', async 
     }
 });
 </script>
-<script src="<?php echo BCWP_PLUGIN_URL; ?>assets/js/frontend.js"></script>
+<script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js"></script>
 
 </body>
 </html>

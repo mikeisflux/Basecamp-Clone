@@ -1,14 +1,14 @@
 /**
- * Basecamp WP Pro - Frontend JavaScript
+ * ProjectFOB - Frontend JavaScript
  */
 
 class BasecampWP {
     constructor() {
-        if (typeof bcwpData !== 'undefined') {
-            this.restUrl = bcwpData.restUrl;
-            this.nonce = bcwpData.nonce;
-            this.currentUser = bcwpData.currentUser;
-            this.projectId = bcwpData.projectId || null;
+        if (typeof pfobData !== 'undefined') {
+            this.restUrl = pfobData.restUrl;
+            this.nonce = pfobData.nonce;
+            this.currentUser = pfobData.currentUser;
+            this.projectId = pfobData.projectId || null;
 
             this.init();
         }
@@ -86,30 +86,30 @@ class BasecampWP {
     // Create Project Modal
     showCreateProjectModal() {
         const modal = document.createElement('div');
-        modal.className = 'bcwp-modal';
+        modal.className = 'pfob-modal';
         modal.innerHTML = `
-            <div class="bcwp-modal-content">
-                <div class="bcwp-modal-header">
+            <div class="pfob-modal-content">
+                <div class="pfob-modal-header">
                     <h2>Make a new project</h2>
-                    <button class="bcwp-modal-close">&times;</button>
+                    <button class="pfob-modal-close">&times;</button>
                 </div>
-                <div class="bcwp-modal-body">
+                <div class="pfob-modal-body">
                     <form id="create-project-form">
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="project-name">Name this project *</label>
                             <input type="text" id="project-name" name="name" required
                                    placeholder="e.g. Office Renovation">
                         </div>
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="project-description">Add a description (optional)</label>
                             <textarea id="project-description" name="description" rows="3"
                                       placeholder="e.g. Plans and scheduling for expanding the office"></textarea>
                         </div>
-                        <div class="bcwp-form-actions">
-                            <button type="submit" class="bcwp-btn bcwp-btn-primary">
+                        <div class="pfob-form-actions">
+                            <button type="submit" class="pfob-btn pfob-btn-primary">
                                 Create Project
                             </button>
-                            <button type="button" class="bcwp-btn bcwp-btn-secondary bcwp-modal-close">
+                            <button type="button" class="pfob-btn pfob-btn-secondary pfob-modal-close">
                                 Cancel
                             </button>
                         </div>
@@ -121,7 +121,7 @@ class BasecampWP {
         document.body.appendChild(modal);
 
         // Close modal handlers
-        modal.querySelectorAll('.bcwp-modal-close').forEach(btn => {
+        modal.querySelectorAll('.pfob-modal-close').forEach(btn => {
             btn.addEventListener('click', () => modal.remove());
         });
 
@@ -155,7 +155,7 @@ class BasecampWP {
                 this.showToast('Project created successfully!', 'success');
 
                 // Remove modal
-                document.querySelector('.bcwp-modal')?.remove();
+                document.querySelector('.pfob-modal')?.remove();
 
                 // Redirect to project page
                 window.location.href = `/basecamp/projects/${result.data.slug}/`;
@@ -168,30 +168,30 @@ class BasecampWP {
     // Create Message Modal
     showCreateMessageModal() {
         const modal = document.createElement('div');
-        modal.className = 'bcwp-modal';
+        modal.className = 'pfob-modal';
         modal.innerHTML = `
-            <div class="bcwp-modal-content">
-                <div class="bcwp-modal-header">
+            <div class="pfob-modal-content">
+                <div class="pfob-modal-header">
                     <h2>New Message</h2>
-                    <button class="bcwp-modal-close">&times;</button>
+                    <button class="pfob-modal-close">&times;</button>
                 </div>
-                <div class="bcwp-modal-body">
+                <div class="pfob-modal-body">
                     <form id="create-message-form">
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="message-title">Title *</label>
                             <input type="text" id="message-title" name="title" required
                                    placeholder="What's this message about?">
                         </div>
-                        <div class="bcwp-form-group">
+                        <div class="pfob-form-group">
                             <label for="message-content">Message *</label>
                             <textarea id="message-content" name="content" rows="8" required
                                       placeholder="Write your message..."></textarea>
                         </div>
-                        <div class="bcwp-form-actions">
-                            <button type="submit" class="bcwp-btn bcwp-btn-primary">
+                        <div class="pfob-form-actions">
+                            <button type="submit" class="pfob-btn pfob-btn-primary">
                                 Post Message
                             </button>
-                            <button type="button" class="bcwp-btn bcwp-btn-secondary bcwp-modal-close">
+                            <button type="button" class="pfob-btn pfob-btn-secondary pfob-modal-close">
                                 Cancel
                             </button>
                         </div>
@@ -203,7 +203,7 @@ class BasecampWP {
         document.body.appendChild(modal);
 
         // Close modal handlers
-        modal.querySelectorAll('.bcwp-modal-close').forEach(btn => {
+        modal.querySelectorAll('.pfob-modal-close').forEach(btn => {
             btn.addEventListener('click', () => modal.remove());
         });
 
@@ -233,7 +233,7 @@ class BasecampWP {
 
             if (result.success) {
                 this.showToast('Message posted successfully!', 'success');
-                document.querySelector('.bcwp-modal')?.remove();
+                document.querySelector('.pfob-modal')?.remove();
 
                 // Reload page to show new message
                 window.location.reload();
@@ -284,10 +284,10 @@ class BasecampWP {
         }
 
         list.innerHTML = notifications.map(notif => `
-            <div class="bcwp-notification-item" data-id="${notif.id}">
+            <div class="pfob-notification-item" data-id="${notif.id}">
                 <h4>${this.escapeHtml(notif.title)}</h4>
                 <p>${this.escapeHtml(notif.message)}</p>
-                <span class="bcwp-notification-time">${this.formatDate(notif.created_at)}</span>
+                <span class="pfob-notification-time">${this.formatDate(notif.created_at)}</span>
             </div>
         `).join('');
     }
@@ -336,14 +336,14 @@ class BasecampWP {
         if (!chatContainer) return;
 
         const messageEl = document.createElement('div');
-        messageEl.className = 'bcwp-chat-message';
+        messageEl.className = 'pfob-chat-message';
         messageEl.innerHTML = `
-            <div class="bcwp-chat-avatar">
+            <div class="pfob-chat-avatar">
                 <img src="${message.user_avatar}" alt="${message.user_name}">
             </div>
-            <div class="bcwp-chat-content">
+            <div class="pfob-chat-content">
                 <strong>${this.escapeHtml(message.user_name)}</strong>
-                <span class="bcwp-chat-time">${this.formatDate(message.created_at)}</span>
+                <span class="pfob-chat-time">${this.formatDate(message.created_at)}</span>
                 <p>${this.escapeHtml(message.message)}</p>
             </div>
         `;
@@ -355,7 +355,7 @@ class BasecampWP {
     // Toast Notifications
     showToast(message, type = 'info') {
         const toast = document.createElement('div');
-        toast.className = `bcwp-toast bcwp-toast-${type}`;
+        toast.className = `pfob-toast pfob-toast-${type}`;
         toast.textContent = message;
         toast.style.cssText = `
             position: fixed;
@@ -400,5 +400,5 @@ class BasecampWP {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    window.bcwp = new BasecampWP();
+    window.pfob = new BasecampWP();
 });
