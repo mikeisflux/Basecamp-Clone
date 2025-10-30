@@ -54,7 +54,7 @@ $messages = PFOB_Chat::get_project_messages( $pfob_project->id, 50 );
 <script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/websocket-client.js"></script>
 <script>
 const pfobData = {
-    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
+    restUrl: '<?php echo rest_url( 'projectfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
     projectId: <?php echo $pfob_project->id; ?>,
     currentUser: <?php echo json_encode( array(

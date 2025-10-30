@@ -124,7 +124,7 @@ PFOB_Template::header( 'Import & Export' );
 
 <script>
 const pfobData = {
-    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
+    restUrl: '<?php echo rest_url( 'projectfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
 };
 

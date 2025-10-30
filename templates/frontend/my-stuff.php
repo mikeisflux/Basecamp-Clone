@@ -99,7 +99,7 @@ $assigned_todos = PFOB_Todo::get_user_assigned_items( $user_id );
 <script>
 const pfobData = {
     ajaxUrl: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
-    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
+    restUrl: '<?php echo rest_url( 'projectfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
     currentUser: <?php echo json_encode( array(
         'id' => $user_id,

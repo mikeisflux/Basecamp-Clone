@@ -39,7 +39,7 @@ class PFOB_Assets {
         // Localize script
         wp_localize_script( 'pfob-frontend', 'pfobData', array(
             'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-            'restUrl'     => rest_url( 'pfob/v1' ),
+            'restUrl'     => rest_url( 'projectfob/v1' ),
             'nonce'       => wp_create_nonce( 'wp_rest' ),
             'currentUser' => $this->get_current_user_data(),
             'strings'     => array(

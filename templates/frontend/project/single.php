@@ -65,7 +65,7 @@ PFOB_Template::header( $pfob_project->name );
 <script>
 const pfobData = {
     ajaxUrl: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
-    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
+    restUrl: '<?php echo rest_url( 'projectfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
     projectId: <?php echo $pfob_project->id; ?>,
     currentUser: <?php echo json_encode( array(

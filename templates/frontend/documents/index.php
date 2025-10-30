@@ -110,7 +110,7 @@ $documents = PFOB_Document::get_project_documents( $pfob_project->id, $current_f
 <script>
 const pfobData = {
     ajaxUrl: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
-    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
+    restUrl: '<?php echo rest_url( 'projectfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
     projectId: <?php echo $pfob_project->id; ?>,
     currentFolder: <?php echo $current_folder ? $current_folder : 'null'; ?>,

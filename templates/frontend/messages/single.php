@@ -128,7 +128,7 @@ PFOB_Template::header( $message->title . ' - ' . $pfob_project->name );
 
 <script>
 const pfobData = {
-    restUrl: '<?php echo rest_url( 'pfob/v1' ); ?>',
+    restUrl: '<?php echo rest_url( 'projectfob/v1' ); ?>',
     nonce: '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
     messageId: <?php echo $message->id; ?>,
     projectSlug: '<?php echo $pfob_project->slug; ?>',
