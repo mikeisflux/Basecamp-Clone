@@ -34,28 +34,27 @@ class PFOB_Core {
         require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-project.php';
         require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-message.php';
         require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-todo.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-todolist.php';
         require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-document.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-chat-room.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-chat-message.php';
+        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-chat.php';
         require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-event.php';
         require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-card.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-card-column.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-comment.php';
         require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-activity.php';
+        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-comment.php';
+        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-subscription.php';
+        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-billing-history.php';
+        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-usage.php';
 
         // Services
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-auth-service.php';
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-permission-service.php';
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-notification-service.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-activity-service.php';
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-search-service.php';
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-email-service.php';
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-digest-service.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-subscription-service.php';
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-paypal-service.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-storage-service.php';
+        require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-r2-storage-service.php';
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-file-service.php';
+        require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-analytics-service.php';
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-google-calendar-service.php';
         require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-websocket-service.php';
 
@@ -64,12 +63,8 @@ class PFOB_Core {
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-projects-endpoint.php';
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-messages-endpoint.php';
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-todos-endpoint.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-documents-endpoint.php';
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-chat-endpoint.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-schedule-endpoint.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-cards-endpoint.php';
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-activities-endpoint.php';
-        require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-comments-endpoint.php';
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-search-endpoint.php';
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-events-endpoint.php';
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-import-export-endpoint.php';
