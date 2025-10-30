@@ -50,6 +50,8 @@ class PFOB_Schema {
             role VARCHAR(50) NOT NULL DEFAULT 'member',
             permissions JSON,
             joined_at DATETIME NOT NULL,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
             PRIMARY KEY (id),
             UNIQUE KEY project_user (project_id, user_id),
             KEY user_id (user_id),
@@ -65,6 +67,8 @@ class PFOB_Schema {
             is_enabled TINYINT(1) NOT NULL DEFAULT 1,
             settings JSON,
             position INT NOT NULL DEFAULT 0,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
             PRIMARY KEY (id),
             UNIQUE KEY project_tool (project_id, tool_type)
         ) $charset_collate;";
@@ -273,6 +277,7 @@ class PFOB_Schema {
             metadata JSON,
             is_public TINYINT(1) NOT NULL DEFAULT 1,
             created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
             PRIMARY KEY (id),
             KEY project_id (project_id),
             KEY user_id (user_id),
