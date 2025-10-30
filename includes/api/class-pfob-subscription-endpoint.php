@@ -361,8 +361,42 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
             return new WP_Error( 'invalid_plan', 'Invalid subscription plan.', array( 'status' => 400 ) );
         }
 
-        // For now, require canceling current subscription and creating a new one
-        // In production, this should use PayPal's subscription revision API
-        return new WP_Error( 'not_implemented', 'Plan changes coming soon. Please cancel your current subscription and sign up for a new plan.', array( 'status' => 501 ) );
+        $new_plan = $plans[ $new_plan_id ];
+        $old_plan_id = $subscription->plan_id;
+
+        // Update subscription plan immediately
+        $result = PFOB_Subscription::update( $subscription->id, array(
+            'plan_id' => $new_plan_id,
+            'updated_at' => current_time( 'mysql' )
+        ) );
+
+        if ( ! $result ) {
+            return new WP_Error( 'update_failed', 'Failed to update subscription plan.', array( 'status' => 500 ) );
+        }
+
+        // Log activity
+        PFOB_Database::insert( 'pfob_activities', array(
+            'user_id' => $user_id,
+            'action_type' => 'subscription.plan_changed',
+            'subject_type' => 'subscription',
+            'subject_id' => $subscription->id,
+            'description' => "Changed plan from {$old_plan_id} to {$new_plan_id}",
+            'created_at' => current_time( 'mysql' ),
+            'updated_at' => current_time( 'mysql' )
+        ) );
+
+        // Note: PayPal subscription updates would need to be handled separately
+        // For now, plan changes are manual and admin can coordinate with PayPal
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'message' => 'Subscription plan updated successfully!',
+            'data' => array(
+                'old_plan' => $old_plan_id,
+                'new_plan' => $new_plan_id,
+                'plan_name' => $new_plan['name'],
+                'price' => $new_plan['price'],
+            ),
+        ), 200 );
     }
 }
