@@ -20,8 +20,8 @@ class PFOB_Activator {
         }
 
         // Check PHP version
-        if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
-            wp_die( __( 'ProjectFOB requires PHP 7.4 or higher.', 'projectfob' ) );
+        if ( version_compare( PHP_VERSION, '8.3', '<' ) ) {
+            wp_die( __( 'ProjectFOB requires PHP 8.3 or higher.', 'projectfob' ) );
         }
 
         // Create database tables
