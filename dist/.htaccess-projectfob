@@ -1,0 +1,35 @@
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+
+# BEGIN ProjectFOB - Disable Caching for Dynamic Pages
+<IfModule mod_headers.c>
+    # Disable caching for ProjectFOB pages
+    <FilesMatch "\.php$">
+        <If "%{REQUEST_URI} =~ m#/projectfob/#">
+            Header set Cache-Control "no-cache, no-store, must-revalidate"
+            Header set Pragma "no-cache"
+            Header set Expires "0"
+        </If>
+    </FilesMatch>
+</IfModule>
+
+# Disable caching for REST API endpoints
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_URI} ^/wp-json/projectfob/(.*)$
+    RewriteRule .* - [E=no-cache:1]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set Cache-Control "no-cache, no-store, must-revalidate" env=no-cache
+    Header always set Pragma "no-cache" env=no-cache
+    Header always set Expires "0" env=no-cache
+</IfModule>
+# END ProjectFOB
