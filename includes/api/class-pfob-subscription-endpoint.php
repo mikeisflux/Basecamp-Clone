@@ -6,7 +6,7 @@
  * @subpackage ProjectFOB/includes/api
  */
 
-class PFOB_Subscription_Endpoint {
+class PFOB_Subscription_Endpoint extends PFOB_REST_API {
 
     protected $namespace = 'projectfob/v1';
 

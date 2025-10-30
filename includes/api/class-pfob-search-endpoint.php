@@ -5,7 +5,7 @@
  * Handles universal search across all content types
  */
 
-class PFOB_Search_Endpoint {
+class PFOB_Search_Endpoint extends PFOB_REST_API {
 
     /**
      * Register routes
@@ -197,9 +197,10 @@ class PFOB_Search_Endpoint {
     /**
      * Check if user has permission
      *
+     * @param WP_REST_Request $request Request object
      * @return bool
      */
-    public function check_permission() {
+    public function check_permission( $request ) {
         return is_user_logged_in();
     }
 }

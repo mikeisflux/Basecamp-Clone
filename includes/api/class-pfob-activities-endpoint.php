@@ -124,9 +124,10 @@ class PFOB_Activities_Endpoint extends PFOB_REST_API {
     /**
      * Check if user has permission
      *
+     * @param WP_REST_Request $request Request object
      * @return bool
      */
-    public function check_permission() {
+    public function check_permission( $request ) {
         return is_user_logged_in();
     }
 }

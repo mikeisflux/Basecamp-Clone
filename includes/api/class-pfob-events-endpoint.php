@@ -5,7 +5,7 @@
  * Handles calendar events and iCal export
  */
 
-class PFOB_Events_Endpoint {
+class PFOB_Events_Endpoint extends PFOB_REST_API {
 
     /**
      * Register routes
@@ -238,8 +238,11 @@ class PFOB_Events_Endpoint {
 
     /**
      * Check permission
+     *
+     * @param WP_REST_Request $request Request object
+     * @return bool
      */
-    public function check_permission() {
+    public function check_permission( $request ) {
         return is_user_logged_in();
     }
 }

@@ -8,7 +8,7 @@
  * @subpackage ProjectFOB/includes/api
  */
 
-class PFOB_PayPal_Webhook_Endpoint {
+class PFOB_PayPal_Webhook_Endpoint extends PFOB_REST_API {
 
     protected $namespace = 'projectfob/v1';
 
