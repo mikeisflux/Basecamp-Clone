@@ -159,7 +159,7 @@
             }
 
             try {
-                const response = await fetch('/wp-json/pfob/v1/subscription/complete', {
+                const response = await fetch('/wp-json/projectfob/v1/subscription/complete', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

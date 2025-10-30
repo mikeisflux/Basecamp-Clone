@@ -253,7 +253,7 @@
             document.getElementById('submit-btn').disabled = true;
 
             try {
-                const response = await fetch('/wp-json/pfob/v1/subscription/register', {
+                const response = await fetch('/wp-json/projectfob/v1/subscription/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
