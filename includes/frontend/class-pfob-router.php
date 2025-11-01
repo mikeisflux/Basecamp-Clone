@@ -48,6 +48,9 @@ class PFOB_Router {
         // Analytics
         add_rewrite_rule( '^projectfob/analytics/?$', 'index.php?pfob_page=analytics', 'top' );
 
+        // Personal Schedule (all events across all projects)
+        add_rewrite_rule( '^projectfob/schedule/?$', 'index.php?pfob_page=my-schedule', 'top' );
+
         // Settings
         add_rewrite_rule( '^projectfob/settings/notifications/?$', 'index.php?pfob_page=notifications', 'top' );
         add_rewrite_rule( '^projectfob/settings/calendar-integration/?$', 'index.php?pfob_page=calendar-integration', 'top' );
@@ -145,6 +148,7 @@ class PFOB_Router {
             'activity'        => $template_dir . 'activity-feed.php',
             'search'          => $template_dir . 'search.php',
             'analytics'       => $template_dir . 'analytics.php',
+            'my-schedule'     => $template_dir . 'my-schedule.php',
             'notifications'   => $template_dir . 'settings/notifications.php',
             'calendar-integration' => $template_dir . 'settings/calendar-integration.php',
             'import-export'   => $template_dir . 'settings/import-export.php',
