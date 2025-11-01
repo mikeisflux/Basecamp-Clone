@@ -228,6 +228,300 @@ function showCreateEventModal(date = null) {
 
 renderCalendar();
 </script>
+
+<style>
+.pfob-calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 30px 0;
+    padding: 0 20px;
+}
+
+.pfob-calendar-controls button {
+    background: #2d9061;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+
+.pfob-calendar-controls button:hover {
+    background: #247a50;
+}
+
+.pfob-calendar-controls h2 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+}
+
+.pfob-calendar {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pfob-calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    margin-bottom: 10px;
+    background: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+.pfob-calendar-day-name {
+    text-align: center;
+    font-weight: 600;
+    padding: 12px;
+    background: #f7f6f3;
+    color: #666;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pfob-calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+.pfob-calendar-cell {
+    background: white;
+    min-height: 100px;
+    padding: 8px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.pfob-calendar-cell.pfob-empty {
+    background: #f9f9f9;
+    cursor: default;
+}
+
+.pfob-calendar-cell:hover:not(.pfob-empty) {
+    background: #f0f9f4;
+}
+
+.pfob-day-number {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 14px;
+}
+
+.pfob-day-events {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 5px;
+}
+
+.pfob-event-dot {
+    width: 8px;
+    height: 8px;
+    background: #2d9061;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.pfob-event-dot:hover {
+    background: #247a50;
+    transform: scale(1.2);
+}
+
+.pfob-upcoming-events {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pfob-upcoming-events h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 20px;
+}
+
+.pfob-event-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+}
+
+.pfob-event-item:hover {
+    background: #f9f9f9;
+}
+
+.pfob-event-item:last-child {
+    border-bottom: none;
+}
+
+.pfob-event-date {
+    flex-shrink: 0;
+    width: 60px;
+    text-align: center;
+    font-weight: 600;
+    color: #2d9061;
+    font-size: 16px;
+}
+
+.pfob-event-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pfob-event-details strong {
+    color: #333;
+    font-size: 16px;
+}
+
+.pfob-event-details span {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Modal styles */
+.pfob-modal {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.pfob-modal-content {
+    background: white;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.pfob-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.pfob-modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.pfob-modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.pfob-modal-close:hover {
+    color: #333;
+}
+
+.pfob-modal-body {
+    padding: 20px;
+}
+
+.pfob-form-group {
+    margin-bottom: 20px;
+}
+
+.pfob-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.pfob-form-group input,
+.pfob-form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.pfob-form-group input:focus,
+.pfob-form-group textarea:focus {
+    outline: none;
+    border-color: #2d9061;
+}
+
+.pfob-form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* Today's date highlight */
+.pfob-calendar-cell.pfob-today .pfob-day-number {
+    background: #2d9061;
+    color: white;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pfob-calendar-cell {
+        min-height: 80px;
+        padding: 5px;
+    }
+
+    .pfob-day-number {
+        font-size: 12px;
+    }
+
+    .pfob-event-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .pfob-calendar-controls h2 {
+        font-size: 18px;
+    }
+}
+</style>
+
 <script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js?ver=<?php echo PFOB_VERSION; ?>"></script>
 
 </body>
