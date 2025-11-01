@@ -3,7 +3,7 @@
  * Plugin Name: ProjectFOB
  * Plugin URI: https://projectfob.com
  * Description: Every great plan deploys from the FOB. Complete project management and team collaboration SaaS platform with real-time features, subscriptions, and cloud storage.
- * Version: 2.2.2
+ * Version: 2.2.3
  * Author: Divinity Comics Inc
  * Author URI: https://projectfob.com
  * License: GPL-2.0+
@@ -45,7 +45,7 @@ function pfob_debug_log( $message, $level = 'INFO' ) {
 /**
  * Current plugin version.
  */
-define( 'PFOB_VERSION', '2.2.2' );
+define( 'PFOB_VERSION', '2.2.3' );
 
 /**
  * Plugin directory path.
@@ -245,6 +245,7 @@ if ( is_admin() ) {
     require_once PFOB_PLUGIN_DIR . 'includes/admin/class-pfob-subscription-manager.php';
 
     // Initialize admin components
+    new PFOB_Admin_Settings();
     new PFOB_Debug_Logger();
     new PFOB_Subscription_Manager();
 }
