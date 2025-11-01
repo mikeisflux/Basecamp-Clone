@@ -239,7 +239,7 @@ class PFOB_Debug_Logger {
 
     public function add_debug_menu() {
         add_submenu_page(
-            'projectfob-settings',
+            'projectfob',
             'Debug Logger',
             'Debug Logger',
             'manage_options',
