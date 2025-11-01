@@ -393,8 +393,3 @@ class PFOB_Admin_Settings {
         wp_send_json_success();
     }
 }
-
-// Initialize admin settings
-if ( is_admin() ) {
-    new PFOB_Admin_Settings();
-}

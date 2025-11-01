@@ -15,7 +15,7 @@ echo -e "${GREEN}=== ProjectFOB - WordPress Plugin Builder ===${NC}\n"
 
 # Configuration
 PLUGIN_SLUG="projectfob"
-VERSION="2.2.4"
+VERSION="2.2.5"
 BUILD_DIR="build"
 DIST_DIR="dist"
 PLUGIN_DIR="${BUILD_DIR}/${PLUGIN_SLUG}"
