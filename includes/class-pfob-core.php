@@ -75,6 +75,7 @@ class PFOB_Core {
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-paypal-webhook-endpoint.php';
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-subscription-endpoint.php';
         require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-user-endpoint.php';
+        require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-import-endpoint.php';
 
         // Frontend
         require_once PFOB_PLUGIN_DIR . 'includes/frontend/class-pfob-router.php';

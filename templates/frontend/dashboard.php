@@ -24,6 +24,9 @@ $view_mode = get_user_meta( $user_id, 'pfob_projects_view', true ) ?: 'grid';
                 <button class="pfob-btn pfob-btn-primary" id="create-project-btn">
                     Make a new project
                 </button>
+                <button class="pfob-btn pfob-btn-secondary" id="import-project-btn">
+                    Import from other PMS
+                </button>
                 <button class="pfob-btn pfob-btn-secondary" id="invite-people-btn">
                     Invite people
                 </button>
@@ -337,6 +340,189 @@ async function saveProjectOrder() {
     } catch (error) {
         console.error('Failed to save project order:', error);
     }
+}
+
+// Import Project from other PMS
+document.getElementById('import-project-btn')?.addEventListener('click', () => {
+    showImportProjectModal();
+});
+
+function showImportProjectModal() {
+    const modal = document.createElement('div');
+    modal.className = 'pfob-modal';
+    modal.id = 'import-project-modal';
+    modal.innerHTML = `
+        <div class="pfob-modal-content">
+            <div class="pfob-modal-header">
+                <h2>Import Project from Other PMS</h2>
+                <button class="pfob-modal-close">&times;</button>
+            </div>
+            <div class="pfob-modal-body">
+                <form id="import-project-form">
+                    <div class="pfob-form-group">
+                        <label>Project Name *</label>
+                        <input type="text"
+                               name="project_name"
+                               id="import-project-name"
+                               required
+                               placeholder="Enter project name">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            This will be the name of your new project
+                        </small>
+                    </div>
+
+                    <div class="pfob-form-group">
+                        <label>Upload Project Files (ZIP) *</label>
+                        <div class="pfob-file-upload-area" id="import-file-drop-zone">
+                            <input type="file"
+                                   name="project_zip"
+                                   id="import-project-zip"
+                                   accept=".zip"
+                                   required
+                                   style="display: none;">
+                            <div class="pfob-upload-placeholder">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <p><strong>Click to upload</strong> or drag and drop</p>
+                                <p style="font-size: 14px; color: #888;">ZIP file containing your project files</p>
+                            </div>
+                            <div class="pfob-upload-filename" style="display: none;">
+                                <span class="filename"></span>
+                                <button type="button" class="remove-file">&times;</button>
+                            </div>
+                        </div>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Upload a ZIP file exported from Basecamp or other project management systems
+                        </small>
+                    </div>
+
+                    <div class="pfob-import-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <p class="progress-text">Importing...</p>
+                    </div>
+
+                    <div class="pfob-form-actions">
+                        <button type="submit" class="pfob-btn pfob-btn-primary" id="import-submit-btn">
+                            Import Project
+                        </button>
+                        <button type="button" class="pfob-btn pfob-btn-secondary pfob-modal-close">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Modal close handlers
+    modal.querySelectorAll('.pfob-modal-close').forEach(btn => {
+        btn.addEventListener('click', () => modal.remove());
+    });
+
+    // File upload handling
+    const fileInput = document.getElementById('import-project-zip');
+    const dropZone = document.getElementById('import-file-drop-zone');
+    const filenameDisplay = dropZone.querySelector('.pfob-upload-filename');
+    const placeholder = dropZone.querySelector('.pfob-upload-placeholder');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            displayFile(file);
+        }
+    });
+
+    // Drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file && file.name.endsWith('.zip')) {
+            fileInput.files = e.dataTransfer.files;
+            displayFile(file);
+        } else {
+            alert('Please upload a ZIP file');
+        }
+    });
+
+    function displayFile(file) {
+        placeholder.style.display = 'none';
+        filenameDisplay.style.display = 'flex';
+        filenameDisplay.querySelector('.filename').textContent = file.name;
+    }
+
+    filenameDisplay.querySelector('.remove-file')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.value = '';
+        placeholder.style.display = 'block';
+        filenameDisplay.style.display = 'none';
+    });
+
+    // Form submission
+    document.getElementById('import-project-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const submitBtn = document.getElementById('import-submit-btn');
+        const progressDiv = document.querySelector('.pfob-import-progress');
+        const progressFill = document.querySelector('.progress-fill');
+        const progressText = document.querySelector('.progress-text');
+
+        // Disable submit button
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Importing...';
+
+        // Show progress
+        progressDiv.style.display = 'block';
+
+        try {
+            const response = await fetch(`${pfobData.restUrl}/projects/import`, {
+                method: 'POST',
+                headers: {
+                    'X-WP-Nonce': pfobData.nonce
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Import successful! Redirecting...';
+
+                // Redirect to new project
+                setTimeout(() => {
+                    window.location.href = result.data.project_url;
+                }, 1500);
+            } else {
+                throw new Error(result.message || 'Import failed');
+            }
+        } catch (error) {
+            console.error('Failed to import project:', error);
+            alert('Failed to import project: ' + error.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Import Project';
+            progressDiv.style.display = 'none';
+        }
+    });
 }
 </script>
 <script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js?ver=<?php echo PFOB_VERSION; ?>"></script>

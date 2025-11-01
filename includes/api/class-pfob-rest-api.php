@@ -27,6 +27,7 @@ class PFOB_REST_API {
             new PFOB_PayPal_Webhook_Endpoint(),
             new PFOB_Subscription_Endpoint(),
             new PFOB_User_Endpoint(),
+            new PFOB_Import_Endpoint(),
         );
 
         foreach ( $endpoints as $endpoint ) {
@@ -38,6 +39,13 @@ class PFOB_REST_API {
      * Check if user is authenticated.
      */
     public function check_permission( $request ) {
+        return is_user_logged_in();
+    }
+
+    /**
+     * Check if user is authenticated (alias for check_permission).
+     */
+    public function check_user_permission( $request ) {
         return is_user_logged_in();
     }
 
