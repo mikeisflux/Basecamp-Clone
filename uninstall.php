@@ -13,8 +13,22 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 // Load database schema class
 require_once plugin_dir_path( __FILE__ ) . 'includes/database/class-pfob-schema.php';
 
-// Drop all tables
-PFOB_Schema::drop_tables();
+// IMPORTANT: For a SaaS product, we DO NOT delete user data on uninstall.
+// Subscriptions, projects, and user data must be preserved.
+// Only delete tables if explicitly enabled by admin (default: KEEP DATA)
+$delete_data_on_uninstall = get_option( 'pfob_delete_data_on_uninstall', '0' );
+
+if ( $delete_data_on_uninstall === '1' ) {
+    // Drop all tables (ONLY if admin explicitly enabled this option)
+    PFOB_Schema::drop_tables();
+} else {
+    // Default behavior: Keep all data for future reinstalls
+    // This preserves:
+    // - User subscriptions and billing history
+    // - Projects and all project data
+    // - Files and documents
+    // - Messages, todos, and activities
+}
 
 // Delete all options
 $options = array(
@@ -40,33 +54,37 @@ foreach ( $options as $option ) {
     delete_option( $option );
 }
 
-// Delete uploaded files
-$upload_dir = WP_CONTENT_DIR . '/uploads/bcwp/';
-if ( file_exists( $upload_dir ) ) {
-    // Recursive delete function
-    function pfob_delete_directory( $dir ) {
-        if ( ! file_exists( $dir ) ) {
-            return true;
-        }
-
-        if ( ! is_dir( $dir ) ) {
-            return unlink( $dir );
-        }
-
-        foreach ( scandir( $dir ) as $item ) {
-            if ( $item == '.' || $item == '..' ) {
-                continue;
+// Delete uploaded files (ONLY if explicitly enabled)
+if ( $delete_data_on_uninstall === '1' ) {
+    $upload_dir = WP_CONTENT_DIR . '/uploads/bcwp/';
+    if ( file_exists( $upload_dir ) ) {
+        // Recursive delete function
+        function pfob_delete_directory( $dir ) {
+            if ( ! file_exists( $dir ) ) {
+                return true;
             }
 
-            if ( ! pfob_delete_directory( $dir . DIRECTORY_SEPARATOR . $item ) ) {
-                return false;
+            if ( ! is_dir( $dir ) ) {
+                return unlink( $dir );
             }
+
+            foreach ( scandir( $dir ) as $item ) {
+                if ( $item == '.' || $item == '..' ) {
+                    continue;
+                }
+
+                if ( ! pfob_delete_directory( $dir . DIRECTORY_SEPARATOR . $item ) ) {
+                    return false;
+                }
+            }
+
+            return rmdir( $dir );
         }
 
-        return rmdir( $dir );
+        pfob_delete_directory( $upload_dir );
     }
-
-    pfob_delete_directory( $upload_dir );
+} else {
+    // Keep all uploaded files for future reinstalls
 }
 
 // Clear any cached data
