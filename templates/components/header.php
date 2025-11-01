@@ -34,8 +34,8 @@
                 <?php echo PFOB_Auth_Service::get_user_avatar( get_current_user_id(), 32 ); ?>
                 <span class="pfob-user-name"><?php echo esc_html( wp_get_current_user()->display_name ); ?></span>
                 <div class="pfob-user-dropdown">
-                    <?php if ( current_user_can( 'manage_options' ) ) : ?>
-                        <a href="<?php echo admin_url( 'admin.php?page=projectfob' ); ?>">Settings</a>
+                    <?php if ( PFOB_Subscription::is_active( get_current_user_id() ) ) : ?>
+                        <a href="<?php echo admin_url( 'admin.php?page=projectfob' ); ?>">Admin</a>
                     <?php endif; ?>
                     <a href="<?php echo wp_logout_url( home_url( '/projectfob/' ) ); ?>">Sign out</a>
                 </div>

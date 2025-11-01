@@ -13,6 +13,7 @@ class PFOB_Admin_Settings {
      */
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+        add_action( 'admin_menu', array( $this, 'hide_admin_menu_for_non_subscribers' ), 999 );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
         add_action( 'admin_notices', array( $this, 'show_activation_notice' ) );
@@ -33,7 +34,7 @@ class PFOB_Admin_Settings {
         add_menu_page(
             'ProjectFOB',
             'ProjectFOB',
-            'manage_options',
+            'read',
             'projectfob',
             array( $this, 'dashboard_page' ),
             'dashicons-groups',
@@ -45,7 +46,7 @@ class PFOB_Admin_Settings {
             'projectfob',
             'Dashboard',
             'Dashboard',
-            'manage_options',
+            'read',
             'projectfob',
             array( $this, 'dashboard_page' )
         );
@@ -55,7 +56,7 @@ class PFOB_Admin_Settings {
             'projectfob',
             'Settings',
             'Settings',
-            'manage_options',
+            'read',
             'projectfob-settings',
             array( $this, 'settings_page' )
         );
@@ -65,7 +66,7 @@ class PFOB_Admin_Settings {
             'projectfob',
             'Users & Subscriptions',
             'Users',
-            'manage_options',
+            'read',
             'projectfob-users',
             array( $this, 'users_page' )
         );
@@ -75,10 +76,25 @@ class PFOB_Admin_Settings {
             'projectfob',
             'Billing & Revenue',
             'Billing',
-            'manage_options',
+            'read',
             'projectfob-billing',
             array( $this, 'billing_page' )
         );
+    }
+
+    /**
+     * Hide admin menu for users without active subscriptions
+     */
+    public function hide_admin_menu_for_non_subscribers() {
+        // Don't hide for WordPress admins
+        if ( current_user_can( 'manage_options' ) ) {
+            return;
+        }
+
+        // Hide menu if user doesn't have active subscription
+        if ( ! PFOB_Subscription::is_active( get_current_user_id() ) ) {
+            remove_menu_page( 'projectfob' );
+        }
     }
 
     /**
@@ -118,6 +134,11 @@ class PFOB_Admin_Settings {
      * Dashboard page
      */
     public function dashboard_page() {
+        // Check if user has active subscription or is WordPress admin
+        if ( ! PFOB_Subscription::is_active( get_current_user_id() ) && ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'You do not have permission to access this page. An active subscription is required.', 'projectfob' ) );
+        }
+
         include PFOB_PLUGIN_DIR . 'templates/admin/dashboard.php';
     }
 
@@ -125,6 +146,11 @@ class PFOB_Admin_Settings {
      * Settings page
      */
     public function settings_page() {
+        // Check if user has active subscription or is WordPress admin
+        if ( ! PFOB_Subscription::is_active( get_current_user_id() ) && ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'You do not have permission to access this page. An active subscription is required.', 'projectfob' ) );
+        }
+
         // Save settings if submitted
         if ( isset( $_POST['pfob_save_settings'] ) && check_admin_referer( 'pfob_settings_save' ) ) {
             $this->save_settings();
@@ -137,6 +163,11 @@ class PFOB_Admin_Settings {
      * Users page
      */
     public function users_page() {
+        // Check if user has active subscription or is WordPress admin
+        if ( ! PFOB_Subscription::is_active( get_current_user_id() ) && ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'You do not have permission to access this page. An active subscription is required.', 'projectfob' ) );
+        }
+
         include PFOB_PLUGIN_DIR . 'templates/admin/users.php';
     }
 
@@ -144,6 +175,11 @@ class PFOB_Admin_Settings {
      * Billing page
      */
     public function billing_page() {
+        // Check if user has active subscription or is WordPress admin
+        if ( ! PFOB_Subscription::is_active( get_current_user_id() ) && ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'You do not have permission to access this page. An active subscription is required.', 'projectfob' ) );
+        }
+
         include PFOB_PLUGIN_DIR . 'templates/admin/billing.php';
     }
 
