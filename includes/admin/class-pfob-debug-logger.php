@@ -31,6 +31,8 @@ class PFOB_Debug_Logger {
         add_action('template_redirect', array($this, 'log_template_redirect'), 1);
         add_action('rest_api_init', array($this, 'log_rest_api_init'), 1);
         add_filter('rest_pre_dispatch', array($this, 'log_rest_pre_dispatch'), 10, 3);
+        add_filter('rest_post_dispatch', array($this, 'log_rest_post_dispatch'), 10, 3);
+        add_filter('rest_request_after_callbacks', array($this, 'log_rest_response'), 10, 3);
         add_action('wp', array($this, 'log_wp_query'), 1);
 
         // Log PHP errors
@@ -155,6 +157,45 @@ class PFOB_Debug_Logger {
         }
 
         return $result;
+    }
+
+    public function log_rest_post_dispatch($response, $server, $request) {
+        $route = $request->get_route();
+
+        if (strpos($route, 'projectfob') !== false) {
+            $this->log('--- REST RESPONSE ---');
+
+            if (is_wp_error($response)) {
+                $this->log('❌ REST API ERROR');
+                $this->log('Error Code: ' . $response->get_error_code());
+                $this->log('Error Message: ' . $response->get_error_message());
+                $this->log('Error Data:', $response->get_error_data());
+            } else {
+                $status = $response->get_status();
+                if ($status >= 400) {
+                    $this->log('⚠️ REST API ERROR RESPONSE');
+                    $this->log('Status: ' . $status);
+                    $this->log('Response Data:', $response->get_data());
+                } else {
+                    $this->log('✅ REST API SUCCESS');
+                    $this->log('Status: ' . $status);
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    public function log_rest_response($response, $handler, $request) {
+        $route = $request->get_route();
+
+        if (strpos($route, 'projectfob') !== false && is_wp_error($response)) {
+            $this->log('--- REST CALLBACK ERROR ---');
+            $this->log('Route: ' . $route);
+            $this->log('Error: ' . $response->get_error_message());
+        }
+
+        return $response;
     }
 
     public function log_php_error($errno, $errstr, $errfile, $errline) {

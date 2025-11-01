@@ -11,7 +11,7 @@ class PFOB_Search_Endpoint extends PFOB_REST_API {
      * Register routes
      */
     public function register_routes() {
-        register_rest_route( 'pfob/v1', '/search', array(
+        register_rest_route( $this->namespace, '/search', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'search' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),

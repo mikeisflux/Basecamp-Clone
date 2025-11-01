@@ -12,14 +12,14 @@ class PFOB_Activities_Endpoint extends PFOB_REST_API {
      */
     public function register_routes() {
         // Get activities
-        register_rest_route( 'pfob/v1', '/activities', array(
+        register_rest_route( $this->namespace, '/activities', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'get_activities' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Poll for new activities
-        register_rest_route( 'pfob/v1', '/activities/poll', array(
+        register_rest_route( $this->namespace, '/activities/poll', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'poll_activities' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),

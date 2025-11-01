@@ -8,7 +8,7 @@
 
 class PFOB_Import_Export_Endpoint extends PFOB_REST_API {
 
-    protected $namespace = 'pfob/v1';
+    protected $namespace = 'projectfob/v1';
 
     /**
      * Register routes.

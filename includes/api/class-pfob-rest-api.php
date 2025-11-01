@@ -8,7 +8,7 @@
 
 class PFOB_REST_API {
 
-    protected $namespace = 'pfob/v1';
+    protected $namespace = 'projectfob/v1';
 
     public function register_routes() {
         $endpoints = array(

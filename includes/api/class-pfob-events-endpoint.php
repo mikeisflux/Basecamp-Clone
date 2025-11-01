@@ -12,35 +12,35 @@ class PFOB_Events_Endpoint extends PFOB_REST_API {
      */
     public function register_routes() {
         // Get events
-        register_rest_route( 'pfob/v1', '/projects/(?P<project_id>\d+)/events', array(
+        register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/events', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'get_events' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Create event
-        register_rest_route( 'pfob/v1', '/projects/(?P<project_id>\d+)/events', array(
+        register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/events', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'create_event' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // iCal export
-        register_rest_route( 'pfob/v1', '/projects/(?P<project_id>\d+)/events/ical', array(
+        register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/events/ical', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'export_ical' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Update event
-        register_rest_route( 'pfob/v1', '/events/(?P<id>\d+)', array(
+        register_rest_route( $this->namespace, '/events/(?P<id>\d+)', array(
             'methods'             => 'PATCH',
             'callback'            => array( $this, 'update_event' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
 
         // Delete event
-        register_rest_route( 'pfob/v1', '/events/(?P<id>\d+)', array(
+        register_rest_route( $this->namespace, '/events/(?P<id>\d+)', array(
             'methods'             => 'DELETE',
             'callback'            => array( $this, 'delete_event' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),
