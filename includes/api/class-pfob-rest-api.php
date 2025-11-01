@@ -26,6 +26,7 @@ class PFOB_REST_API {
             new PFOB_Notifications_Endpoint(),
             new PFOB_PayPal_Webhook_Endpoint(),
             new PFOB_Subscription_Endpoint(),
+            new PFOB_User_Endpoint(),
         );
 
         foreach ( $endpoints as $endpoint ) {

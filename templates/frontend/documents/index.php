@@ -9,6 +9,10 @@ PFOB_Template::header( $pfob_project->name . ' - Docs & Files' );
 
 $current_folder = isset( $_GET['folder'] ) ? intval( $_GET['folder'] ) : null;
 $documents = PFOB_Document::get_project_documents( $pfob_project->id, $current_folder );
+
+// Get user's preferred view (default: grid/tile)
+$user_id = get_current_user_id();
+$view_mode = get_user_meta( $user_id, 'pfob_files_view', true ) ?: 'grid';
 ?>
 
 <div class="pfob-container">
@@ -33,7 +37,31 @@ $documents = PFOB_Document::get_project_documents( $pfob_project->id, $current_f
             </div>
         </div>
 
-        <div class="pfob-documents-grid" id="documents-container">
+        <div class="pfob-view-controls" style="margin: 20px 0;">
+            <div class="pfob-view-toggle">
+                <button class="pfob-view-btn <?php echo $view_mode === 'grid' ? 'active' : ''; ?>"
+                        data-view="grid"
+                        title="Tile View">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="3" y="3" width="8" height="8"/>
+                        <rect x="13" y="3" width="8" height="8"/>
+                        <rect x="3" y="13" width="8" height="8"/>
+                        <rect x="13" y="13" width="8" height="8"/>
+                    </svg>
+                </button>
+                <button class="pfob-view-btn <?php echo $view_mode === 'list' ? 'active' : ''; ?>"
+                        data-view="list"
+                        title="List View">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="3" y="4" width="18" height="2"/>
+                        <rect x="3" y="11" width="18" height="2"/>
+                        <rect x="3" y="18" width="18" height="2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="pfob-documents-container pfob-view-<?php echo $view_mode; ?>" id="documents-container">
             <?php if ( empty( $documents ) ) : ?>
                 <div class="pfob-empty-state">
                     <h3>No files yet</h3>
@@ -46,7 +74,9 @@ $documents = PFOB_Document::get_project_documents( $pfob_project->id, $current_f
                 <?php foreach ( $documents as $doc ) : ?>
                     <div class="pfob-document-item <?php echo $doc->is_folder ? 'pfob-folder' : 'pfob-file'; ?>"
                          data-id="<?php echo $doc->id; ?>"
-                         data-type="<?php echo $doc->is_folder ? 'folder' : 'file'; ?>">
+                         data-type="<?php echo $doc->is_folder ? 'folder' : 'file'; ?>"
+                         draggable="true">
+                        <div class="pfob-drag-handle" title="Drag to reorder">⋮⋮</div>
 
                         <?php if ( $doc->is_folder ) : ?>
                             <a href="?folder=<?php echo $doc->id; ?>" class="pfob-document-link">
@@ -440,7 +470,238 @@ if (docsContainer) {
         }
     });
 }
+
+// View toggle functionality
+document.querySelectorAll('.pfob-view-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const view = this.dataset.view;
+        const container = document.getElementById('documents-container');
+
+        // Update UI
+        document.querySelectorAll('.pfob-view-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        // Update container class
+        container.className = `pfob-documents-container pfob-view-${view}`;
+
+        // Save preference
+        try {
+            await fetch(`${pfobData.restUrl}/user/preferences`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': pfobData.nonce
+                },
+                body: JSON.stringify({
+                    key: 'pfob_files_view',
+                    value: view
+                })
+            });
+        } catch (error) {
+            console.error('Failed to save view preference:', error);
+        }
+    });
+});
+
+// Drag and Drop for reordering
+let draggedElement = null;
+
+document.querySelectorAll('.pfob-document-item[draggable="true"]').forEach((item) => {
+    item.addEventListener('dragstart', function(e) {
+        draggedElement = this;
+        this.classList.add('pfob-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
+    });
+
+    item.addEventListener('dragend', function() {
+        this.classList.remove('pfob-dragging');
+        document.querySelectorAll('.pfob-drag-over').forEach(el => {
+            el.classList.remove('pfob-drag-over');
+        });
+    });
+
+    item.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (draggedElement !== this) {
+            this.classList.add('pfob-drag-over');
+        }
+        return false;
+    });
+
+    item.addEventListener('dragleave', function() {
+        this.classList.remove('pfob-drag-over');
+    });
+
+    item.addEventListener('drop', async function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (draggedElement !== this) {
+            const container = document.getElementById('documents-container');
+            const allItems = Array.from(container.querySelectorAll('.pfob-document-item'));
+            const draggedIdx = allItems.indexOf(draggedElement);
+            const targetIdx = allItems.indexOf(this);
+
+            // Reorder DOM
+            if (draggedIdx < targetIdx) {
+                this.parentNode.insertBefore(draggedElement, this.nextSibling);
+            } else {
+                this.parentNode.insertBefore(draggedElement, this);
+            }
+
+            // Save new order
+            await saveDocumentOrder();
+        }
+
+        this.classList.remove('pfob-drag-over');
+        return false;
+    });
+});
+
+async function saveDocumentOrder() {
+    const container = document.getElementById('documents-container');
+    const items = container.querySelectorAll('.pfob-document-item');
+    const order = Array.from(items).map(item => item.dataset.id);
+
+    try {
+        await fetch(`${pfobData.restUrl}/projects/${pfobData.projectId}/documents/order`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': pfobData.nonce
+            },
+            body: JSON.stringify({
+                folder_id: pfobData.currentFolder,
+                order: order
+            })
+        });
+    } catch (error) {
+        console.error('Failed to save document order:', error);
+    }
+}
 </script>
+
+<style>
+.pfob-view-toggle {
+    display: flex;
+    gap: 5px;
+    background: white;
+    padding: 4px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.pfob-view-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.pfob-view-btn:hover {
+    background: #f0f0f0;
+}
+
+.pfob-view-btn.active {
+    background: #2d9061;
+    color: white;
+}
+
+/* Grid View (Tiles) */
+.pfob-documents-container.pfob-view-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+/* List View */
+.pfob-documents-container.pfob-view-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pfob-view-list .pfob-document-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.pfob-view-list .pfob-document-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.pfob-view-list .pfob-document-link {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 15px;
+}
+
+.pfob-view-list .pfob-document-icon {
+    flex-shrink: 0;
+    font-size: 24px;
+}
+
+.pfob-view-list .pfob-document-info {
+    flex: 1;
+}
+
+.pfob-view-list .pfob-document-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.pfob-view-list .pfob-document-meta {
+    font-size: 0.85em;
+    color: #888;
+}
+
+.pfob-view-list .pfob-document-actions {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+}
+
+/* Drag handle */
+.pfob-drag-handle {
+    cursor: grab;
+    color: #ccc;
+    font-size: 18px;
+    margin-right: 8px;
+    user-select: none;
+    padding: 5px;
+}
+
+.pfob-drag-handle:active {
+    cursor: grabbing;
+}
+
+.pfob-document-item[draggable="true"]:hover .pfob-drag-handle {
+    color: #2d9061;
+}
+
+/* Dragging states */
+.pfob-document-item.pfob-dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.pfob-document-item.pfob-drag-over {
+    border-top: 3px solid #2d9061;
+}
+</style>
+
 <script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js?ver=<?php echo PFOB_VERSION; ?>"></script>
 
 </body>
