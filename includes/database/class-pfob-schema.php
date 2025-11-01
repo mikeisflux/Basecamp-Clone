@@ -48,6 +48,7 @@ class PFOB_Schema {
             project_id BIGINT UNSIGNED NOT NULL,
             user_id BIGINT UNSIGNED NOT NULL,
             role VARCHAR(50) NOT NULL DEFAULT 'member',
+            access_level VARCHAR(20) NOT NULL DEFAULT 'on_project',
             permissions JSON,
             joined_at DATETIME NOT NULL,
             created_at DATETIME NOT NULL,
@@ -55,7 +56,8 @@ class PFOB_Schema {
             PRIMARY KEY (id),
             UNIQUE KEY project_user (project_id, user_id),
             KEY user_id (user_id),
-            KEY role (role)
+            KEY role (role),
+            KEY access_level (access_level)
         ) $charset_collate;";
         dbDelta( $sql );
 

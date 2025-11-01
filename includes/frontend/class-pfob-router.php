@@ -42,6 +42,16 @@ class PFOB_Router {
         // Activity
         add_rewrite_rule( '^projectfob/activity/?$', 'index.php?pfob_page=activity', 'top' );
 
+        // Adminland (Account Management)
+        add_rewrite_rule( '^projectfob/adminland/?$', 'index.php?pfob_page=adminland', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/billing/?$', 'index.php?pfob_page=billing', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/upgrades/?$', 'index.php?pfob_page=upgrades', 'top' );
+
+        // People Management
+        add_rewrite_rule( '^projectfob/people/?$', 'index.php?pfob_page=people', 'top' );
+        add_rewrite_rule( '^projectfob/people/invite/?$', 'index.php?pfob_page=invite', 'top' );
+        add_rewrite_rule( '^projectfob/people/([^/]+)/projects/?$', 'index.php?pfob_page=user-projects&pfob_user=$matches[1]', 'top' );
+
         // Search
         add_rewrite_rule( '^projectfob/search/?$', 'index.php?pfob_page=search', 'top' );
 
@@ -79,6 +89,7 @@ class PFOB_Router {
         $vars[] = 'pfob_page';
         $vars[] = 'pfob_project';
         $vars[] = 'pfob_item';
+        $vars[] = 'pfob_user';
         $vars[] = 'pfob_public_page';
         return $vars;
     }
@@ -146,6 +157,12 @@ class PFOB_Router {
             'lineup'          => $template_dir . 'lineup.php',
             'my-stuff'        => $template_dir . 'my-stuff.php',
             'activity'        => $template_dir . 'activity-feed.php',
+            'adminland'       => $template_dir . 'adminland/index.php',
+            'billing'         => $template_dir . 'adminland/billing.php',
+            'upgrades'        => $template_dir . 'adminland/upgrades.php',
+            'people'          => $template_dir . 'people/index.php',
+            'invite'          => $template_dir . 'people/invite.php',
+            'user-projects'   => $template_dir . 'people/user-projects.php',
             'search'          => $template_dir . 'search.php',
             'analytics'       => $template_dir . 'analytics.php',
             'my-schedule'     => $template_dir . 'my-schedule.php',
