@@ -110,6 +110,34 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
                 ),
             ),
         ) );
+
+        // Add add-on to subscription
+        register_rest_route( $this->namespace, '/subscription/add-addon', array(
+            'methods'             => 'POST',
+            'callback'            => array( $this, 'add_addon' ),
+            'permission_callback' => 'is_user_logged_in',
+            'args'                => array(
+                'addon' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'enum' => array( 'timesheet', 'admin-pro' ),
+                ),
+            ),
+        ) );
+
+        // Remove add-on from subscription
+        register_rest_route( $this->namespace, '/subscription/remove-addon', array(
+            'methods'             => 'POST',
+            'callback'            => array( $this, 'remove_addon' ),
+            'permission_callback' => 'is_user_logged_in',
+            'args'                => array(
+                'addon' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'enum' => array( 'timesheet', 'admin-pro' ),
+                ),
+            ),
+        ) );
     }
 
     /**
@@ -397,6 +425,144 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
                 'plan_name' => $new_plan['name'],
                 'price' => $new_plan['price'],
             ),
+        ), 200 );
+    }
+
+    /**
+     * Add add-on to subscription.
+     */
+    public function add_addon( $request ) {
+        $user_id = get_current_user_id();
+        $addon = $request->get_param( 'addon' );
+
+        $subscription = PFOB_Subscription::get_by_user_id( $user_id );
+
+        if ( ! $subscription ) {
+            return new WP_Error( 'no_subscription', 'No active subscription found.', array( 'status' => 404 ) );
+        }
+
+        // Get current metadata
+        $metadata = $subscription->metadata ? json_decode( $subscription->metadata, true ) : array();
+
+        // Add-on mapping
+        $addon_map = array(
+            'timesheet' => 'addon_timesheet',
+            'admin-pro' => 'addon_admin_pro',
+        );
+
+        $addon_names = array(
+            'timesheet' => 'Timesheet',
+            'admin-pro' => 'Admin Pro Pack',
+        );
+
+        if ( ! isset( $addon_map[ $addon ] ) ) {
+            return new WP_Error( 'invalid_addon', 'Invalid add-on.', array( 'status' => 400 ) );
+        }
+
+        $addon_key = $addon_map[ $addon ];
+
+        // Check if already added
+        if ( isset( $metadata[ $addon_key ] ) && $metadata[ $addon_key ] ) {
+            return new WP_Error( 'addon_exists', 'This add-on is already active.', array( 'status' => 400 ) );
+        }
+
+        // Add the add-on
+        $metadata[ $addon_key ] = true;
+        $metadata[ $addon_key . '_added_at' ] = current_time( 'mysql' );
+
+        // Update subscription
+        $result = PFOB_Subscription::update( $subscription->id, array(
+            'metadata' => wp_json_encode( $metadata ),
+            'updated_at' => current_time( 'mysql' ),
+        ) );
+
+        if ( ! $result ) {
+            return new WP_Error( 'update_failed', 'Failed to add add-on.', array( 'status' => 500 ) );
+        }
+
+        // Log activity
+        PFOB_Database::insert( 'pfob_activities', array(
+            'user_id' => $user_id,
+            'action_type' => 'subscription.addon_added',
+            'subject_type' => 'subscription',
+            'subject_id' => $subscription->id,
+            'description' => "Added {$addon_names[$addon]} add-on (+$50/month)",
+            'created_at' => current_time( 'mysql' ),
+            'updated_at' => current_time( 'mysql' ),
+        ) );
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'message' => "{$addon_names[$addon]} has been added to your subscription! Your account has been instantly updated.",
+        ), 200 );
+    }
+
+    /**
+     * Remove add-on from subscription.
+     */
+    public function remove_addon( $request ) {
+        $user_id = get_current_user_id();
+        $addon = $request->get_param( 'addon' );
+
+        $subscription = PFOB_Subscription::get_by_user_id( $user_id );
+
+        if ( ! $subscription ) {
+            return new WP_Error( 'no_subscription', 'No active subscription found.', array( 'status' => 404 ) );
+        }
+
+        // Get current metadata
+        $metadata = $subscription->metadata ? json_decode( $subscription->metadata, true ) : array();
+
+        // Add-on mapping
+        $addon_map = array(
+            'timesheet' => 'addon_timesheet',
+            'admin-pro' => 'addon_admin_pro',
+        );
+
+        $addon_names = array(
+            'timesheet' => 'Timesheet',
+            'admin-pro' => 'Admin Pro Pack',
+        );
+
+        if ( ! isset( $addon_map[ $addon ] ) ) {
+            return new WP_Error( 'invalid_addon', 'Invalid add-on.', array( 'status' => 400 ) );
+        }
+
+        $addon_key = $addon_map[ $addon ];
+
+        // Check if addon is active
+        if ( ! isset( $metadata[ $addon_key ] ) || ! $metadata[ $addon_key ] ) {
+            return new WP_Error( 'addon_not_active', 'This add-on is not active.', array( 'status' => 400 ) );
+        }
+
+        // Remove the add-on
+        $metadata[ $addon_key ] = false;
+        $metadata[ $addon_key . '_removed_at' ] = current_time( 'mysql' );
+
+        // Update subscription
+        $result = PFOB_Subscription::update( $subscription->id, array(
+            'metadata' => wp_json_encode( $metadata ),
+            'updated_at' => current_time( 'mysql' ),
+        ) );
+
+        if ( ! $result ) {
+            return new WP_Error( 'update_failed', 'Failed to remove add-on.', array( 'status' => 500 ) );
+        }
+
+        // Log activity
+        PFOB_Database::insert( 'pfob_activities', array(
+            'user_id' => $user_id,
+            'action_type' => 'subscription.addon_removed',
+            'subject_type' => 'subscription',
+            'subject_id' => $subscription->id,
+            'description' => "Removed {$addon_names[$addon]} add-on (-$50/month)",
+            'created_at' => current_time( 'mysql' ),
+            'updated_at' => current_time( 'mysql' ),
+        ) );
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'message' => "{$addon_names[$addon]} has been removed from your subscription.",
         ), 200 );
     }
 }

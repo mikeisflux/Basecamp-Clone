@@ -18,10 +18,23 @@ if ( ! $subscription ) {
     wp_die( __( 'No active subscription found.', 'projectfob' ) );
 }
 
-$current_cost = 30; // Base plan
-$has_timesheet = get_user_meta( $user_id, 'pfob_addon_timesheet', true );
-$has_admin_pro = get_user_meta( $user_id, 'pfob_addon_admin_pro', true );
+// Get subscription plan configuration
+$plans_config = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+$plan = isset( $plans_config[ $subscription->plan_id ] ) ? $plans_config[ $subscription->plan_id ] : null;
 
+if ( ! $plan ) {
+    wp_die( __( 'Invalid subscription plan.', 'projectfob' ) );
+}
+
+// Get base plan cost
+$current_cost = $plan['price'];
+
+// Get add-ons from subscription metadata
+$metadata = $subscription->metadata ? json_decode( $subscription->metadata, true ) : array();
+$has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'];
+$has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin_pro'];
+
+// Calculate total cost with add-ons
 if ( $has_timesheet ) {
     $current_cost += 50;
 }

@@ -30,6 +30,7 @@ $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
                         <th>User</th>
                         <th>Email</th>
                         <th>Plan</th>
+                        <th>Add-ons</th>
                         <th>Status</th>
                         <th>Subscribed</th>
                         <th>Next Billing</th>
@@ -41,6 +42,11 @@ $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
                         <?php
                         $user = get_userdata( $subscription->user_id );
                         $plan = $plans[ $subscription->plan_id ] ?? array();
+
+                        // Get add-ons from subscription metadata
+                        $metadata = $subscription->metadata ? json_decode( $subscription->metadata, true ) : array();
+                        $has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'];
+                        $has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin_pro'];
                         ?>
                         <tr>
                             <td>
@@ -51,6 +57,25 @@ $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
                                 <strong><?php echo esc_html( $plan['name'] ?? ucfirst( $subscription->plan_id ) ); ?></strong>
                                 <br>
                                 <span style="color: #666;">$<?php echo number_format( $plan['price'] ?? 0, 2 ); ?>/mo</span>
+                            </td>
+                            <td>
+                                <div class="pfob-addons-toggle">
+                                    <label class="pfob-addon-checkbox">
+                                        <input type="checkbox"
+                                               data-subscription-id="<?php echo $subscription->id; ?>"
+                                               data-addon="timesheet"
+                                               <?php checked( $has_timesheet ); ?>>
+                                        Timesheet (+$50)
+                                    </label>
+                                    <br>
+                                    <label class="pfob-addon-checkbox">
+                                        <input type="checkbox"
+                                               data-subscription-id="<?php echo $subscription->id; ?>"
+                                               data-addon="admin-pro"
+                                               <?php checked( $has_admin_pro ); ?>>
+                                        Admin Pro (+$50)
+                                    </label>
+                                </div>
                             </td>
                             <td>
                                 <span class="status-badge status-<?php echo esc_attr( $subscription->status ); ?>">
@@ -118,4 +143,77 @@ $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
     background: #f8d7da;
     color: #721c24;
 }
+
+.pfob-addons-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pfob-addon-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.pfob-addon-checkbox input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.pfob-addon-checkbox input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
 </style>
+
+<script>
+jQuery(document).ready(function($) {
+    // Handle add-on toggle
+    $('.pfob-addon-checkbox input[type="checkbox"]').on('change', function() {
+        var $checkbox = $(this);
+        var subscriptionId = $checkbox.data('subscription-id');
+        var addon = $checkbox.data('addon');
+        var isChecked = $checkbox.prop('checked');
+
+        // Disable checkbox during request
+        $checkbox.prop('disabled', true);
+
+        // Determine the action (add or remove)
+        var action = isChecked ? 'pfob_admin_add_addon' : 'pfob_admin_remove_addon';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: action,
+                subscription_id: subscriptionId,
+                addon: addon,
+                nonce: '<?php echo wp_create_nonce( 'pfob_admin_addon_toggle' ); ?>'
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Show success message
+                    var message = isChecked ? 'Add-on enabled' : 'Add-on disabled';
+                    $('<div class="notice notice-success is-dismissible"><p>' + message + '</p></div>')
+                        .insertAfter('.wrap h1')
+                        .delay(3000)
+                        .fadeOut();
+                } else {
+                    // Revert checkbox on error
+                    $checkbox.prop('checked', !isChecked);
+                    alert('Error: ' + (response.data ? response.data.message : 'Unknown error'));
+                }
+                $checkbox.prop('disabled', false);
+            },
+            error: function() {
+                // Revert checkbox on error
+                $checkbox.prop('checked', !isChecked);
+                alert('AJAX request failed. Please try again.');
+                $checkbox.prop('disabled', false);
+            }
+        });
+    });
+});
+</script>

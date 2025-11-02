@@ -232,13 +232,110 @@ PFOB_Template::header( 'Adminland' );
             </div>
         </div>
     </div>
-    <?php endif; ?>
 </div>
 
 <style>
 .pfob-adminland {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 20px;
+}
+
+.pfob-page-header {
+    margin-bottom: 32px;
+}
+
+.pfob-page-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 32px;
+    color: #333;
+}
+
+.pfob-page-header p {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+}
+
+.pfob-subscription-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.pfob-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pfob-detail-item .pfob-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #999;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.pfob-detail-item .pfob-value {
+    font-size: 18px;
+    color: #333;
+    font-weight: 500;
+}
+
+.pfob-status-active {
+    color: #10b981;
+}
+
+.pfob-status-trialing {
+    color: #f59e0b;
+}
+
+.pfob-status-inactive {
+    color: #ef4444;
+}
+
+.pfob-plan-limits {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 6px;
+    margin-top: 20px;
+}
+
+.pfob-plan-limits h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.pfob-plan-limits ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.pfob-plan-limits li {
+    padding: 8px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.pfob-empty-state {
+    color: #999;
+    font-style: italic;
+}
+
+.pfob-empty-state a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.pfob-empty-state a:hover {
+    text-decoration: underline;
 }
 
 .pfob-upgrades-banner {

@@ -25,6 +25,8 @@ class PFOB_Admin_Settings {
         add_action( 'wp_ajax_pfob_sync_users', array( $this, 'ajax_sync_users' ) );
         add_action( 'wp_ajax_pfob_flush_rewrite_rules', array( $this, 'ajax_flush_rewrite_rules' ) );
         add_action( 'wp_ajax_pfob_dismiss_notice', array( $this, 'ajax_dismiss_notice' ) );
+        add_action( 'wp_ajax_pfob_admin_add_addon', array( $this, 'ajax_admin_add_addon' ) );
+        add_action( 'wp_ajax_pfob_admin_remove_addon', array( $this, 'ajax_admin_remove_addon' ) );
     }
 
     /**
@@ -509,5 +511,127 @@ class PFOB_Admin_Settings {
         delete_option( 'pfob_show_activation_notice' );
 
         wp_send_json_success();
+    }
+
+    /**
+     * AJAX handler to add addon to subscription
+     */
+    public function ajax_admin_add_addon() {
+        check_ajax_referer( 'pfob_admin_addon_toggle', 'nonce' );
+
+        // Only WordPress admins or subscription owners can toggle add-ons
+        if ( ! current_user_can( 'manage_options' ) && ! PFOB_Subscription::is_active( get_current_user_id() ) ) {
+            wp_send_json_error( array( 'message' => 'Permission denied' ) );
+        }
+
+        $subscription_id = isset( $_POST['subscription_id'] ) ? intval( $_POST['subscription_id'] ) : 0;
+        $addon = isset( $_POST['addon'] ) ? sanitize_text_field( $_POST['addon'] ) : '';
+
+        if ( ! $subscription_id || ! $addon ) {
+            wp_send_json_error( array( 'message' => 'Invalid parameters' ) );
+        }
+
+        // Get subscription
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
+        $subscription = $wpdb->get_row(
+            $wpdb->prepare( "SELECT * FROM {$table_name} WHERE id = %d", $subscription_id )
+        );
+
+        if ( ! $subscription ) {
+            wp_send_json_error( array( 'message' => 'Subscription not found' ) );
+        }
+
+        // Get metadata
+        $metadata = $subscription->metadata ? json_decode( $subscription->metadata, true ) : array();
+
+        // Map addon names
+        $addon_map = array(
+            'timesheet' => 'addon_timesheet',
+            'admin-pro' => 'addon_admin_pro',
+        );
+
+        if ( ! isset( $addon_map[ $addon ] ) ) {
+            wp_send_json_error( array( 'message' => 'Invalid addon' ) );
+        }
+
+        $addon_key = $addon_map[ $addon ];
+
+        // Add the add-on
+        $metadata[ $addon_key ] = true;
+        $metadata[ $addon_key . '_added_at' ] = current_time( 'mysql' );
+
+        // Update subscription
+        $wpdb->update(
+            $table_name,
+            array(
+                'metadata' => wp_json_encode( $metadata ),
+                'updated_at' => current_time( 'mysql' ),
+            ),
+            array( 'id' => $subscription_id )
+        );
+
+        wp_send_json_success( array( 'message' => 'Add-on enabled successfully' ) );
+    }
+
+    /**
+     * AJAX handler to remove addon from subscription
+     */
+    public function ajax_admin_remove_addon() {
+        check_ajax_referer( 'pfob_admin_addon_toggle', 'nonce' );
+
+        // Only WordPress admins or subscription owners can toggle add-ons
+        if ( ! current_user_can( 'manage_options' ) && ! PFOB_Subscription::is_active( get_current_user_id() ) ) {
+            wp_send_json_error( array( 'message' => 'Permission denied' ) );
+        }
+
+        $subscription_id = isset( $_POST['subscription_id'] ) ? intval( $_POST['subscription_id'] ) : 0;
+        $addon = isset( $_POST['addon'] ) ? sanitize_text_field( $_POST['addon'] ) : '';
+
+        if ( ! $subscription_id || ! $addon ) {
+            wp_send_json_error( array( 'message' => 'Invalid parameters' ) );
+        }
+
+        // Get subscription
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
+        $subscription = $wpdb->get_row(
+            $wpdb->prepare( "SELECT * FROM {$table_name} WHERE id = %d", $subscription_id )
+        );
+
+        if ( ! $subscription ) {
+            wp_send_json_error( array( 'message' => 'Subscription not found' ) );
+        }
+
+        // Get metadata
+        $metadata = $subscription->metadata ? json_decode( $subscription->metadata, true ) : array();
+
+        // Map addon names
+        $addon_map = array(
+            'timesheet' => 'addon_timesheet',
+            'admin-pro' => 'addon_admin_pro',
+        );
+
+        if ( ! isset( $addon_map[ $addon ] ) ) {
+            wp_send_json_error( array( 'message' => 'Invalid addon' ) );
+        }
+
+        $addon_key = $addon_map[ $addon ];
+
+        // Remove the add-on
+        $metadata[ $addon_key ] = false;
+        $metadata[ $addon_key . '_removed_at' ] = current_time( 'mysql' );
+
+        // Update subscription
+        $wpdb->update(
+            $table_name,
+            array(
+                'metadata' => wp_json_encode( $metadata ),
+                'updated_at' => current_time( 'mysql' ),
+            ),
+            array( 'id' => $subscription_id )
+        );
+
+        wp_send_json_success( array( 'message' => 'Add-on disabled successfully' ) );
     }
 }
