@@ -667,17 +667,18 @@ let originalTitle = document.title;
 const IDLE_CHECK_MINUTES = 30; // Check every 30 minutes
 const IDLE_TIMEOUT_SECONDS = 60; // Auto-stop after 60 seconds of no response
 
+// Make all functions globally available immediately
+window.startTimer = function() { return startTimer(); };
+window.pauseTimer = function() { return pauseTimer(); };
+window.stopTimer = function() { return stopTimer(); };
+window.loadMoreEntries = function() { return loadMoreEntries(); };
+window.openPopout = function() { return openPopout(); };
+window.updateCurrentWork = function() { return updateCurrentWork(); };
+window.confirmStillWorking = function() { return confirmStillWorking(); };
+window.stopTimerFromIdle = function() { return stopTimerFromIdle(); };
+
 document.addEventListener('DOMContentLoaded', function() {
     loadTimeEntries();
-
-    window.startTimer = startTimer;
-    window.pauseTimer = pauseTimer;
-    window.stopTimer = stopTimer;
-    window.loadMoreEntries = loadMoreEntries;
-    window.openPopout = openPopout;
-    window.updateCurrentWork = updateCurrentWork;
-    window.confirmStillWorking = confirmStillWorking;
-    window.stopTimerFromIdle = stopTimerFromIdle;
 });
 
 function updateCurrentWork() {
