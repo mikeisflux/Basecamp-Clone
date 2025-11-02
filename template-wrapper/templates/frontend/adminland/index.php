@@ -156,7 +156,7 @@ error_log( '[Adminland] Template header loaded successfully' );
             <small style="color: #666; font-style: italic;">Your next payment: $<?php echo number_format( $monthly_cost, 0 ); ?> on <?php echo $next_payment_date; ?>.</small>
         </a>
 
-        <a href="#" class="action-link" data-action="manage-storage">Manage storage</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/storage' ); ?>" class="action-link">Manage storage</a>
         <a href="#" class="action-link" data-action="manage-owners">Add/remove account owners</a>
         <a href="#" class="action-link" data-action="rename-account">Rename this account (<?php echo esc_html( $organization ); ?>)</a>
         <a href="#" class="action-link" data-action="view-trash">View everything in the trash</a>

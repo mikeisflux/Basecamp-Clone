@@ -45,6 +45,7 @@ class PFOB_Router {
         // Adminland (Account Management)
         add_rewrite_rule( '^projectfob/adminland/?$', 'index.php?pfob_page=adminland', 'top' );
         add_rewrite_rule( '^projectfob/adminland/billing/?$', 'index.php?pfob_page=billing', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/storage/?$', 'index.php?pfob_page=storage', 'top' );
         add_rewrite_rule( '^projectfob/adminland/upgrades/?$', 'index.php?pfob_page=upgrades', 'top' );
 
         // People Management
@@ -177,6 +178,7 @@ class PFOB_Router {
             'activity'        => $template_dir . 'activity-feed.php',
             'adminland'       => $template_dir . 'adminland/index.php',
             'billing'         => $template_dir . 'adminland/billing.php',
+            'storage'         => $template_dir . 'adminland/storage.php',
             'upgrades'        => $template_dir . 'adminland/upgrades.php',
             'people'          => $template_dir . 'people/index.php',
             'invite'          => $template_dir . 'people/invite.php',
