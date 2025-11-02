@@ -246,6 +246,11 @@ error_log( '[Adminland] Template header loaded successfully' );
 </div>
 
 <style>
+/* FORCE EVERYTHING TO STACK VERTICALLY - NO COLUMNS */
+.pfob-adminland * {
+    box-sizing: border-box !important;
+}
+
 .pfob-adminland {
     max-width: 1200px;
     margin: 0 auto;
@@ -269,22 +274,33 @@ error_log( '[Adminland] Template header loaded successfully' );
 }
 
 .pfob-subscription-details {
+    display: block !important;
+    width: 100% !important;
     margin-bottom: 24px;
 }
 
 .pfob-detail-item {
+    display: block !important;
+    width: 100% !important;
     margin-bottom: 16px;
+    float: none !important;
+    clear: both !important;
 }
 
 .pfob-detail-item .pfob-label {
+    display: block !important;
+    width: 100% !important;
     font-size: 12px;
     text-transform: uppercase;
     color: #999;
     font-weight: 600;
     letter-spacing: 0.5px;
+    margin-bottom: 4px;
 }
 
 .pfob-detail-item .pfob-value {
+    display: block !important;
+    width: 100% !important;
     font-size: 18px;
     color: #333;
     font-weight: 500;
@@ -347,6 +363,8 @@ error_log( '[Adminland] Template header loaded successfully' );
 }
 
 .pfob-adminland-section {
+    display: block !important;
+    width: 100% !important;
     background: white;
     padding: 32px;
     border-radius: 8px;
@@ -365,6 +383,8 @@ error_log( '[Adminland] Template header loaded successfully' );
 }
 
 .pfob-users-grid {
+    display: block !important;
+    width: 100% !important;
     margin-bottom: 30px;
 }
 
@@ -401,18 +421,25 @@ error_log( '[Adminland] Template header loaded successfully' );
 }
 
 .pfob-capabilities-list {
+    display: block !important;
+    width: 100% !important;
     list-style: none;
     padding: 0;
     margin: 0;
+    columns: unset !important;
+    column-count: 1 !important;
 }
 
 .pfob-capability-card {
-    display: block;
+    display: block !important;
+    width: 100% !important;
     padding: 10px 0;
     text-decoration: none;
     color: #0066cc;
     font-size: 15px;
     line-height: 1.5;
+    float: none !important;
+    clear: both !important;
 }
 
 .pfob-capability-card:hover {
@@ -420,6 +447,7 @@ error_log( '[Adminland] Template header loaded successfully' );
 }
 
 .pfob-capability-card .pfob-label {
+    display: inline !important;
     color: #0066cc;
 }
 
