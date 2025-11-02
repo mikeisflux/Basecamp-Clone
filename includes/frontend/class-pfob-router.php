@@ -48,6 +48,11 @@ class PFOB_Router {
         add_rewrite_rule( '^projectfob/adminland/storage/?$', 'index.php?pfob_page=storage', 'top' );
         add_rewrite_rule( '^projectfob/adminland/groups/?$', 'index.php?pfob_page=groups', 'top' );
         add_rewrite_rule( '^projectfob/adminland/companies/?$', 'index.php?pfob_page=companies', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/administrators/?$', 'index.php?pfob_page=administrators', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/invite-link/?$', 'index.php?pfob_page=invite-link', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/export/?$', 'index.php?pfob_page=export', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/public-items/?$', 'index.php?pfob_page=public-items', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/trash/?$', 'index.php?pfob_page=trash', 'top' );
         add_rewrite_rule( '^projectfob/adminland/upgrades/?$', 'index.php?pfob_page=upgrades', 'top' );
 
         // People Management
@@ -183,6 +188,11 @@ class PFOB_Router {
             'storage'         => $template_dir . 'adminland/storage.php',
             'groups'          => $template_dir . 'adminland/groups.php',
             'companies'       => $template_dir . 'adminland/companies.php',
+            'administrators'  => $template_dir . 'adminland/administrators.php',
+            'invite-link'     => $template_dir . 'adminland/invite-link.php',
+            'export'          => $template_dir . 'adminland/export.php',
+            'public-items'    => $template_dir . 'adminland/public-items.php',
+            'trash'           => $template_dir . 'adminland/trash.php',
             'upgrades'        => $template_dir . 'adminland/upgrades.php',
             'people'          => $template_dir . 'people/index.php',
             'invite'          => $template_dir . 'people/invite.php',

@@ -136,8 +136,8 @@ error_log( '[Adminland] Template header loaded successfully' );
         <h3 class="section-intro">You're an admin, so you can…</h3>
 
         <a href="<?php echo home_url( '/projectfob/people' ); ?>" class="action-link">Manage people</a>
-        <a href="#" class="action-link" data-action="manage-administrators">Add/remove administrators</a>
-        <a href="#" class="action-link" data-action="invite-link">Invite coworkers with a link</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/administrators' ); ?>" class="action-link">Add/remove administrators</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/invite-link' ); ?>" class="action-link">Invite coworkers with a link</a>
         <a href="<?php echo home_url( '/projectfob/adminland/groups' ); ?>" class="action-link">Manage groups</a>
         <a href="<?php echo home_url( '/projectfob/adminland/companies' ); ?>" class="action-link">Manage companies</a>
         <a href="#" class="action-link" data-action="rename-tools">Rename project tools</a>
@@ -158,16 +158,26 @@ error_log( '[Adminland] Template header loaded successfully' );
         <a href="<?php echo home_url( '/projectfob/adminland/storage' ); ?>" class="action-link">Manage storage</a>
         <a href="#" class="action-link" data-action="manage-owners">Add/remove account owners</a>
         <a href="#" class="action-link" data-action="rename-account">Rename this account (<?php echo esc_html( $organization ); ?>)</a>
-        <a href="#" class="action-link" data-action="view-trash">View everything in the trash</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/trash' ); ?>" class="action-link">View everything in the trash</a>
         <a href="#" class="action-link" data-action="reassign-todos">Reassign someone's to-dos</a>
-        <a href="#" class="action-link" data-action="access-projects">Access any project</a>
-        <a href="#" class="action-link" data-action="export-data">Export data from this account</a>
-        <a href="#" class="action-link" data-action="manage-public">Manage public items</a>
+        <a href="<?php echo home_url( '/projectfob' ); ?>" class="action-link">Access any project</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/export' ); ?>" class="action-link">Export data from this account</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/public-items' ); ?>" class="action-link">Manage public items</a>
         <a href="#" class="action-link" data-action="pause-account">Pause or cancel this account</a>
     </div>
 
-    <!-- Timesheet Upgrade -->
-    <?php if ( ! $has_timesheet ) : ?>
+    <!-- Timesheet Features or Upgrade -->
+    <?php if ( $has_timesheet ) : ?>
+    <div class="admin-section addon-section">
+        <h2 class="section-title">⏱️ Timesheet <span class="addon-badge">Active</span></h2>
+        <p style="margin-bottom: 16px;">Track time spent on projects and generate detailed reports.</p>
+
+        <a href="<?php echo home_url( '/projectfob/timesheet' ); ?>" class="action-link">View timesheet dashboard</a>
+        <a href="<?php echo home_url( '/projectfob/timesheet/reports' ); ?>" class="action-link">Time tracking reports</a>
+        <a href="<?php echo home_url( '/projectfob/timesheet/settings' ); ?>" class="action-link">Timesheet settings</a>
+        <a href="<?php echo home_url( '/projectfob/timesheet/export' ); ?>" class="action-link">Export time data</a>
+    </div>
+    <?php else : ?>
     <div class="admin-section upgrade-section">
         <h2 class="section-title">Timesheet <span class="upgrade-tag">Upgrade</span></h2>
         <p>Give your team the power to track time spent on projects.</p>
@@ -175,8 +185,18 @@ error_log( '[Adminland] Template header loaded successfully' );
     </div>
     <?php endif; ?>
 
-    <!-- Admin Pro Pack Upgrade -->
-    <?php if ( ! $has_admin_pro ) : ?>
+    <!-- Admin Pro Pack Features or Upgrade -->
+    <?php if ( $has_admin_pro ) : ?>
+    <div class="admin-section addon-section">
+        <h2 class="section-title">🔐 Admin Pro Pack <span class="addon-badge">Active</span></h2>
+        <p style="margin-bottom: 16px;">Advanced permissions, access controls, and administrative features.</p>
+
+        <a href="<?php echo home_url( '/projectfob/admin-pro/permissions' ); ?>" class="action-link">Advanced permissions settings</a>
+        <a href="<?php echo home_url( '/projectfob/admin-pro/access-logs' ); ?>" class="action-link">User access logs</a>
+        <a href="<?php echo home_url( '/projectfob/admin-pro/approval-workflows' ); ?>" class="action-link">Approval workflows</a>
+        <a href="<?php echo home_url( '/projectfob/admin-pro/custom-roles' ); ?>" class="action-link">Custom user roles</a>
+    </div>
+    <?php else : ?>
     <div class="admin-section upgrade-section">
         <h2 class="section-title">Admin Pro Pack <span class="upgrade-tag">Upgrade</span></h2>
         <p>The Admin Pro Pack is an upgrade for your account that gives you more control over permissions and access.</p>
@@ -285,6 +305,24 @@ error_log( '[Adminland] Template header loaded successfully' );
     background: #f8f9fa;
     padding-left: 8px;
     margin-left: -8px;
+}
+
+.addon-section {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    border-left: 4px solid #10b981;
+}
+
+.addon-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #065f46;
+    background: #d1fae5;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-left: 6px;
 }
 
 .upgrade-section {
