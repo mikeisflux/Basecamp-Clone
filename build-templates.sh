@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ProjectFOB - Templates Build Script
-# Creates a separate zip file for templates only
+# Creates an uploadable "theme" package that auto-installs templates
 
 set -e
 
@@ -16,13 +16,19 @@ echo -e "${GREEN}=== ProjectFOB - Templates Builder ===${NC}\n"
 # Configuration
 VERSION="2.6.8"
 DIST_DIR="dist"
+WRAPPER_DIR="template-wrapper"
 
 # Create dist directory if it doesn't exist
 mkdir -p ${DIST_DIR}
 
-# Create zip file from templates directory
-echo -e "${YELLOW}Creating templates archive...${NC}"
-cd templates
+# Sync latest templates to wrapper
+echo -e "${YELLOW}Syncing latest templates...${NC}"
+rm -rf ${WRAPPER_DIR}/templates
+cp -r templates ${WRAPPER_DIR}/templates
+
+# Create zip file from template-wrapper directory
+echo -e "${YELLOW}Creating uploadable templates package...${NC}"
+cd ${WRAPPER_DIR}
 zip -r "../${DIST_DIR}/projectfob-templates-${VERSION}.zip" . -q
 cd ..
 
@@ -38,11 +44,21 @@ echo -e "Location:  ${GREEN}${DIST_DIR}/projectfob-templates-${VERSION}.zip${NC}
 echo -e "Size:      ${GREEN}${FILESIZE}${NC}"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-echo -e "\n${GREEN}✓ Ready for upload!${NC}\n"
+echo -e "\n${GREEN}✓ Ready for WordPress upload!${NC}\n"
 
-echo -e "${YELLOW}Upload Instructions:${NC}"
-echo -e "  1. Upload to your WordPress site"
-echo -e "  2. Extract to wp-content/plugins/projectfob/templates/"
-echo -e "  3. Replace existing templates directory\n"
+echo -e "${YELLOW}Installation Instructions:${NC}"
+echo -e "  1. Go to WordPress Admin > Appearance > Themes"
+echo -e "  2. Click 'Add New' then 'Upload Theme'"
+echo -e "  3. Choose: ${DIST_DIR}/projectfob-templates-${VERSION}.zip"
+echo -e "  4. Click 'Install Now'"
+echo -e "  5. Click 'Activate'"
+echo -e "  6. Templates will auto-install and theme will switch back"
+echo -e "  7. Clear all caches (browser + WordPress)\n"
+
+echo -e "${YELLOW}What's Fixed in v2.6.8:${NC}"
+echo -e "  ✅ Removed ALL column layouts from adminland"
+echo -e "  ✅ Fixed subscription details vertical stacking"
+echo -e "  ✅ Fixed capabilities list layout"
+echo -e "  ✅ Everything displays as standard web page\n"
 
 echo -e "${GREEN}All done! 🚀${NC}\n"
