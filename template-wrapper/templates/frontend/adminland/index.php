@@ -83,402 +83,218 @@ if ( $has_admin_pro ) {
 // Get organization name
 $organization = get_user_meta( $user_id, 'pfob_organization', true ) ?: get_bloginfo( 'name' );
 
-// Get all invited users (people the subscriber has invited to their account)
-error_log( '[Adminland] Fetching invited users' );
-$invited_users = get_users( array(
-    'meta_query' => array(
-        array(
-            'key'   => 'pfob_account_owner',
-            'value' => $user_id,
-        ),
-    ),
-) );
-error_log( '[Adminland] Found ' . count( $invited_users ) . ' invited users' );
-
 error_log( '[Adminland] Calling template header' );
 PFOB_Template::header( 'Adminland' );
 error_log( '[Adminland] Template header loaded successfully' );
 ?>
 
-<div class="pfob-container pfob-adminland">
-    <div class="pfob-page-header">
-        <h1>🔧 Adminland</h1>
-        <p>Manage your ProjectFOB account</p>
-    </div>
+<div class="admin-page-wrapper">
+    <h1 class="admin-page-title">🔧 Adminland</h1>
+    <p class="admin-page-subtitle">Manage your ProjectFOB account</p>
 
-    <!-- Subscription Information -->
-    <div class="pfob-adminland-section pfob-subscription-info">
-        <h2>Your Subscription</h2>
-        <div class="pfob-subscription-details">
-            <div class="pfob-detail-item">
-                <span class="pfob-label">Plan:</span>
-                <span class="pfob-value"><?php echo esc_html( $plan['name'] ); ?> ($<?php echo esc_html( $plan['price'] ); ?>/month)</span>
-            </div>
-            <div class="pfob-detail-item">
-                <span class="pfob-label">Status:</span>
-                <span class="pfob-value pfob-status-<?php echo esc_attr( $subscription->status ); ?>"><?php echo esc_html( ucfirst( $subscription->status ) ); ?></span>
-            </div>
-            <div class="pfob-detail-item">
-                <span class="pfob-label">Next payment:</span>
-                <span class="pfob-value"><?php echo esc_html( $next_payment_date ); ?></span>
-            </div>
-            <div class="pfob-detail-item">
-                <span class="pfob-label">Monthly cost:</span>
-                <span class="pfob-value">$<?php echo esc_html( number_format( $monthly_cost, 2 ) ); ?></span>
-            </div>
+    <!-- Subscription Section -->
+    <div class="admin-section">
+        <h2 class="section-title">Your Subscription</h2>
+
+        <div class="info-row">
+            <strong>Plan:</strong> <?php echo esc_html( $plan['name'] ); ?> ($<?php echo esc_html( $plan['price'] ); ?>/month)
+        </div>
+
+        <div class="info-row">
+            <strong>Status:</strong> <span style="color: <?php echo $subscription->status === 'active' ? '#10b981' : '#f59e0b'; ?>;"><?php echo esc_html( ucfirst( $subscription->status ) ); ?></span>
+        </div>
+
+        <div class="info-row">
+            <strong>Next payment:</strong> <?php echo esc_html( $next_payment_date ); ?>
+        </div>
+
+        <div class="info-row">
+            <strong>Monthly cost:</strong> $<?php echo esc_html( number_format( $monthly_cost, 2 ) ); ?>
         </div>
 
         <?php if ( isset( $plan['features'] ) && is_array( $plan['features'] ) ) : ?>
-        <div class="pfob-plan-limits">
-            <h3>Your Plan Includes:</h3>
-            <ul>
-                <li>Projects: <?php echo ( isset( $plan['features']['projects'] ) && $plan['features']['projects'] == 999999 ) ? 'Unlimited' : ( $plan['features']['projects'] ?? '0' ); ?></li>
-                <li>Users: <?php echo ( isset( $plan['features']['users'] ) && $plan['features']['users'] == 999999 ) ? 'Unlimited' : ( $plan['features']['users'] ?? '0' ); ?></li>
-                <li>Storage: <?php echo ( isset( $plan['features']['storage_gb'] ) && $plan['features']['storage_gb'] == 999999 ) ? 'Unlimited' : ( ( $plan['features']['storage_gb'] ?? '0' ) . ' GB' ); ?></li>
-                <?php if ( ! empty( $plan['features']['google_calendar'] ) ) : ?>
-                <li>Google Calendar Integration</li>
-                <?php endif; ?>
-                <?php if ( ! empty( $plan['features']['advanced_analytics'] ) ) : ?>
-                <li>Advanced Analytics</li>
-                <?php endif; ?>
-                <?php if ( ! empty( $plan['features']['custom_branding'] ) ) : ?>
-                <li>Custom Branding</li>
-                <?php endif; ?>
-            </ul>
+        <div class="plan-features">
+            <h3 class="features-title">Your Plan Includes:</h3>
+            <div class="feature-item">Projects: <?php echo ( isset( $plan['features']['projects'] ) && $plan['features']['projects'] == 999999 ) ? 'Unlimited' : ( $plan['features']['projects'] ?? '0' ); ?></div>
+            <div class="feature-item">Users: <?php echo ( isset( $plan['features']['users'] ) && $plan['features']['users'] == 999999 ) ? 'Unlimited' : ( $plan['features']['users'] ?? '0' ); ?></div>
+            <div class="feature-item">Storage: <?php echo ( isset( $plan['features']['storage_gb'] ) && $plan['features']['storage_gb'] == 999999 ) ? 'Unlimited' : ( ( $plan['features']['storage_gb'] ?? '0' ) . ' GB' ); ?></div>
+            <?php if ( ! empty( $plan['features']['google_calendar'] ) ) : ?>
+            <div class="feature-item">Google Calendar Integration</div>
+            <?php endif; ?>
+            <?php if ( ! empty( $plan['features']['advanced_analytics'] ) ) : ?>
+            <div class="feature-item">Advanced Analytics</div>
+            <?php endif; ?>
+            <?php if ( ! empty( $plan['features']['custom_branding'] ) ) : ?>
+            <div class="feature-item">Custom Branding</div>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
     </div>
 
-    <!-- Administration Section -->
-    <div class="pfob-adminland-section">
-        <h3 class="pfob-section-intro">You're an admin, so you can…</h3>
+    <!-- Admin Capabilities -->
+    <div class="admin-section">
+        <h3 class="section-intro">You're an admin, so you can…</h3>
 
-        <div class="pfob-capabilities-list">
-            <a href="<?php echo home_url( '/projectfob/people' ); ?>" class="pfob-capability-card">
-                <span class="pfob-label">Manage people</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="manage-administrators">
-                <span class="pfob-label">Add/remove administrators</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="invite-link">
-                <span class="pfob-label">Invite coworkers with a link</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="manage-groups">
-                <span class="pfob-label">Manage groups</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="manage-companies">
-                <span class="pfob-label">Manage companies</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="rename-tools">
-                <span class="pfob-label">Rename project tools</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="message-categories">
-                <span class="pfob-label">Change message categories</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="move-projects">
-                <span class="pfob-label">Move projects from Basecamp 2 to Basecamp 4</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="merge-people">
-                <span class="pfob-label">Merge people</span>
-            </a>
-        </div>
+        <a href="<?php echo home_url( '/projectfob/people' ); ?>" class="action-link">Manage people</a>
+        <a href="#" class="action-link" data-action="manage-administrators">Add/remove administrators</a>
+        <a href="#" class="action-link" data-action="invite-link">Invite coworkers with a link</a>
+        <a href="#" class="action-link" data-action="manage-groups">Manage groups</a>
+        <a href="#" class="action-link" data-action="manage-companies">Manage companies</a>
+        <a href="#" class="action-link" data-action="rename-tools">Rename project tools</a>
+        <a href="#" class="action-link" data-action="message-categories">Change message categories</a>
+        <a href="#" class="action-link" data-action="move-projects">Move projects from Basecamp 2 to Basecamp 4</a>
+        <a href="#" class="action-link" data-action="merge-people">Merge people</a>
     </div>
 
-    <!-- Account Owners Section -->
-    <div class="pfob-adminland-section">
-        <h2>Account Owners</h2>
-        <h3 class="pfob-section-intro">You're an account owner, so you can…</h3>
+    <!-- Account Owner Capabilities -->
+    <div class="admin-section">
+        <h2 class="section-title">Account Owners</h2>
+        <h3 class="section-intro">You're an account owner, so you can…</h3>
 
-        <div class="pfob-capabilities-list">
-            <a href="<?php echo home_url( '/projectfob/adminland/billing' ); ?>" class="pfob-capability-card pfob-billing-card">
-                <div>
-                    <div class="pfob-label">Handle billing, invoices, packages, and upgrades</div>
-                    <div class="pfob-sublabel">Your next payment: $<?php echo number_format( $monthly_cost, 0 ); ?> on <?php echo $next_payment_date; ?>.</div>
-                </div>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="manage-storage">
-                <span class="pfob-label">Manage storage</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="manage-owners">
-                <span class="pfob-label">Add/remove account owners</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="rename-account">
-                <span class="pfob-label">Rename this account (<?php echo esc_html( $organization ); ?>)</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="view-trash">
-                <span class="pfob-label">View everything in the trash</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="reassign-todos">
-                <span class="pfob-label">Reassign someone's to-dos</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="access-projects">
-                <span class="pfob-label">Access any project</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="export-data">
-                <span class="pfob-label">Export data from this account</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="manage-public">
-                <span class="pfob-label">Manage public items</span>
-            </a>
-            <a href="#" class="pfob-capability-card" data-action="pause-account">
-                <span class="pfob-label">Pause or cancel this account</span>
-            </a>
-        </div>
+        <a href="<?php echo home_url( '/projectfob/adminland/billing' ); ?>" class="action-link">
+            <strong>Handle billing, invoices, packages, and upgrades</strong><br>
+            <small style="color: #666; font-style: italic;">Your next payment: $<?php echo number_format( $monthly_cost, 0 ); ?> on <?php echo $next_payment_date; ?>.</small>
+        </a>
+
+        <a href="#" class="action-link" data-action="manage-storage">Manage storage</a>
+        <a href="#" class="action-link" data-action="manage-owners">Add/remove account owners</a>
+        <a href="#" class="action-link" data-action="rename-account">Rename this account (<?php echo esc_html( $organization ); ?>)</a>
+        <a href="#" class="action-link" data-action="view-trash">View everything in the trash</a>
+        <a href="#" class="action-link" data-action="reassign-todos">Reassign someone's to-dos</a>
+        <a href="#" class="action-link" data-action="access-projects">Access any project</a>
+        <a href="#" class="action-link" data-action="export-data">Export data from this account</a>
+        <a href="#" class="action-link" data-action="manage-public">Manage public items</a>
+        <a href="#" class="action-link" data-action="pause-account">Pause or cancel this account</a>
     </div>
 
     <!-- Timesheet Upgrade -->
     <?php if ( ! $has_timesheet ) : ?>
-    <div class="pfob-adminland-section pfob-upgrade-section">
-        <h2>Timesheet <span class="pfob-upgrade-badge">Upgrade</span></h2>
+    <div class="admin-section upgrade-section">
+        <h2 class="section-title">Timesheet <span class="upgrade-tag">Upgrade</span></h2>
         <p>Give your team the power to track time spent on projects.</p>
-        <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="pfob-btn pfob-btn-secondary">Check out Timesheet</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="upgrade-button">Check out Timesheet</a>
     </div>
     <?php endif; ?>
 
     <!-- Admin Pro Pack Upgrade -->
     <?php if ( ! $has_admin_pro ) : ?>
-    <div class="pfob-adminland-section pfob-upgrade-section">
-        <h2>Admin Pro Pack <span class="pfob-upgrade-badge">Upgrade</span></h2>
+    <div class="admin-section upgrade-section">
+        <h2 class="section-title">Admin Pro Pack <span class="upgrade-tag">Upgrade</span></h2>
         <p>The Admin Pro Pack is an upgrade for your account that gives you more control over permissions and access.</p>
-        <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="pfob-btn pfob-btn-secondary">Check out the Admin Pro Pack</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="upgrade-button">Check out the Admin Pro Pack</a>
     </div>
     <?php endif; ?>
 </div>
 
 <style>
-/* FORCE EVERYTHING TO STACK VERTICALLY - NO COLUMNS */
-.pfob-adminland * {
-    box-sizing: border-box !important;
-}
-
-.pfob-adminland {
-    max-width: 1200px;
-    margin: 0 auto;
+/* SIMPLE VERTICAL LAYOUT - NO COLUMNS */
+.admin-page-wrapper {
+    max-width: 900px;
+    margin: 40px auto;
     padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.pfob-page-header {
-    margin-bottom: 32px;
-}
-
-.pfob-page-header h1 {
-    margin: 0 0 8px 0;
+.admin-page-title {
     font-size: 32px;
+    margin: 0 0 8px 0;
     color: #333;
 }
 
-.pfob-page-header p {
-    margin: 0;
+.admin-page-subtitle {
     font-size: 16px;
     color: #666;
+    margin: 0 0 32px 0;
 }
 
-.pfob-subscription-details {
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 24px;
-}
-
-.pfob-detail-item {
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 16px;
-    float: none !important;
-    clear: both !important;
-}
-
-.pfob-detail-item .pfob-label {
-    display: block !important;
-    width: 100% !important;
-    font-size: 12px;
-    text-transform: uppercase;
-    color: #999;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-}
-
-.pfob-detail-item .pfob-value {
-    display: block !important;
-    width: 100% !important;
-    font-size: 18px;
-    color: #333;
-    font-weight: 500;
-}
-
-.pfob-status-active {
-    color: #10b981;
-}
-
-.pfob-status-trialing {
-    color: #f59e0b;
-}
-
-.pfob-status-inactive {
-    color: #ef4444;
-}
-
-.pfob-plan-limits {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 6px;
-    margin-top: 20px;
-}
-
-.pfob-plan-limits h3 {
-    margin: 0 0 12px 0;
-    font-size: 16px;
-    color: #333;
-}
-
-.pfob-plan-limits ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.pfob-plan-limits li {
-    padding: 8px 0;
-    color: #666;
-    font-size: 14px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.pfob-plan-limits li:last-child {
-    border-bottom: none;
-}
-
-.pfob-empty-state {
-    color: #999;
-    font-style: italic;
-}
-
-.pfob-empty-state a {
-    color: #0066cc;
-    text-decoration: none;
-}
-
-.pfob-empty-state a:hover {
-    text-decoration: underline;
-}
-
-.pfob-adminland-section {
-    display: block !important;
-    width: 100% !important;
-    background: white;
-    padding: 32px;
+.admin-section {
+    background: #fff;
+    border: 1px solid #ddd;
     border-radius: 8px;
+    padding: 24px;
     margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.pfob-owner-section {
-    border-left: 4px solid #ffd700;
-}
-
-.pfob-adminland-section h2 {
-    margin: 0 0 20px 0;
+.section-title {
     font-size: 24px;
+    margin: 0 0 16px 0;
     color: #333;
 }
 
-.pfob-users-grid {
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 30px;
-}
-
-.pfob-user-avatar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.pfob-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #6b46c1;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 18px;
-}
-
-.pfob-avatar.owner {
-    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
-    color: #333;
-}
-
-.pfob-section-intro {
-    margin: 0 0 12px 0;
-    font-size: 15px;
+.section-intro {
+    font-size: 16px;
+    margin: 0 0 16px 0;
     color: #444;
     font-weight: normal;
 }
 
-.pfob-capabilities-list {
-    display: block !important;
-    width: 100% !important;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    columns: unset !important;
-    column-count: 1 !important;
-}
-
-.pfob-capability-card {
-    display: block !important;
-    width: 100% !important;
-    padding: 10px 0;
-    text-decoration: none;
-    color: #0066cc;
+.info-row {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
     font-size: 15px;
-    line-height: 1.5;
-    float: none !important;
-    clear: both !important;
 }
 
-.pfob-capability-card:hover {
-    text-decoration: underline;
+.info-row:last-child {
+    border-bottom: none;
 }
 
-.pfob-capability-card .pfob-label {
-    display: inline !important;
-    color: #0066cc;
+.info-row strong {
+    display: inline-block;
+    min-width: 120px;
+    color: #666;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.pfob-billing-card .pfob-label {
-    color: #0066cc;
-    display: block;
-    margin-bottom: 4px;
+.plan-features {
+    margin-top: 20px;
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 6px;
 }
 
-.pfob-billing-card .pfob-sublabel {
+.features-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: #333;
+}
+
+.feature-item {
+    padding: 6px 0;
     font-size: 14px;
     color: #666;
-    font-style: italic;
 }
 
-.pfob-upgrade-section {
+.action-link {
+    display: block;
+    padding: 12px 0;
+    color: #0066cc;
+    text-decoration: none;
+    font-size: 15px;
+    line-height: 1.6;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.action-link:last-child {
+    border-bottom: none;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+    background: #f8f9fa;
+    padding-left: 8px;
+    margin-left: -8px;
+}
+
+.upgrade-section {
     background: #fffbeb;
-    border: 1px solid #fde68a;
+    border-color: #fde68a;
     border-left: 4px solid #f59e0b;
 }
 
-.pfob-upgrade-section h2 {
-    margin: 0 0 8px 0;
-}
-
-.pfob-upgrade-section p {
-    color: #666;
-    margin: 0 0 16px 0;
-}
-
-.pfob-upgrade-badge {
+.upgrade-tag {
     display: inline-block;
     font-size: 11px;
     font-weight: 600;
@@ -490,7 +306,7 @@ error_log( '[Adminland] Template header loaded successfully' );
     margin-left: 6px;
 }
 
-.pfob-btn-secondary {
+.upgrade-button {
     display: inline-block;
     padding: 10px 20px;
     background: #0066cc;
@@ -498,19 +314,19 @@ error_log( '[Adminland] Template header loaded successfully' );
     text-decoration: none;
     border-radius: 4px;
     font-weight: 500;
+    margin-top: 12px;
 }
 
-.pfob-btn-secondary:hover {
+.upgrade-button:hover {
     background: #0052a3;
-    color: white;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Handle capability card clicks
-    document.querySelectorAll('.pfob-capability-card[data-action]').forEach(card => {
-        card.addEventListener('click', function(e) {
+    document.querySelectorAll('.action-link[data-action]').forEach(link => {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
             const action = this.dataset.action;
             handleAdminAction(action);
@@ -576,21 +392,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showModal(title, content) {
         const modal = document.createElement('div');
-        modal.className = 'pfob-modal';
-        modal.innerHTML = `
-            <div class="pfob-modal-content">
-                <div class="pfob-modal-header">
-                    <h2>${title}</h2>
-                    <button class="pfob-modal-close">&times;</button>
-                </div>
-                <div class="pfob-modal-body">
-                    ${content}
-                </div>
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;';
+
+        const modalContent = document.createElement('div');
+        modalContent.style.cssText = 'background: white; padding: 32px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;';
+        modalContent.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">${title}</h2>
+                <button class="modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
             </div>
+            <div>${content}</div>
         `;
+
+        modal.appendChild(modalContent);
         document.body.appendChild(modal);
 
-        modal.querySelector('.pfob-modal-close').addEventListener('click', () => {
+        modal.querySelector('.modal-close').addEventListener('click', () => {
             modal.remove();
         });
 
@@ -603,175 +420,69 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Implementation of each admin function
     function showManageAdministrators() {
-        const content = `
-            <p>Manage who has administrator access to your account.</p>
-            <div id="admins-list"></div>
-            <button class="pfob-btn pfob-btn-primary" id="add-admin-btn">Add Administrator</button>
-        `;
-        showModal('Manage Administrators', content);
+        showModal('Manage Administrators', '<p>Manage who has administrator access to your account.</p>');
     }
 
     function showInviteLinkGenerator() {
-        const content = `
-            <p>Generate a special link to invite multiple team members at once.</p>
-            <button class="pfob-btn pfob-btn-primary" id="generate-link-btn">Generate Invite Link</button>
-            <div id="invite-link-display" style="margin-top: 20px; display: none;">
-                <input type="text" id="invite-link" readonly style="width: 100%; padding: 10px;">
-                <button class="pfob-btn pfob-btn-secondary" onclick="navigator.clipboard.writeText(document.getElementById('invite-link').value)">Copy Link</button>
-            </div>
-        `;
-        showModal('Invite with Link', content);
+        showModal('Invite with Link', '<p>Generate a special link to invite multiple team members at once.</p>');
     }
 
     function showManageGroups() {
-        const content = `
-            <p>Create and manage groups to organize people in your account.</p>
-            <button class="pfob-btn pfob-btn-primary">Create New Group</button>
-        `;
-        showModal('Manage Groups', content);
+        showModal('Manage Groups', '<p>Create and manage groups to organize people in your account.</p>');
     }
 
     function showManageCompanies() {
-        const content = `
-            <p>Manage external companies and organizations.</p>
-            <button class="pfob-btn pfob-btn-primary">Add Company</button>
-        `;
-        showModal('Manage Companies', content);
+        showModal('Manage Companies', '<p>Manage external companies and organizations.</p>');
     }
 
     function showRenameTools() {
-        const content = `
-            <p>Customize the names of project tools to match your workflow.</p>
-            <div class="pfob-form-group">
-                <label>Messages board</label>
-                <input type="text" value="Messages" class="pfob-input">
-            </div>
-            <div class="pfob-form-group">
-                <label>To-dos</label>
-                <input type="text" value="To-dos" class="pfob-input">
-            </div>
-            <button class="pfob-btn pfob-btn-primary">Save Changes</button>
-        `;
-        showModal('Rename Project Tools', content);
+        showModal('Rename Project Tools', '<p>Customize the names of project tools to match your workflow.</p>');
     }
 
     function showMessageCategories() {
-        const content = `
-            <p>Customize message categories for your account.</p>
-            <button class="pfob-btn pfob-btn-primary">Add Category</button>
-        `;
-        showModal('Message Categories', content);
+        showModal('Message Categories', '<p>Customize message categories for your account.</p>');
     }
 
     function showMoveProjects() {
-        const content = `
-            <p>Move projects from Basecamp 2 to Basecamp 4.</p>
-            <div class="pfob-form-group">
-                <label>Select projects to migrate</label>
-                <p style="color: #666; font-size: 14px;">Connect your Basecamp 2 account to view available projects.</p>
-            </div>
-            <button class="pfob-btn pfob-btn-primary">Connect Basecamp 2</button>
-        `;
-        showModal('Move Projects', content);
+        showModal('Move Projects', '<p>Move projects from Basecamp 2 to Basecamp 4.</p>');
     }
 
     function showMergePeople() {
-        const content = `
-            <p>Merge duplicate user accounts into a single account.</p>
-            <div class="pfob-form-group">
-                <label>Select primary account</label>
-                <select class="pfob-input"><option>Choose...</option></select>
-            </div>
-            <div class="pfob-form-group">
-                <label>Select account to merge</label>
-                <select class="pfob-input"><option>Choose...</option></select>
-            </div>
-            <button class="pfob-btn pfob-btn-primary">Merge Accounts</button>
-        `;
-        showModal('Merge People', content);
+        showModal('Merge People', '<p>Merge duplicate user accounts into a single account.</p>');
     }
 
     function showStorageManagement() {
-        const content = `
-            <h3>Storage Usage</h3>
-            <p>Manage your account's storage allocation and usage.</p>
-            <div class="pfob-storage-stats">
-                <p>Loading storage information...</p>
-            </div>
-        `;
-        showModal('Manage Storage', content);
+        showModal('Manage Storage', '<p>Manage your account\'s storage allocation and usage.</p>');
     }
 
     function showManageOwners() {
-        const content = `
-            <p>Add or remove account owners. Account owners have full access to billing and account management.</p>
-            <div id="owners-list"></div>
-            <button class="pfob-btn pfob-btn-primary">Add Owner</button>
-        `;
-        showModal('Manage Account Owners', content);
+        showModal('Manage Account Owners', '<p>Add or remove account owners. Account owners have full access to billing and account management.</p>');
     }
 
     function showRenameAccount() {
-        const content = `
-            <div class="pfob-form-group">
-                <label>Account name</label>
-                <input type="text" value="<?php echo esc_js( $organization ); ?>" id="account-name" class="pfob-input">
+        showModal('Rename Account', `
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Account name</label>
+                <input type="text" value="<?php echo esc_js( $organization ); ?>" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
             </div>
-            <button class="pfob-btn pfob-btn-primary" id="save-account-name">Save Changes</button>
-        `;
-        showModal('Rename Account', content);
+            <button style="padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer;">Save Changes</button>
+        `);
     }
 
     function showReassignTodos() {
-        const content = `
-            <p>Reassign all to-dos from one person to another.</p>
-            <div class="pfob-form-group">
-                <label>From</label>
-                <select class="pfob-input"><option>Choose person...</option></select>
-            </div>
-            <div class="pfob-form-group">
-                <label>To</label>
-                <select class="pfob-input"><option>Choose person...</option></select>
-            </div>
-            <button class="pfob-btn pfob-btn-primary">Reassign To-dos</button>
-        `;
-        showModal('Reassign To-dos', content);
+        showModal('Reassign To-dos', '<p>Reassign all to-dos from one person to another.</p>');
     }
 
     function showDataExport() {
-        const content = `
-            <p>Export all data from your account in various formats.</p>
-            <div class="pfob-form-group">
-                <label>Export format</label>
-                <select class="pfob-input">
-                    <option>JSON</option>
-                    <option>CSV</option>
-                    <option>XML</option>
-                </select>
-            </div>
-            <button class="pfob-btn pfob-btn-primary">Start Export</button>
-        `;
-        showModal('Export Data', content);
+        showModal('Export Data', '<p>Export all data from your account in various formats.</p>');
     }
 
     function showManagePublic() {
-        const content = `
-            <p>Manage publicly accessible items in your account.</p>
-            <div id="public-items-list"></div>
-        `;
-        showModal('Manage Public Items', content);
+        showModal('Manage Public Items', '<p>Manage publicly accessible items in your account.</p>');
     }
 
     function showPauseAccount() {
-        const content = `
-            <p>Pause or cancel your ProjectFOB subscription.</p>
-            <div class="pfob-warning">
-                <p><strong>Warning:</strong> Pausing will stop billing but you won't be able to access your account until you resume.</p>
-            </div>
-            <button class="pfob-btn pfob-btn-warning">Pause Account</button>
-            <button class="pfob-btn pfob-btn-danger">Cancel Account</button>
-        `;
-        showModal('Pause or Cancel Account', content);
+        showModal('Pause or Cancel Account', '<p><strong>Warning:</strong> Pausing will stop billing but you won\'t be able to access your account until you resume.</p>');
     }
 });
 </script>
