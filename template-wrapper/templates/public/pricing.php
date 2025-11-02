@@ -39,15 +39,18 @@
 
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
             margin-bottom: 40px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .pricing-card {
             background: white;
             border-radius: 12px;
-            padding: 40px 30px;
+            padding: 30px 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             position: relative;
             transition: transform 0.3s ease;
@@ -170,6 +173,27 @@
             margin: 0;
             opacity: 0.9;
             line-height: 1.6;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .pricing-grid {
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
         }
     </style>
 </head>
