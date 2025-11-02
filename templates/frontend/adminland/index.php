@@ -297,9 +297,9 @@ error_log( '[Adminland] Template header loaded successfully' );
 }
 
 .pfob-subscription-details {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
     margin-bottom: 24px;
 }
 
@@ -352,15 +352,17 @@ error_log( '[Adminland] Template header loaded successfully' );
     list-style: none;
     padding: 0;
     margin: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
 }
 
 .pfob-plan-limits li {
     padding: 8px 0;
     color: #666;
     font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pfob-plan-limits li:last-child {
+    border-bottom: none;
 }
 
 .pfob-empty-state {
@@ -421,6 +423,7 @@ error_log( '[Adminland] Template header loaded successfully' );
     gap: 20px;
     flex-wrap: wrap;
     margin-bottom: 30px;
+    align-items: center;
 }
 
 .pfob-user-avatar {
@@ -455,28 +458,30 @@ error_log( '[Adminland] Template header loaded successfully' );
 }
 
 .pfob-capabilities-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 800px;
 }
 
 .pfob-capability-card {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 16px;
-    background: #f8f9fa;
+    padding: 12px 16px;
+    background: #ffffff;
     border: 1px solid #e0e0e0;
-    border-radius: 6px;
+    border-left: 3px solid #0066cc;
+    border-radius: 4px;
     text-decoration: none;
     color: #333;
     transition: all 0.2s;
 }
 
 .pfob-capability-card:hover {
-    background: #e8e9ea;
-    border-color: #0066cc;
-    transform: translateY(-2px);
+    background: #f8f9fa;
+    border-left-color: #0052a3;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .pfob-capability-card .pfob-icon {
