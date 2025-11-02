@@ -89,14 +89,32 @@ class PFOB_Subscription {
      */
     public static function get_by_user_id( $user_id ) {
         global $wpdb;
+        error_log( '[Subscription] get_by_user_id() called for user ID: ' . $user_id );
 
         $table_name = $wpdb->prefix . 'pfob_subscriptions';
+        error_log( '[Subscription] Querying table: ' . $table_name );
+
         $subscription = $wpdb->get_row(
             $wpdb->prepare( "SELECT * FROM {$table_name} WHERE user_id = %d ORDER BY created_at DESC LIMIT 1", $user_id )
         );
 
+        if ( $wpdb->last_error ) {
+            error_log( '[Subscription] Database error: ' . $wpdb->last_error );
+        }
+
+        if ( ! $subscription ) {
+            error_log( '[Subscription] No subscription found in database for user ID: ' . $user_id );
+            return null;
+        }
+
+        error_log( '[Subscription] Found subscription: ID=' . $subscription->id . ', plan_id=' . $subscription->plan_id );
+
         if ( $subscription && ! empty( $subscription->metadata ) ) {
+            error_log( '[Subscription] Decoding metadata JSON' );
             $subscription->metadata = json_decode( $subscription->metadata, true );
+            if ( json_last_error() !== JSON_ERROR_NONE ) {
+                error_log( '[Subscription] JSON decode error: ' . json_last_error_msg() );
+            }
         }
 
         return $subscription;
@@ -207,13 +225,21 @@ class PFOB_Subscription {
      * @return bool True if active, false otherwise.
      */
     public static function is_active( $user_id ) {
+        error_log( '[Subscription] is_active() called for user ID: ' . $user_id );
+
         $subscription = self::get_by_user_id( $user_id );
 
         if ( ! $subscription ) {
+            error_log( '[Subscription] No subscription found for user ID: ' . $user_id );
             return false;
         }
 
-        return in_array( $subscription->status, array( 'active', 'trialing' ) );
+        error_log( '[Subscription] Found subscription ID: ' . $subscription->id . ', status: ' . $subscription->status );
+
+        $is_active = in_array( $subscription->status, array( 'active', 'trialing' ) );
+        error_log( '[Subscription] is_active result: ' . ( $is_active ? 'true' : 'false' ) );
+
+        return $is_active;
     }
 
     /**

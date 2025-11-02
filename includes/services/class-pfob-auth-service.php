@@ -79,17 +79,28 @@ class PFOB_Auth_Service {
      * Redirects to pricing page if no active subscription.
      */
     public static function require_subscription() {
+        error_log( '[AuthService] require_subscription() called' );
+
         $user_id = self::get_current_user_id();
+        error_log( '[AuthService] User ID: ' . $user_id );
 
         // Admins always have access
         if ( user_can( $user_id, 'manage_options' ) ) {
+            error_log( '[AuthService] User is admin, bypassing subscription check' );
             return;
         }
 
-        if ( ! PFOB_Subscription::is_active( $user_id ) ) {
+        error_log( '[AuthService] Checking if user has active subscription' );
+        $is_active = PFOB_Subscription::is_active( $user_id );
+        error_log( '[AuthService] Subscription active: ' . ( $is_active ? 'Yes' : 'No' ) );
+
+        if ( ! $is_active ) {
+            error_log( '[AuthService] No active subscription, redirecting to pricing' );
             wp_redirect( home_url( '/projectfob/pricing/' ) );
             exit;
         }
+
+        error_log( '[AuthService] Subscription check passed' );
     }
 
     /**

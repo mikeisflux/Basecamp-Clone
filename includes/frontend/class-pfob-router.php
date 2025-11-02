@@ -95,30 +95,44 @@ class PFOB_Router {
     }
 
     public function route_request() {
+        error_log( '[Router] route_request() called' );
+
         // Handle public pages (no auth required)
         $public_page = get_query_var( 'pfob_public_page' );
         if ( ! empty( $public_page ) ) {
+            error_log( '[Router] Routing to public page: ' . $public_page );
             $this->route_public_page( $public_page );
             return;
         }
 
         // Handle authenticated pages
         $page = get_query_var( 'pfob_page' );
+        error_log( '[Router] pfob_page query var: ' . ( $page ?: 'empty' ) );
 
         if ( empty( $page ) ) {
+            error_log( '[Router] No page specified, returning' );
             return;
         }
 
+        error_log( '[Router] Routing to authenticated page: ' . $page );
+
         // Require authentication
+        error_log( '[Router] Checking authentication...' );
         PFOB_Auth_Service::require_auth();
+        error_log( '[Router] Authentication passed' );
 
         // Require active subscription
+        error_log( '[Router] Checking subscription...' );
         PFOB_Auth_Service::require_subscription();
+        error_log( '[Router] Subscription check passed' );
 
         // Load template based on page
         $template = $this->get_template_for_page( $page );
+        error_log( '[Router] Template path: ' . ( $template ?: 'null' ) );
 
         if ( $template && file_exists( $template ) ) {
+            error_log( '[Router] Template exists, loading: ' . $template );
+
             // Set up global variables for templates
             global $pfob_page, $pfob_project, $pfob_item;
 
@@ -144,8 +158,12 @@ class PFOB_Router {
             }
 
             // Include template
+            error_log( '[Router] Including template file' );
             include $template;
+            error_log( '[Router] Template included successfully' );
             exit;
+        } else {
+            error_log( '[Router] Template not found or does not exist: ' . ( $template ?: 'null' ) );
         }
     }
 
