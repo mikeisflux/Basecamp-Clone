@@ -176,6 +176,10 @@ $r2_configured = PFOB_R2_Storage_Service::is_configured();
                 <span class="dashicons dashicons-money-alt"></span>
                 <span>Billing & Revenue</span>
             </a>
+            <a href="#" class="pfob-link-card" id="pfob-sync-users-btn">
+                <span class="dashicons dashicons-update"></span>
+                <span>Sync Users</span>
+            </a>
             <a href="<?php echo site_url( '/projectfob/pricing' ); ?>" class="pfob-link-card" target="_blank">
                 <span class="dashicons dashicons-external"></span>
                 <span>View Pricing Page</span>
@@ -185,8 +189,74 @@ $r2_configured = PFOB_R2_Storage_Service::is_configured();
                 <span>User Dashboard</span>
             </a>
         </div>
+        <p class="description" style="margin-top: 15px;">
+            <strong>Sync Users:</strong> Click this button to sync all WordPress users with the subscription system.
+            This is useful after uninstalling/reinstalling the plugin or when adding new users.
+        </p>
     </div>
 </div>
+
+<script>
+jQuery(document).ready(function($) {
+    // Sync users button handler
+    $('#pfob-sync-users-btn').on('click', function(e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var originalHtml = $btn.html();
+
+        if ($btn.hasClass('syncing')) {
+            return; // Already syncing
+        }
+
+        $btn.addClass('syncing').html('<span class="dashicons dashicons-update spinning"></span><span>Syncing...</span>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pfob_sync_users',
+                nonce: '<?php echo wp_create_nonce( 'pfob_admin_nonce' ); ?>'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $btn.removeClass('syncing').addClass('success').html('<span class="dashicons dashicons-yes"></span><span>' + response.data.message + '</span>');
+
+                    // Reload page after 2 seconds to show updated stats
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    alert('Error: ' + (response.data ? response.data.message : 'Unknown error'));
+                    $btn.removeClass('syncing').html(originalHtml);
+                }
+            },
+            error: function() {
+                alert('AJAX request failed. Please try again.');
+                $btn.removeClass('syncing').html(originalHtml);
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.pfob-link-card.syncing {
+    pointer-events: none;
+    opacity: 0.7;
+}
+.pfob-link-card.success {
+    border-color: #28a745;
+    background: #d4edda;
+    color: #155724;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.spinning {
+    animation: spin 1s linear infinite;
+}
+</style>
 
 <style>
 .pfob-stats-grid {

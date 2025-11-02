@@ -22,6 +22,7 @@ class PFOB_Admin_Settings {
         add_action( 'wp_ajax_pfob_test_paypal_connection', array( $this, 'test_paypal_connection' ) );
         add_action( 'wp_ajax_pfob_test_r2_connection', array( $this, 'test_r2_connection' ) );
         add_action( 'wp_ajax_pfob_sync_paypal_plans', array( $this, 'sync_paypal_plans' ) );
+        add_action( 'wp_ajax_pfob_sync_users', array( $this, 'ajax_sync_users' ) );
         add_action( 'wp_ajax_pfob_flush_rewrite_rules', array( $this, 'ajax_flush_rewrite_rules' ) );
         add_action( 'wp_ajax_pfob_dismiss_notice', array( $this, 'ajax_dismiss_notice' ) );
     }
@@ -282,6 +283,87 @@ class PFOB_Admin_Settings {
             wp_send_json_success( array(
                 'message' => 'Successfully synced ' . count( $result ) . ' subscription plans to PayPal!',
                 'plans' => $result,
+            ) );
+        }
+    }
+
+    /**
+     * Sync WordPress users with subscription system (AJAX)
+     */
+    public function ajax_sync_users() {
+        check_ajax_referer( 'pfob_admin_nonce', 'nonce' );
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized' ) );
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
+
+        // Get all WordPress users
+        $users = get_users( array(
+            'fields' => array( 'ID', 'user_email' ),
+        ) );
+
+        $synced_count = 0;
+
+        foreach ( $users as $user ) {
+            // Check if user already has a subscription record
+            $existing = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT id FROM {$table_name} WHERE user_id = %d",
+                    $user->ID
+                )
+            );
+
+            // Skip if subscription already exists
+            if ( $existing ) {
+                continue;
+            }
+
+            // Determine subscription status and plan based on user role
+            $user_obj = get_userdata( $user->ID );
+
+            if ( in_array( 'administrator', $user_obj->roles ) ) {
+                // WordPress admins get active enterprise subscription
+                $status = 'active';
+                $plan_id = 'enterprise';
+            } else {
+                // Regular users get active professional subscription
+                $status = 'active';
+                $plan_id = 'professional';
+            }
+
+            // Create subscription record
+            $wpdb->insert(
+                $table_name,
+                array(
+                    'user_id' => $user->ID,
+                    'plan_id' => $plan_id,
+                    'status' => $status,
+                    'current_period_start' => current_time( 'mysql' ),
+                    'current_period_end' => date( 'Y-m-d H:i:s', strtotime( '+1 month' ) ),
+                    'created_at' => current_time( 'mysql' ),
+                    'updated_at' => current_time( 'mysql' ),
+                    'metadata' => wp_json_encode( array(
+                        'synced_manually' => true,
+                        'original_user_role' => implode( ',', $user_obj->roles ),
+                    ) ),
+                )
+            );
+
+            $synced_count++;
+        }
+
+        if ( $synced_count > 0 ) {
+            wp_send_json_success( array(
+                'message' => "Successfully synced {$synced_count} user(s) with the subscription system!",
+                'count' => $synced_count,
+            ) );
+        } else {
+            wp_send_json_success( array(
+                'message' => 'All users are already synced with the subscription system.',
+                'count' => 0,
             ) );
         }
     }

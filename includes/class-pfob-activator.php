@@ -31,6 +31,9 @@ class PFOB_Activator {
         // Set default options
         self::set_default_options();
 
+        // Sync existing WordPress users with subscription system
+        self::sync_existing_users();
+
         // Register rewrite rules and flush
         require_once PFOB_PLUGIN_DIR . 'includes/frontend/class-pfob-router.php';
         PFOB_Router::register_rewrite_rules();
@@ -70,6 +73,81 @@ class PFOB_Activator {
             if ( false === get_option( $key ) ) {
                 add_option( $key, $value );
             }
+        }
+    }
+
+    /**
+     * Sync existing WordPress users with subscription system.
+     *
+     * This runs on plugin activation to ensure all existing users have subscription records.
+     * Critical for uninstall/reinstall scenarios where users exist but subscriptions don't.
+     */
+    private static function sync_existing_users() {
+        global $wpdb;
+
+        // Load subscription model
+        require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-subscription.php';
+
+        // Get all WordPress users
+        $users = get_users( array(
+            'fields' => array( 'ID', 'user_email' ),
+        ) );
+
+        $synced_count = 0;
+        $table_name = $wpdb->prefix . 'pfob_subscriptions';
+
+        foreach ( $users as $user ) {
+            // Check if user already has a subscription record
+            $existing = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT id FROM {$table_name} WHERE user_id = %d",
+                    $user->ID
+                )
+            );
+
+            // Skip if subscription already exists
+            if ( $existing ) {
+                continue;
+            }
+
+            // Determine subscription status and plan based on user role
+            $user_obj = get_userdata( $user->ID );
+
+            if ( in_array( 'administrator', $user_obj->roles ) ) {
+                // WordPress admins get active enterprise subscription
+                $status = 'active';
+                $plan_id = 'enterprise';
+            } else {
+                // Regular users get active professional subscription
+                // (You can change this to 'trialing' or 'pending' if preferred)
+                $status = 'active';
+                $plan_id = 'professional';
+            }
+
+            // Create subscription record
+            $wpdb->insert(
+                $table_name,
+                array(
+                    'user_id' => $user->ID,
+                    'plan_id' => $plan_id,
+                    'status' => $status,
+                    'current_period_start' => current_time( 'mysql' ),
+                    'current_period_end' => date( 'Y-m-d H:i:s', strtotime( '+1 month' ) ),
+                    'created_at' => current_time( 'mysql' ),
+                    'updated_at' => current_time( 'mysql' ),
+                    'metadata' => wp_json_encode( array(
+                        'synced_on_activation' => true,
+                        'original_user_role' => implode( ',', $user_obj->roles ),
+                    ) ),
+                )
+            );
+
+            $synced_count++;
+        }
+
+        // Store sync results for admin notice
+        if ( $synced_count > 0 ) {
+            update_option( 'pfob_users_synced_on_activation', $synced_count );
         }
     }
 }
