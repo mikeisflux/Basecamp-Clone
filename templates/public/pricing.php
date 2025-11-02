@@ -34,7 +34,55 @@
         .pricing-header p {
             font-size: 20px;
             opacity: 0.9;
-            margin: 0;
+            margin: 0 0 30px 0;
+        }
+
+        .billing-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .billing-toggle {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+            padding: 5px;
+        }
+
+        .billing-toggle button {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: white;
+        }
+
+        .billing-toggle button.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .billing-toggle button:not(.active):hover {
+            opacity: 0.8;
+        }
+
+        .savings-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .pricing-grid {
@@ -202,6 +250,14 @@
         <div class="pricing-header">
             <h1>Choose Your Plan</h1>
             <p>Start your journey with ProjectFOB today</p>
+
+            <div class="billing-toggle-container">
+                <div class="billing-toggle">
+                    <button id="monthly-toggle" class="active" onclick="toggleBilling('monthly')">Monthly</button>
+                    <button id="yearly-toggle" onclick="toggleBilling('yearly')">Yearly</button>
+                </div>
+                <div class="savings-badge">Save 17% with yearly billing</div>
+            </div>
         </div>
 
         <div class="pricing-grid" id="pricing-grid">
@@ -229,6 +285,9 @@
     </div>
 
     <script>
+        let currentBillingInterval = 'monthly';
+        let plansData = null;
+
         // Load pricing plans
         async function loadPricing() {
             try {
@@ -236,15 +295,30 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    renderPricingCards(result.data);
+                    plansData = result.data;
+                    renderPricingCards(result.data, currentBillingInterval);
                 }
             } catch (error) {
                 console.error('Failed to load pricing:', error);
             }
         }
 
-        function renderPricingCards(plans) {
+        function toggleBilling(interval) {
+            currentBillingInterval = interval;
+
+            // Update toggle button states
+            document.getElementById('monthly-toggle').classList.toggle('active', interval === 'monthly');
+            document.getElementById('yearly-toggle').classList.toggle('active', interval === 'yearly');
+
+            // Re-render pricing cards
+            if (plansData) {
+                renderPricingCards(plansData, interval);
+            }
+        }
+
+        function renderPricingCards(plans, billingInterval) {
             const grid = document.getElementById('pricing-grid');
+            grid.innerHTML = ''; // Clear existing cards
 
             const planOrder = ['starter', 'professional', 'business', 'enterprise'];
 
@@ -291,16 +365,27 @@
                 };
                 features.push(supportLevel[plan.features.support] || 'Support Included');
 
+                // Calculate price based on billing interval
+                let price, priceLabel;
+                if (billingInterval === 'yearly') {
+                    price = plan.yearly_price;
+                    const monthlyEquivalent = (price / 12).toFixed(2);
+                    priceLabel = `$${monthlyEquivalent}<span>/mo</span><br><small style="font-size: 14px; opacity: 0.7;">$${price}/year</small>`;
+                } else {
+                    price = plan.monthly_price;
+                    priceLabel = `$${price}<span>/mo</span>`;
+                }
+
                 card.innerHTML = `
                     <h2 class="plan-name">${plan.name}</h2>
                     <p class="plan-description">${plan.description}</p>
                     <div class="plan-price">
-                        $${plan.price}<span>/mo</span>
+                        ${priceLabel}
                     </div>
                     <ul class="plan-features">
                         ${features.map(f => `<li>${f}</li>`).join('')}
                     </ul>
-                    <button class="plan-cta" onclick="selectPlan('${plan.id}', '${plan.name}')">
+                    <button class="plan-cta" onclick="selectPlan('${plan.id}', '${plan.name}', '${billingInterval}')">
                         Get Started
                     </button>
                 `;
@@ -309,10 +394,11 @@
             });
         }
 
-        function selectPlan(planId, planName) {
+        function selectPlan(planId, planName, billingInterval) {
             // Store selected plan in session storage
             sessionStorage.setItem('selected_plan', planId);
             sessionStorage.setItem('selected_plan_name', planName);
+            sessionStorage.setItem('selected_billing_interval', billingInterval);
 
             // Redirect to signup page
             window.location.href = '<?php echo site_url( '/projectfob/signup' ); ?>';

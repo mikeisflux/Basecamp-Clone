@@ -53,6 +53,13 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
                     'type' => 'string',
                     'enum' => array( 'starter', 'professional', 'business', 'enterprise' ),
                 ),
+                'billing_interval' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'enum' => array( 'monthly', 'yearly' ),
+                    'default' => 'monthly',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
             ),
         ) );
 
@@ -169,6 +176,9 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
             return new WP_Error( 'invalid_plan', 'Invalid subscription plan.', array( 'status' => 400 ) );
         }
 
+        // Get billing interval (default to monthly)
+        $billing_interval = isset( $params['billing_interval'] ) ? $params['billing_interval'] : 'monthly';
+
         // Create WordPress user
         $user_id = wp_create_user(
             $params['email'],
@@ -188,11 +198,16 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
             'display_name' => $params['first_name'] . ' ' . $params['last_name'],
         ) );
 
-        // Create subscription record
+        // Create subscription record with billing interval
+        $subscription_metadata = array(
+            'billing_interval' => $billing_interval,
+        );
+
         $subscription_id = PFOB_Subscription::create( array(
             'user_id' => $user_id,
             'plan_id' => $params['plan_id'],
             'status' => 'pending',
+            'metadata' => wp_json_encode( $subscription_metadata ),
         ) );
 
         if ( ! $subscription_id ) {
@@ -201,7 +216,7 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
             return new WP_Error( 'subscription_error', 'Failed to create subscription.', array( 'status' => 500 ) );
         }
 
-        // Create PayPal subscription
+        // Create PayPal subscription with the appropriate billing interval
         $return_url = site_url( '/projectfob/subscription/success' );
         $cancel_url = site_url( '/projectfob/subscription/cancel' );
 
@@ -209,7 +224,8 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
             $user_id,
             $params['plan_id'],
             $return_url,
-            $cancel_url
+            $cancel_url,
+            $billing_interval
         );
 
         if ( is_wp_error( $paypal_result ) ) {
@@ -233,6 +249,7 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
                 'user_id' => $user_id,
                 'subscription_id' => $subscription_id,
                 'approval_url' => $paypal_result['approval_url'],
+                'billing_interval' => $billing_interval,
             ),
         ), 201 );
     }

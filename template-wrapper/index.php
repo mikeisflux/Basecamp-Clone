@@ -6,7 +6,7 @@ get_header();
 ?>
 
 <div style="max-width: 800px; margin: 50px auto; padding: 20px;">
-    <h1>ProjectFOB Templates v2.6.8</h1>
+    <h1>ProjectFOB Templates v2.7.0</h1>
     <p>Activate this theme to install templates.</p>
 </div>
 

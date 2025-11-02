@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}=== ProjectFOB - Templates Builder ===${NC}\n"
 
 # Configuration
-VERSION="2.6.9"
+VERSION="2.7.0"
 DIST_DIR="dist"
 WRAPPER_DIR="template-wrapper"
 
@@ -55,10 +55,11 @@ echo -e "  5. Click 'Activate'"
 echo -e "  6. Templates will auto-install and theme will switch back"
 echo -e "  7. Clear all caches (browser + WordPress)\n"
 
-echo -e "${YELLOW}What's Fixed in v2.6.8:${NC}"
-echo -e "  ✅ Removed ALL column layouts from adminland"
-echo -e "  ✅ Fixed subscription details vertical stacking"
-echo -e "  ✅ Fixed capabilities list layout"
-echo -e "  ✅ Everything displays as standard web page\n"
+echo -e "${YELLOW}What's New in v2.7.0:${NC}"
+echo -e "  ✅ Added monthly/yearly billing toggles to pricing page"
+echo -e "  ✅ Integrated billing interval selection into subscription system"
+echo -e "  ✅ Display yearly pricing with 17% discount"
+echo -e "  ✅ Updated subscription plans configuration"
+echo -e "  ✅ Enhanced pricing page UI with savings badge\n"
 
 echo -e "${GREEN}All done! 🚀${NC}\n"

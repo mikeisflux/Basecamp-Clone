@@ -10,9 +10,9 @@ return array(
     'starter' => array(
         'id' => 'starter',
         'name' => 'Starter',
-        'price' => 9.00,
+        'monthly_price' => 9.00,
+        'yearly_price' => 90.00, // $7.50/month when billed yearly (17% discount)
         'currency' => 'USD',
-        'interval' => 'month',
         'features' => array(
             'projects' => 5,
             'users' => 10,
@@ -29,9 +29,9 @@ return array(
     'professional' => array(
         'id' => 'professional',
         'name' => 'Professional',
-        'price' => 29.00,
+        'monthly_price' => 29.00,
+        'yearly_price' => 290.00, // $24.17/month when billed yearly (17% discount)
         'currency' => 'USD',
-        'interval' => 'month',
         'features' => array(
             'projects' => 25,
             'users' => 50,
@@ -49,9 +49,9 @@ return array(
     'business' => array(
         'id' => 'business',
         'name' => 'Business',
-        'price' => 79.00,
+        'monthly_price' => 79.00,
+        'yearly_price' => 790.00, // $65.83/month when billed yearly (17% discount)
         'currency' => 'USD',
-        'interval' => 'month',
         'features' => array(
             'projects' => 999999, // Unlimited
             'users' => 250,
@@ -71,9 +71,9 @@ return array(
     'enterprise' => array(
         'id' => 'enterprise',
         'name' => 'Enterprise',
-        'price' => 289.00,
+        'monthly_price' => 289.00,
+        'yearly_price' => 2890.00, // $240.83/month when billed yearly (17% discount)
         'currency' => 'USD',
-        'interval' => 'month',
         'features' => array(
             'projects' => 999999, // Unlimited
             'users' => 999999, // Unlimited

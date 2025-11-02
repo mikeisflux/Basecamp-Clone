@@ -73,7 +73,7 @@ function projectfob_templates_install_notice() {
         delete_option('projectfob_templates_backup_path');
 
         echo '<div class="notice notice-success is-dismissible">';
-        echo '<h2>ProjectFOB Templates v2.6.8 Installed!</h2>';
+        echo '<h2>ProjectFOB Templates v2.7.0 Installed!</h2>';
         echo '<p>Templates updated successfully.</p>';
         echo '<p>Clear your caches and refresh the page.</p>';
         echo '</div>';
