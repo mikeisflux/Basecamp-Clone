@@ -269,16 +269,11 @@ error_log( '[Adminland] Template header loaded successfully' );
 }
 
 .pfob-subscription-details {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
     margin-bottom: 24px;
 }
 
 .pfob-detail-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    margin-bottom: 16px;
 }
 
 .pfob-detail-item .pfob-label {
@@ -351,27 +346,6 @@ error_log( '[Adminland] Template header loaded successfully' );
     text-decoration: underline;
 }
 
-.pfob-upgrades-banner {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 24px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
-}
-
-.pfob-upgrades-banner h3 {
-    margin: 0 0 8px 0;
-    font-size: 20px;
-}
-
-.pfob-upgrades-banner p {
-    margin: 0;
-    opacity: 0.9;
-}
-
 .pfob-adminland-section {
     background: white;
     padding: 32px;
@@ -391,17 +365,14 @@ error_log( '[Adminland] Template header loaded successfully' );
 }
 
 .pfob-users-grid {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
     margin-bottom: 30px;
-    align-items: center;
 }
 
 .pfob-user-avatar {
     display: flex;
     align-items: center;
     gap: 12px;
+    margin-bottom: 12px;
 }
 
 .pfob-avatar {
