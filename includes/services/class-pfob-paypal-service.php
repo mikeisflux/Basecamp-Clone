@@ -51,7 +51,7 @@ class PFOB_PayPal_Service {
      *
      * @return string|WP_Error Access token or WP_Error on failure
      */
-    private static function get_access_token() {
+    public static function get_access_token() {
         $credentials = self::get_credentials();
 
         if ( ! $credentials ) {
@@ -80,13 +80,24 @@ class PFOB_PayPal_Service {
         );
 
         if ( is_wp_error( $response ) ) {
-            return $response;
+            error_log( '[PayPal] Connection error: ' . $response->get_error_message() );
+            return new WP_Error( 'connection_error', 'PayPal connection failed: ' . $response->get_error_message() );
         }
 
+        $status_code = wp_remote_retrieve_response_code( $response );
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
 
+        // Log the response for debugging
+        error_log( '[PayPal] Token request status: ' . $status_code );
+        error_log( '[PayPal] Token response: ' . wp_remote_retrieve_body( $response ) );
+
+        if ( $status_code !== 200 ) {
+            $error_message = isset( $body['error_description'] ) ? $body['error_description'] : 'HTTP ' . $status_code;
+            return new WP_Error( 'auth_error', 'PayPal authentication failed: ' . $error_message );
+        }
+
         if ( empty( $body['access_token'] ) ) {
-            return new WP_Error( 'token_error', 'Failed to get access token from PayPal' );
+            return new WP_Error( 'token_error', 'No access token in PayPal response' );
         }
 
         // Cache token for 55 minutes (expires in 60 minutes)
@@ -386,6 +397,69 @@ class PFOB_PayPal_Service {
         );
 
         if ( is_wp_error( $response ) ) {
+            return $response;
+        }
+
+        return true;
+    }
+
+    /**
+     * Revise subscription (requires customer approval for price changes)
+     *
+     * Used for adding/removing add-ons or changing plans.
+     * Customer receives email from PayPal to approve the change.
+     *
+     * @param string $subscription_id PayPal subscription ID
+     * @param string $new_plan_id New plan ID (with add-ons)
+     * @param string $reason Reason for revision
+     * @return array|WP_Error Revision details or WP_Error on failure
+     */
+    public static function revise_subscription( $subscription_id, $new_plan_id, $reason = 'Add-on subscription change' ) {
+        $response = self::api_request(
+            '/v1/billing/subscriptions/' . $subscription_id . '/revise',
+            'POST',
+            array(
+                'plan_id' => $new_plan_id,
+                'application_context' => array(
+                    'user_action' => 'SUBSCRIBE_NOW', // Requires immediate approval
+                    'return_url' => home_url( '/projectfob/adminland/billing?revision=success' ),
+                    'cancel_url' => home_url( '/projectfob/adminland/billing?revision=cancelled' ),
+                ),
+            )
+        );
+
+        if ( is_wp_error( $response ) ) {
+            error_log( '[PayPal] Subscription revision failed: ' . $response->get_error_message() );
+            return $response;
+        }
+
+        // Response contains approve_link for customer to approve the change
+        error_log( '[PayPal] Subscription revision created, approval required' );
+        return $response;
+    }
+
+    /**
+     * Update subscription custom fields (for add-on metadata without plan change)
+     *
+     * @param string $subscription_id PayPal subscription ID
+     * @param array $custom_data Custom data to store
+     * @return true|WP_Error True on success or WP_Error on failure
+     */
+    public static function update_subscription_custom_data( $subscription_id, $custom_data ) {
+        $response = self::api_request(
+            '/v1/billing/subscriptions/' . $subscription_id,
+            'PATCH',
+            array(
+                array(
+                    'op' => 'replace',
+                    'path' => '/custom_id',
+                    'value' => wp_json_encode( $custom_data ),
+                ),
+            )
+        );
+
+        if ( is_wp_error( $response ) ) {
+            error_log( '[PayPal] Update custom data failed: ' . $response->get_error_message() );
             return $response;
         }
 

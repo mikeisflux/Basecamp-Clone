@@ -466,35 +466,71 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
             return new WP_Error( 'addon_exists', 'This add-on is already active.', array( 'status' => 400 ) );
         }
 
-        // Add the add-on
-        $metadata[ $addon_key ] = true;
-        $metadata[ $addon_key . '_added_at' ] = current_time( 'mysql' );
+        // Mark add-on as pending approval
+        $metadata[ $addon_key . '_pending' ] = true;
+        $metadata[ $addon_key . '_pending_since' ] = current_time( 'mysql' );
 
-        // Update subscription
-        $result = PFOB_Subscription::update( $subscription->id, array(
-            'metadata' => wp_json_encode( $metadata ),
-            'updated_at' => current_time( 'mysql' ),
-        ) );
+        // Calculate new plan - need to determine which combined plan to use
+        // For now, we'll use PayPal subscription revision instead of plan change
 
-        if ( ! $result ) {
-            return new WP_Error( 'update_failed', 'Failed to add add-on.', array( 'status' => 500 ) );
+        // Call PayPal API to revise subscription (requires customer approval)
+        if ( ! empty( $subscription->paypal_subscription_id ) ) {
+            $paypal_result = PFOB_PayPal_Service::revise_subscription(
+                $subscription->paypal_subscription_id,
+                $subscription->plan_id, // Keep same base plan for now
+                "Adding {$addon_names[$addon]} add-on (+$50/month)"
+            );
+
+            if ( is_wp_error( $paypal_result ) ) {
+                return new WP_Error(
+                    'paypal_error',
+                    'Failed to process PayPal subscription change: ' . $paypal_result->get_error_message(),
+                    array( 'status' => 500 )
+                );
+            }
+
+            // Get approval link from PayPal response
+            $approve_link = '';
+            if ( isset( $paypal_result['links'] ) ) {
+                foreach ( $paypal_result['links'] as $link ) {
+                    if ( $link['rel'] === 'approve' ) {
+                        $approve_link = $link['href'];
+                        break;
+                    }
+                }
+            }
+
+            // Update subscription with pending status
+            $result = PFOB_Subscription::update( $subscription->id, array(
+                'metadata' => wp_json_encode( $metadata ),
+                'updated_at' => current_time( 'mysql' ),
+            ) );
+
+            if ( ! $result ) {
+                return new WP_Error( 'update_failed', 'Failed to update subscription.', array( 'status' => 500 ) );
+            }
+
+            // Log activity
+            PFOB_Database::insert( 'pfob_activities', array(
+                'user_id' => $user_id,
+                'action_type' => 'subscription.addon_pending',
+                'subject_type' => 'subscription',
+                'subject_id' => $subscription->id,
+                'description' => "Requested {$addon_names[$addon]} add-on - Awaiting approval",
+                'created_at' => current_time( 'mysql' ),
+                'updated_at' => current_time( 'mysql' ),
+            ) );
+
+            return new WP_REST_Response( array(
+                'success' => true,
+                'requires_approval' => true,
+                'approval_url' => $approve_link,
+                'message' => "Please approve the subscription change in PayPal to add {$addon_names[$addon]} (+$50/month).",
+            ), 200 );
         }
 
-        // Log activity
-        PFOB_Database::insert( 'pfob_activities', array(
-            'user_id' => $user_id,
-            'action_type' => 'subscription.addon_added',
-            'subject_type' => 'subscription',
-            'subject_id' => $subscription->id,
-            'description' => "Added {$addon_names[$addon]} add-on (+$50/month)",
-            'created_at' => current_time( 'mysql' ),
-            'updated_at' => current_time( 'mysql' ),
-        ) );
-
-        return new WP_REST_Response( array(
-            'success' => true,
-            'message' => "{$addon_names[$addon]} has been added to your subscription! Your account has been instantly updated.",
-        ), 200 );
+        // Fallback if no PayPal subscription ID (shouldn't happen)
+        return new WP_Error( 'no_paypal_subscription', 'No PayPal subscription found.', array( 'status' => 400 ) );
     }
 
     /**
