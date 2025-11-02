@@ -149,138 +149,100 @@ error_log( '[Adminland] Template header loaded successfully' );
         <?php endif; ?>
     </div>
 
-    <?php if ( ! $has_timesheet || ! $has_admin_pro ) : ?>
-    <div class="pfob-upgrades-banner">
-        <div class="pfob-banner-content">
-            <h3>⬆️ Add-ons available</h3>
-            <p>Enhance your account with Timesheet ($50/mo) or Admin Pro ($50/mo) add-ons.</p>
+    <!-- Administration Section -->
+    <div class="pfob-adminland-section">
+        <h3 class="pfob-section-intro">You're an admin, so you can…</h3>
+
+        <div class="pfob-capabilities-list">
+            <a href="<?php echo home_url( '/projectfob/people' ); ?>" class="pfob-capability-card">
+                <span class="pfob-label">Manage people</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="manage-administrators">
+                <span class="pfob-label">Add/remove administrators</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="invite-link">
+                <span class="pfob-label">Invite coworkers with a link</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="manage-groups">
+                <span class="pfob-label">Manage groups</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="manage-companies">
+                <span class="pfob-label">Manage companies</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="rename-tools">
+                <span class="pfob-label">Rename project tools</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="message-categories">
+                <span class="pfob-label">Change message categories</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="move-projects">
+                <span class="pfob-label">Move projects from Basecamp 2 to Basecamp 4</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="merge-people">
+                <span class="pfob-label">Merge people</span>
+            </a>
         </div>
-        <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="pfob-btn pfob-btn-primary">See add-ons</a>
+    </div>
+
+    <!-- Account Owners Section -->
+    <div class="pfob-adminland-section">
+        <h2>Account Owners</h2>
+        <h3 class="pfob-section-intro">You're an account owner, so you can…</h3>
+
+        <div class="pfob-capabilities-list">
+            <a href="<?php echo home_url( '/projectfob/adminland/billing' ); ?>" class="pfob-capability-card pfob-billing-card">
+                <div>
+                    <div class="pfob-label">Handle billing, invoices, packages, and upgrades</div>
+                    <div class="pfob-sublabel">Your next payment: $<?php echo number_format( $monthly_cost, 0 ); ?> on <?php echo $next_payment_date; ?>.</div>
+                </div>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="manage-storage">
+                <span class="pfob-label">Manage storage</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="manage-owners">
+                <span class="pfob-label">Add/remove account owners</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="rename-account">
+                <span class="pfob-label">Rename this account (<?php echo esc_html( $organization ); ?>)</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="view-trash">
+                <span class="pfob-label">View everything in the trash</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="reassign-todos">
+                <span class="pfob-label">Reassign someone's to-dos</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="access-projects">
+                <span class="pfob-label">Access any project</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="export-data">
+                <span class="pfob-label">Export data from this account</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="manage-public">
+                <span class="pfob-label">Manage public items</span>
+            </a>
+            <a href="#" class="pfob-capability-card" data-action="pause-account">
+                <span class="pfob-label">Pause or cancel this account</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Timesheet Upgrade -->
+    <?php if ( ! $has_timesheet ) : ?>
+    <div class="pfob-adminland-section pfob-upgrade-section">
+        <h2>Timesheet <span class="pfob-upgrade-badge">Upgrade</span></h2>
+        <p>Give your team the power to track time spent on projects.</p>
+        <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="pfob-btn pfob-btn-secondary">Check out Timesheet</a>
     </div>
     <?php endif; ?>
 
-    <!-- Administration Capabilities -->
-    <div class="pfob-adminland-section">
-        <h2>Administration</h2>
-        <p>Manage your account and team</p>
-
-        <div class="pfob-capabilities-section">
-            <h3>As the subscriber, you can:</h3>
-            <div class="pfob-capabilities-grid">
-                <a href="<?php echo home_url( '/projectfob/people' ); ?>" class="pfob-capability-card">
-                    <span class="pfob-icon">👥</span>
-                    <span class="pfob-label">Manage people</span>
-                </a>
-                <a href="<?php echo home_url( '/projectfob/people/invite' ); ?>" class="pfob-capability-card">
-                    <span class="pfob-icon">👤</span>
-                    <span class="pfob-label">Invite coworkers</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="invite-link">
-                    <span class="pfob-icon">🔗</span>
-                    <span class="pfob-label">Invite coworkers with a link</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="manage-groups">
-                    <span class="pfob-icon">👥</span>
-                    <span class="pfob-label">Manage groups</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="manage-companies">
-                    <span class="pfob-icon">🏢</span>
-                    <span class="pfob-label">Manage companies</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="rename-tools">
-                    <span class="pfob-icon">🔧</span>
-                    <span class="pfob-label">Rename project tools</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="message-categories">
-                    <span class="pfob-icon">📝</span>
-                    <span class="pfob-label">Change message categories</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="merge-people">
-                    <span class="pfob-icon">🔀</span>
-                    <span class="pfob-label">Merge people</span>
-                </a>
-                <a href="<?php echo home_url( '/projectfob/adminland/billing' ); ?>" class="pfob-capability-card">
-                    <span class="pfob-icon">💳</span>
-                    <span class="pfob-label">Manage billing</span>
-                </a>
-                <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="pfob-capability-card">
-                    <span class="pfob-icon">⬆️</span>
-                    <span class="pfob-label">Upgrade plan</span>
-                </a>
-                <a href="<?php echo home_url( '/projectfob/settings/notifications' ); ?>" class="pfob-capability-card">
-                    <span class="pfob-icon">🔔</span>
-                    <span class="pfob-label">Notification settings</span>
-                </a>
-                <a href="<?php echo home_url( '/projectfob/analytics' ); ?>" class="pfob-capability-card">
-                    <span class="pfob-icon">📊</span>
-                    <span class="pfob-label">View analytics</span>
-                </a>
-            </div>
-        </div>
+    <!-- Admin Pro Pack Upgrade -->
+    <?php if ( ! $has_admin_pro ) : ?>
+    <div class="pfob-adminland-section pfob-upgrade-section">
+        <h2>Admin Pro Pack <span class="pfob-upgrade-badge">Upgrade</span></h2>
+        <p>The Admin Pro Pack is an upgrade for your account that gives you more control over permissions and access.</p>
+        <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="pfob-btn pfob-btn-secondary">Check out the Admin Pro Pack</a>
     </div>
-
-    <!-- Invited Users -->
-    <div class="pfob-adminland-section">
-        <h2>Invited Users</h2>
-        <p>People you've invited to use your ProjectFOB account</p>
-        <?php if ( ! empty( $invited_users ) ) : ?>
-        <div class="pfob-users-grid">
-            <?php foreach ( $invited_users as $invited_user ) :
-                $initials = strtoupper( substr( $invited_user->display_name, 0, 1 ) . substr( strrchr( $invited_user->display_name, ' ' ), 1, 1 ) );
-            ?>
-            <div class="pfob-user-avatar">
-                <div class="pfob-avatar"><?php echo esc_html( $initials ); ?></div>
-                <span><?php echo esc_html( $invited_user->display_name ); ?></span>
-            </div>
-            <?php endforeach; ?>
-        </div>
-        <?php else : ?>
-        <p class="pfob-empty-state">No invited users yet. <a href="<?php echo home_url( '/projectfob/people/invite' ); ?>">Invite someone</a></p>
-        <?php endif; ?>
-    </div>
-
-    <!-- Account Owner Actions -->
-    <div class="pfob-adminland-section">
-        <h2>Account Owner Actions</h2>
-        <p>Special capabilities for the account owner</p>
-
-        <div class="pfob-capabilities-section">
-            <div class="pfob-capabilities-grid">
-                <a href="#" class="pfob-capability-card" data-action="manage-storage">
-                    <span class="pfob-icon">💾</span>
-                    <span class="pfob-label">Manage storage</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="rename-account">
-                    <span class="pfob-icon">✏️</span>
-                    <span class="pfob-label">Rename this account (<?php echo esc_html( $organization ); ?>)</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="view-trash">
-                    <span class="pfob-icon">🗑️</span>
-                    <span class="pfob-label">View everything in the trash</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="reassign-todos">
-                    <span class="pfob-icon">📋</span>
-                    <span class="pfob-label">Reassign someone's to-dos</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="access-projects">
-                    <span class="pfob-icon">🔑</span>
-                    <span class="pfob-label">Access any project</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="export-data">
-                    <span class="pfob-icon">📥</span>
-                    <span class="pfob-label">Export data from this account</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="manage-public">
-                    <span class="pfob-icon">🔧</span>
-                    <span class="pfob-label">Manage public items</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="pause-account">
-                    <span class="pfob-icon">⏸️</span>
-                    <span class="pfob-label">Pause or cancel this account</span>
-                </a>
-            </div>
-        </div>
-    </div>
+    <?php endif; ?>
 </div>
 
 <style>
@@ -460,54 +422,88 @@ error_log( '[Adminland] Template header loaded successfully' );
     color: #333;
 }
 
-.pfob-capabilities-section h3 {
-    margin: 0 0 20px 0;
-    font-size: 16px;
-    color: #666;
+.pfob-section-intro {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    color: #444;
     font-weight: normal;
 }
 
-.pfob-capabilities-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-width: 800px;
+.pfob-capabilities-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .pfob-capability-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-left: 3px solid #0066cc;
-    border-radius: 4px;
+    display: block;
+    padding: 10px 0;
     text-decoration: none;
-    color: #333;
-    transition: all 0.2s;
+    color: #0066cc;
+    font-size: 15px;
+    line-height: 1.5;
 }
 
 .pfob-capability-card:hover {
-    background: #f8f9fa;
-    border-left-color: #0052a3;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.pfob-capability-card .pfob-icon {
-    font-size: 24px;
-    flex-shrink: 0;
+    text-decoration: underline;
 }
 
 .pfob-capability-card .pfob-label {
-    font-weight: 500;
-    font-size: 14px;
+    color: #0066cc;
 }
 
-.pfob-capability-card .pfob-sublabel {
-    font-size: 12px;
+.pfob-billing-card .pfob-label {
+    color: #0066cc;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.pfob-billing-card .pfob-sublabel {
+    font-size: 14px;
     color: #666;
-    margin-top: 4px;
+    font-style: italic;
+}
+
+.pfob-upgrade-section {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+}
+
+.pfob-upgrade-section h2 {
+    margin: 0 0 8px 0;
+}
+
+.pfob-upgrade-section p {
+    color: #666;
+    margin: 0 0 16px 0;
+}
+
+.pfob-upgrade-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #f59e0b;
+    background: #fef3c7;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-left: 6px;
+}
+
+.pfob-btn-secondary {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #0066cc;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.pfob-btn-secondary:hover {
+    background: #0052a3;
+    color: white;
 }
 </style>
 
@@ -542,6 +538,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'message-categories':
                 showMessageCategories();
+                break;
+            case 'move-projects':
+                showMoveProjects();
                 break;
             case 'merge-people':
                 showMergePeople();
@@ -663,6 +662,18 @@ document.addEventListener('DOMContentLoaded', function() {
             <button class="pfob-btn pfob-btn-primary">Add Category</button>
         `;
         showModal('Message Categories', content);
+    }
+
+    function showMoveProjects() {
+        const content = `
+            <p>Move projects from Basecamp 2 to Basecamp 4.</p>
+            <div class="pfob-form-group">
+                <label>Select projects to migrate</label>
+                <p style="color: #666; font-size: 14px;">Connect your Basecamp 2 account to view available projects.</p>
+            </div>
+            <button class="pfob-btn pfob-btn-primary">Connect Basecamp 2</button>
+        `;
+        showModal('Move Projects', content);
     }
 
     function showMergePeople() {
