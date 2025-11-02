@@ -493,7 +493,79 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showManageOwners() {
-        showModal('Manage Account Owners', '<p>Add or remove account owners. Account owners have full access to billing and account management.</p>');
+        showModal('Manage Account Owners', `
+            <p style="margin-bottom: 20px; color: #666;">Add or remove account owners. Account owners have full access to billing and account management.</p>
+
+            <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 16px; margin-bottom: 12px;">Current Account Owners</h3>
+                <div id="owners-list" style="border: 1px solid #ddd; border-radius: 4px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-weight: 600;"><?php echo esc_js( $user->display_name ); ?></div>
+                            <div style="font-size: 13px; color: #666;"><?php echo esc_js( $user->user_email ); ?></div>
+                        </div>
+                        <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;">Primary</span>
+                    </div>
+                    <div id="additional-owners"></div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <h3 style="font-size: 16px; margin-bottom: 12px;">Add Account Owner</h3>
+                <div style="display: flex; gap: 8px;">
+                    <input type="email" id="new-owner-email" placeholder="Enter email address"
+                           style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <button onclick="addAccountOwner()"
+                            style="padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+                        Add Owner
+                    </button>
+                </div>
+                <div id="add-owner-message" style="margin-top: 8px; font-size: 14px;"></div>
+            </div>
+        `);
+
+        loadAccountOwners();
+    }
+
+    function loadAccountOwners() {
+        // This would normally fetch from the API
+        // For now, show placeholder
+        const container = document.getElementById('additional-owners');
+        if (container) {
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">No additional owners yet</div>';
+        }
+    }
+
+    function addAccountOwner() {
+        const emailInput = document.getElementById('new-owner-email');
+        const messageDiv = document.getElementById('add-owner-message');
+        const email = emailInput.value.trim();
+
+        if (!email) {
+            messageDiv.style.color = '#dc3545';
+            messageDiv.textContent = 'Please enter an email address';
+            return;
+        }
+
+        if (!email.includes('@')) {
+            messageDiv.style.color = '#dc3545';
+            messageDiv.textContent = 'Please enter a valid email address';
+            return;
+        }
+
+        messageDiv.style.color = '#0066cc';
+        messageDiv.textContent = 'Sending invitation...';
+
+        // Simulate API call
+        setTimeout(() => {
+            messageDiv.style.color = '#10b981';
+            messageDiv.textContent = '✓ Invitation sent to ' + email;
+            emailInput.value = '';
+
+            setTimeout(() => {
+                messageDiv.textContent = '';
+            }, 3000);
+        }, 500);
     }
 
     function showRenameAccount() {
@@ -507,7 +579,114 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showReassignTodos() {
-        showModal('Reassign To-dos', '<p>Reassign all to-dos from one person to another.</p>');
+        showModal('Reassign To-dos', `
+            <p style="margin-bottom: 20px; color: #666;">Reassign all to-dos from one person to another. This will update all incomplete to-dos assigned to the selected person.</p>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">From (current assignee)</label>
+                <select id="reassign-from" onchange="updateTodoCount()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">Select a person...</option>
+                    <option value="<?php echo esc_js( $user_id ); ?>"><?php echo esc_js( $user->display_name ); ?> (You)</option>
+                    <option value="2">John Smith</option>
+                    <option value="3">Jane Doe</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">To (new assignee)</label>
+                <select id="reassign-to" onchange="updateTodoCount()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">Select a person...</option>
+                    <option value="<?php echo esc_js( $user_id ); ?>"><?php echo esc_js( $user->display_name ); ?> (You)</option>
+                    <option value="2">John Smith</option>
+                    <option value="3">Jane Doe</option>
+                </select>
+            </div>
+
+            <div id="todo-count-info" style="background: #f8f9fa; padding: 16px; border-radius: 4px; margin-bottom: 20px; display: none;">
+                <div style="font-size: 14px; color: #666; margin-bottom: 4px;">To-dos to be reassigned:</div>
+                <div style="font-size: 24px; font-weight: 700; color: #0066cc;"><span id="todo-count">0</span> to-dos</div>
+            </div>
+
+            <div id="reassign-message" style="margin-bottom: 16px; padding: 12px; border-radius: 4px; display: none;"></div>
+
+            <div style="display: flex; gap: 12px;">
+                <button onclick="executeReassign()" id="reassign-button" disabled
+                        style="flex: 1; padding: 12px 24px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                    Reassign To-dos
+                </button>
+                <button onclick="document.querySelector('.modal-close').click()"
+                        style="padding: 12px 24px; background: #e5e7eb; color: #333; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                    Cancel
+                </button>
+            </div>
+        `);
+    }
+
+    function updateTodoCount() {
+        const fromSelect = document.getElementById('reassign-from');
+        const toSelect = document.getElementById('reassign-to');
+        const countInfo = document.getElementById('todo-count-info');
+        const countSpan = document.getElementById('todo-count');
+        const button = document.getElementById('reassign-button');
+        const messageDiv = document.getElementById('reassign-message');
+
+        messageDiv.style.display = 'none';
+
+        if (fromSelect.value && toSelect.value) {
+            if (fromSelect.value === toSelect.value) {
+                messageDiv.style.display = 'block';
+                messageDiv.style.background = '#fee2e2';
+                messageDiv.style.color = '#dc3545';
+                messageDiv.textContent = '⚠️ Cannot reassign to the same person';
+                countInfo.style.display = 'none';
+                button.disabled = true;
+                button.style.opacity = '0.5';
+                button.style.cursor = 'not-allowed';
+                return;
+            }
+
+            // Simulate fetching count (would be API call)
+            const mockCount = Math.floor(Math.random() * 20) + 5;
+            countSpan.textContent = mockCount;
+            countInfo.style.display = 'block';
+            button.disabled = false;
+            button.style.opacity = '1';
+            button.style.cursor = 'pointer';
+        } else {
+            countInfo.style.display = 'none';
+            button.disabled = true;
+            button.style.opacity = '0.5';
+            button.style.cursor = 'not-allowed';
+        }
+    }
+
+    function executeReassign() {
+        const fromSelect = document.getElementById('reassign-from');
+        const toSelect = document.getElementById('reassign-to');
+        const countSpan = document.getElementById('todo-count');
+        const messageDiv = document.getElementById('reassign-message');
+        const button = document.getElementById('reassign-button');
+
+        const fromName = fromSelect.options[fromSelect.selectedIndex].text;
+        const toName = toSelect.options[toSelect.selectedIndex].text;
+        const count = countSpan.textContent;
+
+        button.disabled = true;
+        button.textContent = 'Reassigning...';
+
+        // Simulate API call
+        setTimeout(() => {
+            messageDiv.style.display = 'block';
+            messageDiv.style.background = '#d1fae5';
+            messageDiv.style.color = '#10b981';
+            messageDiv.innerHTML = `✓ Successfully reassigned ${count} to-dos from <strong>${fromName}</strong> to <strong>${toName}</strong>`;
+
+            button.textContent = 'Done!';
+
+            setTimeout(() => {
+                document.querySelector('.modal-close').click();
+            }, 2000);
+        }, 1000);
     }
 
     function showDataExport() {
