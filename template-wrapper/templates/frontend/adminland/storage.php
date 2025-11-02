@@ -36,9 +36,9 @@ $documents_table = $wpdb->prefix . 'pfob_documents';
 
 // Get all documents for this user's account
 $total_storage_query = "
-    SELECT SUM(CAST(JSON_EXTRACT(metadata, '$.size') AS UNSIGNED)) as total_bytes
+    SELECT SUM(file_size) as total_bytes
     FROM {$documents_table}
-    WHERE created_by IN (
+    WHERE uploaded_by IN (
         SELECT ID FROM {$wpdb->users}
         WHERE ID = %d OR ID IN (
             SELECT user_id FROM {$wpdb->usermeta}
@@ -57,11 +57,11 @@ $used_percentage = $is_unlimited ? 0 : min( 100, ( $used_gb / $storage_limit_gb 
 // Get file breakdown by type
 $file_breakdown_query = "
     SELECT
-        JSON_EXTRACT(metadata, '$.mime_type') as mime_type,
+        mime_type,
         COUNT(*) as file_count,
-        SUM(CAST(JSON_EXTRACT(metadata, '$.size') AS UNSIGNED)) as total_size
+        SUM(file_size) as total_size
     FROM {$documents_table}
-    WHERE created_by IN (
+    WHERE uploaded_by IN (
         SELECT ID FROM {$wpdb->users}
         WHERE ID = %d OR ID IN (
             SELECT user_id FROM {$wpdb->usermeta}
@@ -78,12 +78,12 @@ $file_breakdown = $wpdb->get_results( $wpdb->prepare( $file_breakdown_query, $us
 // Get largest files
 $largest_files_query = "
     SELECT
-        title,
-        CAST(JSON_EXTRACT(metadata, '$.size') AS UNSIGNED) as file_size,
-        JSON_EXTRACT(metadata, '$.mime_type') as mime_type,
+        name as title,
+        file_size,
+        mime_type,
         created_at
     FROM {$documents_table}
-    WHERE created_by IN (
+    WHERE uploaded_by IN (
         SELECT ID FROM {$wpdb->users}
         WHERE ID = %d OR ID IN (
             SELECT user_id FROM {$wpdb->usermeta}
