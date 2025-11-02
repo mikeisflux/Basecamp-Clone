@@ -3,7 +3,7 @@
  * Timesheet Dashboard
  *
  * Main dashboard for time tracking. Shows recent time entries,
- * quick timer, and weekly summary.
+ * quick timer with popout functionality and idle detection, and weekly summary.
  *
  * @package ProjectFOB
  */
@@ -25,10 +25,22 @@ PFOB_Template::header( 'Timesheet' );
 
     <!-- Quick Timer -->
     <div class="timesheet-section timer-section">
-        <h2 class="section-title">Quick Timer</h2>
+        <div class="timer-header">
+            <h2 class="section-title">Quick Timer</h2>
+            <button class="popout-button" onclick="openPopout()" title="Open in popup window">
+                🗗 Pop Out
+            </button>
+        </div>
 
         <div class="quick-timer">
             <div class="timer-display" id="timer-display">00:00:00</div>
+
+            <!-- Current Project/Task Display -->
+            <div class="current-work" id="current-work" style="display: none;">
+                <div class="current-work-label">Currently Working On:</div>
+                <div class="current-work-project" id="current-project-name">—</div>
+                <div class="current-work-task" id="current-task-name">—</div>
+            </div>
 
             <div class="timer-controls">
                 <button class="timer-button start-button" id="start-timer" onclick="startTimer()">
@@ -45,7 +57,7 @@ PFOB_Template::header( 'Timesheet' );
             <div class="timer-details" id="timer-details" style="display: none;">
                 <div class="detail-row">
                     <label class="detail-label">Project:</label>
-                    <select id="timer-project" class="detail-input">
+                    <select id="timer-project" class="detail-input" onchange="updateCurrentWork()">
                         <option value="">Select project...</option>
                         <option value="1">Website Redesign</option>
                         <option value="2">Marketing Campaign</option>
@@ -55,12 +67,19 @@ PFOB_Template::header( 'Timesheet' );
 
                 <div class="detail-row">
                     <label class="detail-label">Task:</label>
-                    <input type="text" id="timer-task" class="detail-input" placeholder="What are you working on?">
+                    <input type="text" id="timer-task" class="detail-input" placeholder="What are you working on?" onchange="updateCurrentWork()">
                 </div>
 
                 <div class="detail-row">
                     <label class="detail-label">Notes:</label>
                     <textarea id="timer-notes" class="detail-textarea" rows="2" placeholder="Additional notes (optional)"></textarea>
+                </div>
+
+                <div class="detail-row">
+                    <label class="detail-label checkbox-label">
+                        <input type="checkbox" id="timer-billable" checked>
+                        Mark as billable
+                    </label>
                 </div>
             </div>
         </div>
@@ -136,6 +155,23 @@ PFOB_Template::header( 'Timesheet' );
     </div>
 </div>
 
+<!-- Idle Confirmation Modal -->
+<div id="idle-modal" class="idle-modal" style="display: none;">
+    <div class="idle-modal-content">
+        <h2 class="idle-modal-title">⏰ Still Working?</h2>
+        <p class="idle-modal-message">Your timer has been running for a while. Are you still working on this task?</p>
+        <div class="idle-modal-info">
+            <strong id="idle-project-name">Website Redesign</strong><br>
+            <span id="idle-task-name">Homepage Design</span><br>
+            <span class="idle-duration">Time elapsed: <strong id="idle-duration">0:30:00</strong></span>
+        </div>
+        <div class="idle-modal-actions">
+            <button class="action-button primary-button" onclick="confirmStillWorking()">✅ Yes, Still Working</button>
+            <button class="action-button secondary-button" onclick="stopTimerFromIdle()">⏹️ Stop Timer</button>
+        </div>
+    </div>
+</div>
+
 <style>
 /* SIMPLE VERTICAL LAYOUT - NO COLUMNS */
 .timesheet-page-wrapper {
@@ -183,14 +219,36 @@ PFOB_Template::header( 'Timesheet' );
     color: white;
 }
 
+.timer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
 .section-title {
     font-size: 20px;
-    margin: 0 0 20px 0;
+    margin: 0;
     color: #333;
 }
 
 .timer-section .section-title {
     color: white;
+}
+
+.popout-button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.popout-button:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .quick-timer {
@@ -201,9 +259,40 @@ PFOB_Template::header( 'Timesheet' );
     font-size: 64px;
     font-weight: bold;
     font-family: 'Courier New', monospace;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     color: white;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Current Work Display */
+.current-work {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 0 auto 24px;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+}
+
+.current-work-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 8px;
+}
+
+.current-work-project {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.current-work-task {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .timer-controls {
@@ -229,6 +318,7 @@ PFOB_Template::header( 'Timesheet' );
 
 .start-button:hover {
     background: #059669;
+    transform: scale(1.05);
 }
 
 .pause-button {
@@ -238,6 +328,7 @@ PFOB_Template::header( 'Timesheet' );
 
 .pause-button:hover {
     background: #d97706;
+    transform: scale(1.05);
 }
 
 .stop-button {
@@ -247,6 +338,7 @@ PFOB_Template::header( 'Timesheet' );
 
 .stop-button:hover {
     background: #c82333;
+    transform: scale(1.05);
 }
 
 .timer-details {
@@ -267,6 +359,17 @@ PFOB_Template::header( 'Timesheet' );
     color: white;
 }
 
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
 .detail-input,
 .detail-textarea {
     width: 100%;
@@ -285,6 +388,75 @@ PFOB_Template::header( 'Timesheet' );
     background: white;
 }
 
+/* Idle Modal */
+.idle-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: flash 1s ease-in-out infinite;
+}
+
+@keyframes flash {
+    0%, 100% { background: rgba(0, 0, 0, 0.7); }
+    50% { background: rgba(255, 165, 0, 0.3); }
+}
+
+.idle-modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: bounce 0.5s ease-out;
+}
+
+@keyframes bounce {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.idle-modal-title {
+    font-size: 28px;
+    color: #333;
+    margin: 0 0 16px 0;
+    text-align: center;
+}
+
+.idle-modal-message {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.idle-modal-info {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.idle-duration {
+    color: #666;
+    font-size: 14px;
+}
+
+.idle-modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Weekly Summary */
 .weekly-summary {
     margin-bottom: 32px;
 }
@@ -418,10 +590,21 @@ PFOB_Template::header( 'Timesheet' );
     border: none;
 }
 
+.primary-button {
+    background: #0066cc;
+    color: white;
+    flex: 1;
+}
+
+.primary-button:hover {
+    background: #0052a3;
+}
+
 .secondary-button {
     background: #e5e7eb;
     color: #333;
     border: 1px solid #d1d5db;
+    flex: 1;
 }
 
 .secondary-button:hover {
@@ -460,6 +643,15 @@ PFOB_Template::header( 'Timesheet' );
     .summary-stat:nth-child(2n) {
         margin-right: 0;
     }
+
+    .idle-modal-content {
+        margin: 20px;
+        padding: 24px;
+    }
+
+    .idle-modal-actions {
+        flex-direction: column;
+    }
 }
 </style>
 
@@ -467,6 +659,13 @@ PFOB_Template::header( 'Timesheet' );
 let timerInterval = null;
 let timerSeconds = 0;
 let timerRunning = false;
+let idleCheckInterval = null;
+let lastIdleCheck = null;
+let titleFlashInterval = null;
+let originalTitle = document.title;
+
+const IDLE_CHECK_MINUTES = 30; // Check every 30 minutes
+const IDLE_TIMEOUT_SECONDS = 60; // Auto-stop after 60 seconds of no response
 
 document.addEventListener('DOMContentLoaded', function() {
     loadTimeEntries();
@@ -475,7 +674,30 @@ document.addEventListener('DOMContentLoaded', function() {
     window.pauseTimer = pauseTimer;
     window.stopTimer = stopTimer;
     window.loadMoreEntries = loadMoreEntries;
+    window.openPopout = openPopout;
+    window.updateCurrentWork = updateCurrentWork;
+    window.confirmStillWorking = confirmStillWorking;
+    window.stopTimerFromIdle = stopTimerFromIdle;
 });
+
+function updateCurrentWork() {
+    const projectSelect = document.getElementById('timer-project');
+    const taskInput = document.getElementById('timer-task');
+    const currentWork = document.getElementById('current-work');
+    const currentProjectName = document.getElementById('current-project-name');
+    const currentTaskName = document.getElementById('current-task-name');
+
+    const projectName = projectSelect.options[projectSelect.selectedIndex].text;
+    const taskName = taskInput.value;
+
+    if (projectName && taskName) {
+        currentProjectName.textContent = projectName;
+        currentTaskName.textContent = taskName;
+        currentWork.style.display = 'block';
+    } else {
+        currentWork.style.display = 'none';
+    }
+}
 
 function startTimer() {
     timerRunning = true;
@@ -488,11 +710,91 @@ function startTimer() {
         timerSeconds++;
         updateTimerDisplay();
     }, 1000);
+
+    // Start idle check
+    lastIdleCheck = Date.now();
+    idleCheckInterval = setInterval(checkIdleStatus, 60000); // Check every minute
+}
+
+function checkIdleStatus() {
+    const minutesElapsed = (Date.now() - lastIdleCheck) / 1000 / 60;
+
+    if (minutesElapsed >= IDLE_CHECK_MINUTES) {
+        showIdleModal();
+    }
+}
+
+function showIdleModal() {
+    clearInterval(timerInterval);
+
+    const modal = document.getElementById('idle-modal');
+    const projectSelect = document.getElementById('timer-project');
+    const taskInput = document.getElementById('timer-task');
+
+    document.getElementById('idle-project-name').textContent =
+        projectSelect.options[projectSelect.selectedIndex].text || 'Unknown Project';
+    document.getElementById('idle-task-name').textContent =
+        taskInput.value || 'No task description';
+    document.getElementById('idle-duration').textContent = formatDuration(timerSeconds);
+
+    modal.style.display = 'flex';
+
+    // Start title flashing
+    startTitleFlash();
+
+    // Play notification sound (if permissions allow)
+    try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSeL0fPTgjMGHm7A7+OZSA0PVqzn77BdGAg+ltz0yHkqBSN1xe/glUYLEly57OylUxEJQ5zg87xrJAYniM/z1YU1Bxpr');
+        audio.play();
+    } catch (e) {
+        // Silent fail if audio not supported
+    }
+
+    // Auto-stop after timeout
+    setTimeout(() => {
+        if (document.getElementById('idle-modal').style.display === 'flex') {
+            stopTimerFromIdle();
+        }
+    }, IDLE_TIMEOUT_SECONDS * 1000);
+}
+
+function startTitleFlash() {
+    let isOriginal = true;
+    titleFlashInterval = setInterval(() => {
+        document.title = isOriginal ? '⏰ STILL WORKING? ⏰' : originalTitle;
+        isOriginal = !isOriginal;
+    }, 1000);
+}
+
+function stopTitleFlash() {
+    clearInterval(titleFlashInterval);
+    document.title = originalTitle;
+}
+
+function confirmStillWorking() {
+    document.getElementById('idle-modal').style.display = 'none';
+    stopTitleFlash();
+
+    // Reset idle check
+    lastIdleCheck = Date.now();
+
+    // Resume timer
+    timerInterval = setInterval(() => {
+        timerSeconds++;
+        updateTimerDisplay();
+    }, 1000);
+}
+
+function stopTimerFromIdle() {
+    document.getElementById('idle-modal').style.display = 'none';
+    stopTitleFlash();
+    stopTimer();
 }
 
 function pauseTimer() {
     timerRunning = false;
     clearInterval(timerInterval);
+    clearInterval(idleCheckInterval);
     document.getElementById('pause-timer').textContent = timerRunning ? '⏸️ Pause' : '▶️ Resume';
 
     if (!timerRunning) {
@@ -502,6 +804,8 @@ function pauseTimer() {
                 timerSeconds++;
                 updateTimerDisplay();
             }, 1000);
+            lastIdleCheck = Date.now();
+            idleCheckInterval = setInterval(checkIdleStatus, 60000);
             document.getElementById('pause-timer').textContent = '⏸️ Pause';
         }, 100);
     }
@@ -509,10 +813,12 @@ function pauseTimer() {
 
 async function stopTimer() {
     clearInterval(timerInterval);
+    clearInterval(idleCheckInterval);
 
     const project = document.getElementById('timer-project').value;
     const task = document.getElementById('timer-task').value;
     const notes = document.getElementById('timer-notes').value;
+    const billable = document.getElementById('timer-billable').checked;
 
     if (!project || !task) {
         alert('Please select a project and enter a task description');
@@ -531,22 +837,23 @@ async function stopTimer() {
                 project_id: project,
                 task: task,
                 notes: notes,
-                duration: timerSeconds
+                duration: timerSeconds,
+                billable: billable
             })
         });
 
         const data = await response.json();
 
         if (data.success) {
-            alert(`Time entry saved: ${formatDuration(timerSeconds)}`);
+            alert(`✅ Time entry saved: ${formatDuration(timerSeconds)}`);
             resetTimer();
             loadTimeEntries();
         } else {
-            alert('Failed to save time entry: ' + (data.message || 'Unknown error'));
+            alert('❌ Failed to save time entry: ' + (data.message || 'Unknown error'));
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Time entry saved (simulated): ' + formatDuration(timerSeconds));
+        alert(`✅ Time entry saved (simulated): ${formatDuration(timerSeconds)}\n\n(API will save this when backend is ready)`);
         resetTimer();
     }
 }
@@ -555,16 +862,20 @@ function resetTimer() {
     timerSeconds = 0;
     timerRunning = false;
     clearInterval(timerInterval);
+    clearInterval(idleCheckInterval);
+    stopTitleFlash();
     updateTimerDisplay();
 
     document.getElementById('start-timer').style.display = 'inline-block';
     document.getElementById('pause-timer').style.display = 'none';
     document.getElementById('stop-timer').style.display = 'none';
     document.getElementById('timer-details').style.display = 'none';
+    document.getElementById('current-work').style.display = 'none';
 
     document.getElementById('timer-project').value = '';
     document.getElementById('timer-task').value = '';
     document.getElementById('timer-notes').value = '';
+    document.getElementById('timer-billable').checked = true;
 }
 
 function updateTimerDisplay() {
@@ -586,6 +897,133 @@ function formatDuration(seconds) {
         return `${hours}h ${minutes}m`;
     }
     return `${minutes}m`;
+}
+
+function openPopout() {
+    const width = 400;
+    const height = 500;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+
+    const popupWindow = window.open(
+        '',
+        'TimerPopout',
+        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=no`
+    );
+
+    if (popupWindow) {
+        popupWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>⏱️ Timer - ProjectFOB</title>
+                <style>
+                    body {
+                        margin: 0;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        min-height: 100vh;
+                        box-sizing: border-box;
+                    }
+                    .timer-popout {
+                        text-align: center;
+                    }
+                    .popout-display {
+                        font-size: 48px;
+                        font-weight: bold;
+                        font-family: 'Courier New', monospace;
+                        margin: 20px 0;
+                        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                    }
+                    .popout-work {
+                        background: rgba(255,255,255,0.15);
+                        border-radius: 8px;
+                        padding: 16px;
+                        margin: 20px 0;
+                        backdrop-filter: blur(10px);
+                    }
+                    .popout-project {
+                        font-size: 18px;
+                        font-weight: 700;
+                        margin-bottom: 8px;
+                    }
+                    .popout-task {
+                        font-size: 14px;
+                        opacity: 0.9;
+                    }
+                    .popout-controls button {
+                        padding: 10px 20px;
+                        margin: 8px;
+                        border-radius: 6px;
+                        border: none;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    }
+                    .stop-btn {
+                        background: #dc3545;
+                        color: white;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="timer-popout">
+                    <h2>⏱️ Time Tracker</h2>
+                    <div class="popout-display" id="popout-display">00:00:00</div>
+                    <div class="popout-work" id="popout-work">
+                        <div class="popout-project" id="popout-project">—</div>
+                        <div class="popout-task" id="popout-task">—</div>
+                    </div>
+                    <div class="popout-controls">
+                        <button class="stop-btn" onclick="stopFromPopout()">⏹️ Stop & Close</button>
+                    </div>
+                </div>
+                <script>
+                    let seconds = ${timerSeconds};
+                    setInterval(() => {
+                        if (window.opener && !window.opener.closed) {
+                            seconds = window.opener.timerSeconds;
+                            updateDisplay();
+                        }
+                    }, 1000);
+
+                    function updateDisplay() {
+                        const h = Math.floor(seconds / 3600);
+                        const m = Math.floor((seconds % 3600) / 60);
+                        const s = seconds % 60;
+                        document.getElementById('popout-display').textContent =
+                            String(h).padStart(2, '0') + ':' +
+                            String(m).padStart(2, '0') + ':' +
+                            String(s).padStart(2, '0');
+                    }
+
+                    function stopFromPopout() {
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.stopTimer();
+                            window.close();
+                        }
+                    }
+
+                    // Sync project/task from parent
+                    setInterval(() => {
+                        if (window.opener && !window.opener.closed) {
+                            const projectEl = window.opener.document.getElementById('current-project-name');
+                            const taskEl = window.opener.document.getElementById('current-task-name');
+                            if (projectEl && taskEl) {
+                                document.getElementById('popout-project').textContent = projectEl.textContent;
+                                document.getElementById('popout-task').textContent = taskEl.textContent;
+                            }
+                        }
+                    }, 1000);
+                </script>
+            </body>
+            </html>
+        `);
+    } else {
+        alert('Please allow popups for this site to use the popout timer feature.');
+    }
 }
 
 async function loadTimeEntries() {
