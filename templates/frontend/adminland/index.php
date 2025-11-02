@@ -12,23 +12,36 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+error_log( '[Adminland] Page load started' );
+
 $user_id = get_current_user_id();
+error_log( '[Adminland] User ID: ' . $user_id );
+
 $user = wp_get_current_user();
+error_log( '[Adminland] User display name: ' . $user->display_name );
 
 // Only THE SUBSCRIBER (account owner who pays) can access this page
 // Invited users should not be able to access adminland at all
 $subscription = PFOB_Subscription::get_by_user_id( $user_id );
+error_log( '[Adminland] Subscription retrieved: ' . ( $subscription ? 'Yes (ID: ' . $subscription->id . ')' : 'No' ) );
 
 if ( ! $subscription || ! in_array( $subscription->status, array( 'active', 'trialing' ) ) ) {
     wp_die( __( 'Access denied. You must be the account subscriber to access Adminland.', 'projectfob' ) );
 }
 
 // Get subscription plan configuration
+error_log( '[Adminland] Loading subscription plans config' );
 $plans_config = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+error_log( '[Adminland] Subscription plan_id: ' . $subscription->plan_id );
+
 $plan = isset( $plans_config[ $subscription->plan_id ] ) ? $plans_config[ $subscription->plan_id ] : null;
 
 if ( ! $plan ) {
-    wp_die( __( 'Invalid subscription plan.', 'projectfob' ) );
+    error_log( '[Adminland] WARNING: Invalid plan_id "' . $subscription->plan_id . '", using professional as fallback' );
+    // Fallback to professional plan if plan_id is invalid
+    $plan = $plans_config['professional'];
+} else {
+    error_log( '[Adminland] Plan loaded: ' . $plan['name'] );
 }
 
 // Calculate costs
@@ -36,9 +49,22 @@ $monthly_cost = $plan['price'];
 $next_payment_date = $subscription->current_period_end ? date( 'F j, Y', strtotime( $subscription->current_period_end ) ) : 'N/A';
 
 // Check for add-ons (from subscription metadata)
-$metadata = $subscription->metadata ? json_decode( $subscription->metadata, true ) : array();
-$has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'];
-$has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin_pro'];
+error_log( '[Adminland] Checking add-ons from metadata' );
+$metadata = array();
+if ( ! empty( $subscription->metadata ) ) {
+    error_log( '[Adminland] Raw metadata: ' . $subscription->metadata );
+    $decoded = json_decode( $subscription->metadata, true );
+    if ( is_array( $decoded ) ) {
+        $metadata = $decoded;
+        error_log( '[Adminland] Decoded metadata: ' . print_r( $metadata, true ) );
+    } else {
+        error_log( '[Adminland] WARNING: Failed to decode metadata JSON' );
+    }
+}
+$has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'] === true;
+$has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin_pro'] === true;
+error_log( '[Adminland] Has Timesheet: ' . ( $has_timesheet ? 'Yes' : 'No' ) );
+error_log( '[Adminland] Has Admin Pro: ' . ( $has_admin_pro ? 'Yes' : 'No' ) );
 
 if ( $has_timesheet ) {
     $monthly_cost += 50;
@@ -51,6 +77,7 @@ if ( $has_admin_pro ) {
 $organization = get_user_meta( $user_id, 'pfob_organization', true ) ?: get_bloginfo( 'name' );
 
 // Get all invited users (people the subscriber has invited to their account)
+error_log( '[Adminland] Fetching invited users' );
 $invited_users = get_users( array(
     'meta_query' => array(
         array(
@@ -59,8 +86,11 @@ $invited_users = get_users( array(
         ),
     ),
 ) );
+error_log( '[Adminland] Found ' . count( $invited_users ) . ' invited users' );
 
+error_log( '[Adminland] Calling template header' );
 PFOB_Template::header( 'Adminland' );
+error_log( '[Adminland] Template header loaded successfully' );
 ?>
 
 <div class="pfob-container pfob-adminland">
@@ -91,23 +121,25 @@ PFOB_Template::header( 'Adminland' );
             </div>
         </div>
 
+        <?php if ( isset( $plan['features'] ) && is_array( $plan['features'] ) ) : ?>
         <div class="pfob-plan-limits">
             <h3>Your Plan Includes:</h3>
             <ul>
-                <li>Projects: <?php echo $plan['features']['projects'] == 999999 ? 'Unlimited' : $plan['features']['projects']; ?></li>
-                <li>Users: <?php echo $plan['features']['users'] == 999999 ? 'Unlimited' : $plan['features']['users']; ?></li>
-                <li>Storage: <?php echo $plan['features']['storage_gb'] == 999999 ? 'Unlimited' : $plan['features']['storage_gb'] . ' GB'; ?></li>
-                <?php if ( isset( $plan['features']['google_calendar'] ) && $plan['features']['google_calendar'] ) : ?>
+                <li>Projects: <?php echo ( isset( $plan['features']['projects'] ) && $plan['features']['projects'] == 999999 ) ? 'Unlimited' : ( $plan['features']['projects'] ?? '0' ); ?></li>
+                <li>Users: <?php echo ( isset( $plan['features']['users'] ) && $plan['features']['users'] == 999999 ) ? 'Unlimited' : ( $plan['features']['users'] ?? '0' ); ?></li>
+                <li>Storage: <?php echo ( isset( $plan['features']['storage_gb'] ) && $plan['features']['storage_gb'] == 999999 ) ? 'Unlimited' : ( ( $plan['features']['storage_gb'] ?? '0' ) . ' GB' ); ?></li>
+                <?php if ( ! empty( $plan['features']['google_calendar'] ) ) : ?>
                 <li>Google Calendar Integration</li>
                 <?php endif; ?>
-                <?php if ( isset( $plan['features']['advanced_analytics'] ) && $plan['features']['advanced_analytics'] ) : ?>
+                <?php if ( ! empty( $plan['features']['advanced_analytics'] ) ) : ?>
                 <li>Advanced Analytics</li>
                 <?php endif; ?>
-                <?php if ( isset( $plan['features']['custom_branding'] ) && $plan['features']['custom_branding'] ) : ?>
+                <?php if ( ! empty( $plan['features']['custom_branding'] ) ) : ?>
                 <li>Custom Branding</li>
                 <?php endif; ?>
             </ul>
         </div>
+        <?php endif; ?>
     </div>
 
     <?php if ( ! $has_timesheet || ! $has_admin_pro ) : ?>
@@ -713,4 +745,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <?php
+error_log( '[Adminland] Rendering complete, calling footer' );
 PFOB_Template::footer();
+error_log( '[Adminland] Page fully rendered' );

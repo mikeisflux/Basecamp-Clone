@@ -44,9 +44,15 @@ $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
                         $plan = $plans[ $subscription->plan_id ] ?? array();
 
                         // Get add-ons from subscription metadata
-                        $metadata = $subscription->metadata ? json_decode( $subscription->metadata, true ) : array();
-                        $has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'];
-                        $has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin_pro'];
+                        $metadata = array();
+                        if ( ! empty( $subscription->metadata ) ) {
+                            $decoded = json_decode( $subscription->metadata, true );
+                            if ( is_array( $decoded ) ) {
+                                $metadata = $decoded;
+                            }
+                        }
+                        $has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'] === true;
+                        $has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin_pro'] === true;
                         ?>
                         <tr>
                             <td>
