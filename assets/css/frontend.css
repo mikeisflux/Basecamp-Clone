@@ -130,7 +130,7 @@
 
 .pfob-user-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 8px);
     right: 0;
     background: var(--pfob-white);
     border: 1px solid var(--pfob-border-color);
@@ -138,10 +138,22 @@
     box-shadow: var(--pfob-shadow);
     min-width: 160px;
     display: none;
-    margin-top: 4px;
+    z-index: 1000;
 }
 
-.pfob-user-menu:hover .pfob-user-dropdown {
+/* Invisible bridge to prevent dropdown from disappearing */
+.pfob-user-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: transparent;
+}
+
+.pfob-user-menu:hover .pfob-user-dropdown,
+.pfob-user-dropdown:hover {
     display: block;
 }
 
@@ -154,6 +166,14 @@
 
 .pfob-user-dropdown a:hover {
     background-color: var(--pfob-background-color);
+}
+
+.pfob-user-dropdown a:first-child {
+    border-radius: var(--pfob-radius) var(--pfob-radius) 0 0;
+}
+
+.pfob-user-dropdown a:last-child {
+    border-radius: 0 0 var(--pfob-radius) var(--pfob-radius);
 }
 
 /* Container & Layout */
