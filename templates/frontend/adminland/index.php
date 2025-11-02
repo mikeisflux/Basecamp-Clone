@@ -159,24 +159,10 @@ error_log( '[Adminland] Template header loaded successfully' );
     </div>
     <?php endif; ?>
 
-    <!-- Invited Users -->
+    <!-- Administration Capabilities -->
     <div class="pfob-adminland-section">
-        <h2>Invited Users</h2>
-        <p>People you've invited to use your ProjectFOB account</p>
-        <?php if ( ! empty( $invited_users ) ) : ?>
-        <div class="pfob-users-grid">
-            <?php foreach ( $invited_users as $invited_user ) :
-                $initials = strtoupper( substr( $invited_user->display_name, 0, 1 ) . substr( strrchr( $invited_user->display_name, ' ' ), 1, 1 ) );
-            ?>
-            <div class="pfob-user-avatar">
-                <div class="pfob-avatar"><?php echo esc_html( $initials ); ?></div>
-                <span><?php echo esc_html( $invited_user->display_name ); ?></span>
-            </div>
-            <?php endforeach; ?>
-        </div>
-        <?php else : ?>
-        <p class="pfob-empty-state">No invited users yet. <a href="<?php echo home_url( '/projectfob/people/invite' ); ?>">Invite someone</a></p>
-        <?php endif; ?>
+        <h2>Administration</h2>
+        <p>Manage your account and team</p>
 
         <div class="pfob-capabilities-section">
             <h3>As the subscriber, you can:</h3>
@@ -188,6 +174,30 @@ error_log( '[Adminland] Template header loaded successfully' );
                 <a href="<?php echo home_url( '/projectfob/people/invite' ); ?>" class="pfob-capability-card">
                     <span class="pfob-icon">👤</span>
                     <span class="pfob-label">Invite coworkers</span>
+                </a>
+                <a href="#" class="pfob-capability-card" data-action="invite-link">
+                    <span class="pfob-icon">🔗</span>
+                    <span class="pfob-label">Invite coworkers with a link</span>
+                </a>
+                <a href="#" class="pfob-capability-card" data-action="manage-groups">
+                    <span class="pfob-icon">👥</span>
+                    <span class="pfob-label">Manage groups</span>
+                </a>
+                <a href="#" class="pfob-capability-card" data-action="manage-companies">
+                    <span class="pfob-icon">🏢</span>
+                    <span class="pfob-label">Manage companies</span>
+                </a>
+                <a href="#" class="pfob-capability-card" data-action="rename-tools">
+                    <span class="pfob-icon">🔧</span>
+                    <span class="pfob-label">Rename project tools</span>
+                </a>
+                <a href="#" class="pfob-capability-card" data-action="message-categories">
+                    <span class="pfob-icon">📝</span>
+                    <span class="pfob-label">Change message categories</span>
+                </a>
+                <a href="#" class="pfob-capability-card" data-action="merge-people">
+                    <span class="pfob-icon">🔀</span>
+                    <span class="pfob-label">Merge people</span>
                 </a>
                 <a href="<?php echo home_url( '/projectfob/adminland/billing' ); ?>" class="pfob-capability-card">
                     <span class="pfob-icon">💳</span>
@@ -209,36 +219,36 @@ error_log( '[Adminland] Template header loaded successfully' );
         </div>
     </div>
 
-    <!-- Account Owner Info -->
-    <div class="pfob-adminland-section pfob-owner-section">
-        <h2>Account Owner</h2>
+    <!-- Invited Users -->
+    <div class="pfob-adminland-section">
+        <h2>Invited Users</h2>
+        <p>People you've invited to use your ProjectFOB account</p>
+        <?php if ( ! empty( $invited_users ) ) : ?>
         <div class="pfob-users-grid">
-            <?php
-            $owner_initials = strtoupper( substr( $user->display_name, 0, 1 ) . substr( strrchr( $user->display_name, ' ' ), 1, 1 ) );
+            <?php foreach ( $invited_users as $invited_user ) :
+                $initials = strtoupper( substr( $invited_user->display_name, 0, 1 ) . substr( strrchr( $invited_user->display_name, ' ' ), 1, 1 ) );
             ?>
             <div class="pfob-user-avatar">
-                <div class="pfob-avatar owner"><?php echo esc_html( $owner_initials ); ?></div>
-                <span><?php echo esc_html( $user->display_name ); ?></span>
+                <div class="pfob-avatar"><?php echo esc_html( $initials ); ?></div>
+                <span><?php echo esc_html( $invited_user->display_name ); ?></span>
             </div>
+            <?php endforeach; ?>
         </div>
+        <?php else : ?>
+        <p class="pfob-empty-state">No invited users yet. <a href="<?php echo home_url( '/projectfob/people/invite' ); ?>">Invite someone</a></p>
+        <?php endif; ?>
+    </div>
+
+    <!-- Account Owner Actions -->
+    <div class="pfob-adminland-section">
+        <h2>Account Owner Actions</h2>
+        <p>Special capabilities for the account owner</p>
 
         <div class="pfob-capabilities-section">
-            <h3>You're an account owner, so you can:</h3>
             <div class="pfob-capabilities-grid">
-                <a href="<?php echo home_url( '/projectfob/adminland/billing' ); ?>" class="pfob-capability-card">
-                    <span class="pfob-icon">💰</span>
-                    <div>
-                        <div class="pfob-label">Handle billing, invoices, packages, and upgrades</div>
-                        <div class="pfob-sublabel">Next payment: $<?php echo $monthly_cost; ?> on <?php echo $next_payment_date; ?></div>
-                    </div>
-                </a>
                 <a href="#" class="pfob-capability-card" data-action="manage-storage">
                     <span class="pfob-icon">💾</span>
                     <span class="pfob-label">Manage storage</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="manage-owners">
-                    <span class="pfob-icon">👑</span>
-                    <span class="pfob-label">Add/remove account owners</span>
                 </a>
                 <a href="#" class="pfob-capability-card" data-action="rename-account">
                     <span class="pfob-icon">✏️</span>
