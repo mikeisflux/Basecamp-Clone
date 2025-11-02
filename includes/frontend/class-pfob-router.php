@@ -55,6 +55,18 @@ class PFOB_Router {
         add_rewrite_rule( '^projectfob/adminland/trash/?$', 'index.php?pfob_page=trash', 'top' );
         add_rewrite_rule( '^projectfob/adminland/upgrades/?$', 'index.php?pfob_page=upgrades', 'top' );
 
+        // Timesheet (Add-on)
+        add_rewrite_rule( '^projectfob/timesheet/?$', 'index.php?pfob_page=timesheet', 'top' );
+        add_rewrite_rule( '^projectfob/timesheet/reports/?$', 'index.php?pfob_page=timesheet-reports', 'top' );
+        add_rewrite_rule( '^projectfob/timesheet/settings/?$', 'index.php?pfob_page=timesheet-settings', 'top' );
+        add_rewrite_rule( '^projectfob/timesheet/export/?$', 'index.php?pfob_page=timesheet-export', 'top' );
+
+        // Admin Pro Pack (Add-on)
+        add_rewrite_rule( '^projectfob/admin-pro/permissions/?$', 'index.php?pfob_page=admin-pro-permissions', 'top' );
+        add_rewrite_rule( '^projectfob/admin-pro/access-logs/?$', 'index.php?pfob_page=admin-pro-access-logs', 'top' );
+        add_rewrite_rule( '^projectfob/admin-pro/approval-workflows/?$', 'index.php?pfob_page=admin-pro-approval-workflows', 'top' );
+        add_rewrite_rule( '^projectfob/admin-pro/custom-roles/?$', 'index.php?pfob_page=admin-pro-custom-roles', 'top' );
+
         // People Management
         add_rewrite_rule( '^projectfob/people/?$', 'index.php?pfob_page=people', 'top' );
         add_rewrite_rule( '^projectfob/people/invite/?$', 'index.php?pfob_page=invite', 'top' );
