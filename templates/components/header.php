@@ -41,7 +41,7 @@
                     // Do NOT show for invited project members without subscriptions
                     if ( PFOB_Subscription::is_active( get_current_user_id() ) || current_user_can( 'manage_options' ) ) :
                     ?>
-                        <a href="<?php echo admin_url( 'admin.php?page=projectfob' ); ?>">Admin</a>
+                        <a href="<?php echo home_url( '/projectfob/adminland/' ); ?>">Admin</a>
                     <?php endif; ?>
                     <a href="<?php echo wp_logout_url( home_url( '/projectfob/' ) ); ?>">Sign out</a>
                 </div>
