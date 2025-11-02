@@ -35,11 +35,11 @@
                 <span class="pfob-user-name"><?php echo esc_html( wp_get_current_user()->display_name ); ?></span>
                 <div class="pfob-user-dropdown">
                     <?php
-                    // Show admin link for:
-                    // 1. Users with active subscriptions (account subscribers)
-                    // 2. WordPress administrators (for testing/management)
-                    // Do NOT show for invited project members without subscriptions
-                    if ( PFOB_Subscription::is_active( get_current_user_id() ) || current_user_can( 'manage_options' ) ) :
+                    // Show admin link ONLY for THE SUBSCRIBER (account owner who pays)
+                    // Do NOT show for:
+                    // - WordPress admins (unless they also have a subscription)
+                    // - Invited users (who are using someone else's account)
+                    if ( PFOB_Subscription::is_active( get_current_user_id() ) ) :
                     ?>
                         <a href="<?php echo home_url( '/projectfob/adminland/' ); ?>">Admin</a>
                     <?php endif; ?>

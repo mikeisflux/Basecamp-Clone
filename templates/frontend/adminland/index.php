@@ -15,22 +15,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 $user_id = get_current_user_id();
 $user = wp_get_current_user();
 
-// Get user role in the account
-$user_type = get_user_meta( $user_id, 'pfob_user_type', true );
-$account_owner_id = get_user_meta( $user_id, 'pfob_account_owner', true );
+// Only THE SUBSCRIBER (account owner who pays) can access this page
+// Invited users should not be able to access adminland at all
+$subscription = PFOB_Subscription::get_by_user_id( $user_id );
 
-// Determine if user is account owner or just has admin access
-$is_owner = empty( $account_owner_id ); // No account owner = they ARE the owner
-$is_admin = get_user_meta( $user_id, 'pfob_is_admin', true ) || $is_owner;
+if ( ! $subscription || ! in_array( $subscription->status, array( 'active', 'trialing' ) ) ) {
+    wp_die( __( 'Access denied. You must be the account subscriber to access Adminland.', 'projectfob' ) );
+}
 
-// Get subscription info
-$subscription = PFOB_Subscription::get_by_user_id( $is_owner ? $user_id : $account_owner_id );
-$next_payment_date = $subscription ? date( 'F j, Y', strtotime( $subscription->current_period_end ) ) : 'N/A';
-$monthly_cost = 30; // Base plan
+// Get subscription plan configuration
+$plans_config = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+$plan = isset( $plans_config[ $subscription->plan_id ] ) ? $plans_config[ $subscription->plan_id ] : null;
 
-// Check for add-ons
-$has_timesheet = get_user_meta( $is_owner ? $user_id : $account_owner_id, 'pfob_addon_timesheet', true );
-$has_admin_pro = get_user_meta( $is_owner ? $user_id : $account_owner_id, 'pfob_addon_admin_pro', true );
+if ( ! $plan ) {
+    wp_die( __( 'Invalid subscription plan.', 'projectfob' ) );
+}
+
+// Calculate costs
+$monthly_cost = $plan['price'];
+$next_payment_date = $subscription->current_period_end ? date( 'F j, Y', strtotime( $subscription->current_period_end ) ) : 'N/A';
+
+// Check for add-ons (from subscription metadata)
+$metadata = $subscription->metadata ? json_decode( $subscription->metadata, true ) : array();
+$has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'];
+$has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin_pro'];
 
 if ( $has_timesheet ) {
     $monthly_cost += 50;
@@ -40,27 +48,17 @@ if ( $has_admin_pro ) {
 }
 
 // Get organization name
-$organization = get_user_meta( $is_owner ? $user_id : $account_owner_id, 'pfob_organization', true ) ?: get_bloginfo( 'name' );
+$organization = get_user_meta( $user_id, 'pfob_organization', true ) ?: get_bloginfo( 'name' );
 
-// Get all admins
-$admins = get_users( array(
+// Get all invited users (people the subscriber has invited to their account)
+$invited_users = get_users( array(
     'meta_query' => array(
-        'relation' => 'AND',
         array(
             'key'   => 'pfob_account_owner',
-            'value' => $is_owner ? $user_id : $account_owner_id,
-        ),
-        array(
-            'key'   => 'pfob_is_admin',
-            'value' => '1',
+            'value' => $user_id,
         ),
     ),
 ) );
-
-// Add owner to admins if not already there
-if ( $is_owner ) {
-    array_unshift( $admins, $user );
-}
 
 PFOB_Template::header( 'Adminland' );
 ?>
@@ -71,71 +69,108 @@ PFOB_Template::header( 'Adminland' );
         <p>Manage your ProjectFOB account</p>
     </div>
 
+    <!-- Subscription Information -->
+    <div class="pfob-adminland-section pfob-subscription-info">
+        <h2>Your Subscription</h2>
+        <div class="pfob-subscription-details">
+            <div class="pfob-detail-item">
+                <span class="pfob-label">Plan:</span>
+                <span class="pfob-value"><?php echo esc_html( $plan['name'] ); ?> ($<?php echo esc_html( $plan['price'] ); ?>/month)</span>
+            </div>
+            <div class="pfob-detail-item">
+                <span class="pfob-label">Status:</span>
+                <span class="pfob-value pfob-status-<?php echo esc_attr( $subscription->status ); ?>"><?php echo esc_html( ucfirst( $subscription->status ) ); ?></span>
+            </div>
+            <div class="pfob-detail-item">
+                <span class="pfob-label">Next payment:</span>
+                <span class="pfob-value"><?php echo esc_html( $next_payment_date ); ?></span>
+            </div>
+            <div class="pfob-detail-item">
+                <span class="pfob-label">Monthly cost:</span>
+                <span class="pfob-value">$<?php echo esc_html( number_format( $monthly_cost, 2 ) ); ?></span>
+            </div>
+        </div>
+
+        <div class="pfob-plan-limits">
+            <h3>Your Plan Includes:</h3>
+            <ul>
+                <li>Projects: <?php echo $plan['features']['projects'] == 999999 ? 'Unlimited' : $plan['features']['projects']; ?></li>
+                <li>Users: <?php echo $plan['features']['users'] == 999999 ? 'Unlimited' : $plan['features']['users']; ?></li>
+                <li>Storage: <?php echo $plan['features']['storage_gb'] == 999999 ? 'Unlimited' : $plan['features']['storage_gb'] . ' GB'; ?></li>
+                <?php if ( isset( $plan['features']['google_calendar'] ) && $plan['features']['google_calendar'] ) : ?>
+                <li>Google Calendar Integration</li>
+                <?php endif; ?>
+                <?php if ( isset( $plan['features']['advanced_analytics'] ) && $plan['features']['advanced_analytics'] ) : ?>
+                <li>Advanced Analytics</li>
+                <?php endif; ?>
+                <?php if ( isset( $plan['features']['custom_branding'] ) && $plan['features']['custom_branding'] ) : ?>
+                <li>Custom Branding</li>
+                <?php endif; ?>
+            </ul>
+        </div>
+    </div>
+
     <?php if ( ! $has_timesheet || ! $has_admin_pro ) : ?>
     <div class="pfob-upgrades-banner">
         <div class="pfob-banner-content">
-            <h3>⬆️ Upgrades available</h3>
-            <p>Make ProjectFOB even better with upgrades.</p>
+            <h3>⬆️ Add-ons available</h3>
+            <p>Enhance your account with Timesheet ($50/mo) or Admin Pro ($50/mo) add-ons.</p>
         </div>
-        <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="pfob-btn pfob-btn-primary">See your options</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="pfob-btn pfob-btn-primary">See add-ons</a>
     </div>
     <?php endif; ?>
 
-    <?php if ( $is_admin ) : ?>
+    <!-- Invited Users -->
     <div class="pfob-adminland-section">
-        <h2>Administrators</h2>
+        <h2>Invited Users</h2>
+        <p>People you've invited to use your ProjectFOB account</p>
+        <?php if ( ! empty( $invited_users ) ) : ?>
         <div class="pfob-users-grid">
-            <?php foreach ( $admins as $admin ) :
-                $initials = strtoupper( substr( $admin->display_name, 0, 1 ) . substr( strrchr( $admin->display_name, ' ' ), 1, 1 ) );
+            <?php foreach ( $invited_users as $invited_user ) :
+                $initials = strtoupper( substr( $invited_user->display_name, 0, 1 ) . substr( strrchr( $invited_user->display_name, ' ' ), 1, 1 ) );
             ?>
             <div class="pfob-user-avatar">
                 <div class="pfob-avatar"><?php echo esc_html( $initials ); ?></div>
-                <span><?php echo esc_html( $admin->display_name ); ?></span>
+                <span><?php echo esc_html( $invited_user->display_name ); ?></span>
             </div>
             <?php endforeach; ?>
         </div>
+        <?php else : ?>
+        <p class="pfob-empty-state">No invited users yet. <a href="<?php echo home_url( '/projectfob/people/invite' ); ?>">Invite someone</a></p>
+        <?php endif; ?>
 
         <div class="pfob-capabilities-section">
-            <h3>You're an admin, so you can:</h3>
+            <h3>As the subscriber, you can:</h3>
             <div class="pfob-capabilities-grid">
                 <a href="<?php echo home_url( '/projectfob/people' ); ?>" class="pfob-capability-card">
                     <span class="pfob-icon">👥</span>
                     <span class="pfob-label">Manage people</span>
                 </a>
-                <a href="#" class="pfob-capability-card" data-action="manage-administrators">
-                    <span class="pfob-icon">🔧</span>
-                    <span class="pfob-label">Add/remove administrators</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="invite-link">
+                <a href="<?php echo home_url( '/projectfob/people/invite' ); ?>" class="pfob-capability-card">
                     <span class="pfob-icon">👤</span>
-                    <span class="pfob-label">Invite coworkers with a link</span>
+                    <span class="pfob-label">Invite coworkers</span>
                 </a>
-                <a href="#" class="pfob-capability-card" data-action="manage-groups">
-                    <span class="pfob-icon">👥</span>
-                    <span class="pfob-label">Manage groups</span>
+                <a href="<?php echo home_url( '/projectfob/adminland/billing' ); ?>" class="pfob-capability-card">
+                    <span class="pfob-icon">💳</span>
+                    <span class="pfob-label">Manage billing</span>
                 </a>
-                <a href="#" class="pfob-capability-card" data-action="manage-companies">
-                    <span class="pfob-icon">🏢</span>
-                    <span class="pfob-label">Manage companies</span>
+                <a href="<?php echo home_url( '/projectfob/adminland/upgrades' ); ?>" class="pfob-capability-card">
+                    <span class="pfob-icon">⬆️</span>
+                    <span class="pfob-label">Upgrade plan</span>
                 </a>
-                <a href="#" class="pfob-capability-card" data-action="rename-tools">
-                    <span class="pfob-icon">🔧</span>
-                    <span class="pfob-label">Rename project tools</span>
+                <a href="<?php echo home_url( '/projectfob/settings/notifications' ); ?>" class="pfob-capability-card">
+                    <span class="pfob-icon">🔔</span>
+                    <span class="pfob-label">Notification settings</span>
                 </a>
-                <a href="#" class="pfob-capability-card" data-action="message-categories">
-                    <span class="pfob-icon">📝</span>
-                    <span class="pfob-label">Change message categories</span>
-                </a>
-                <a href="#" class="pfob-capability-card" data-action="merge-people">
-                    <span class="pfob-icon">🔀</span>
-                    <span class="pfob-label">Merge people</span>
+                <a href="<?php echo home_url( '/projectfob/analytics' ); ?>" class="pfob-capability-card">
+                    <span class="pfob-icon">📊</span>
+                    <span class="pfob-label">View analytics</span>
                 </a>
             </div>
         </div>
     </div>
-    <?php endif; ?>
 
-    <?php if ( $is_owner ) : ?>
+    <!-- Account Owner Info -->
     <div class="pfob-adminland-section pfob-owner-section">
         <h2>Account Owner</h2>
         <div class="pfob-users-grid">
