@@ -52,13 +52,20 @@ $next_payment_date = $subscription->current_period_end ? date( 'F j, Y', strtoti
 error_log( '[Adminland] Checking add-ons from metadata' );
 $metadata = array();
 if ( ! empty( $subscription->metadata ) ) {
-    error_log( '[Adminland] Raw metadata: ' . $subscription->metadata );
-    $decoded = json_decode( $subscription->metadata, true );
-    if ( is_array( $decoded ) ) {
-        $metadata = $decoded;
-        error_log( '[Adminland] Decoded metadata: ' . print_r( $metadata, true ) );
+    // Metadata is already decoded as an array in get_by_user_id()
+    if ( is_array( $subscription->metadata ) ) {
+        $metadata = $subscription->metadata;
+        error_log( '[Adminland] Metadata (already array): ' . print_r( $metadata, true ) );
     } else {
-        error_log( '[Adminland] WARNING: Failed to decode metadata JSON' );
+        // Fallback: if it's still a string, decode it
+        error_log( '[Adminland] Metadata is string, decoding...' );
+        $decoded = json_decode( $subscription->metadata, true );
+        if ( is_array( $decoded ) ) {
+            $metadata = $decoded;
+            error_log( '[Adminland] Decoded metadata: ' . print_r( $metadata, true ) );
+        } else {
+            error_log( '[Adminland] WARNING: Failed to decode metadata JSON' );
+        }
     }
 }
 $has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'] === true;

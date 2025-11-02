@@ -44,11 +44,17 @@ $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
                         $plan = $plans[ $subscription->plan_id ] ?? array();
 
                         // Get add-ons from subscription metadata
+                        // Note: metadata is already decoded as an array in get_by_user_id()
                         $metadata = array();
                         if ( ! empty( $subscription->metadata ) ) {
-                            $decoded = json_decode( $subscription->metadata, true );
-                            if ( is_array( $decoded ) ) {
-                                $metadata = $decoded;
+                            if ( is_array( $subscription->metadata ) ) {
+                                $metadata = $subscription->metadata;
+                            } else {
+                                // Fallback if still a string
+                                $decoded = json_decode( $subscription->metadata, true );
+                                if ( is_array( $decoded ) ) {
+                                    $metadata = $decoded;
+                                }
                             }
                         }
                         $has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'] === true;
