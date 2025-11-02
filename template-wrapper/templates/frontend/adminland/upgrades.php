@@ -59,200 +59,213 @@ $next_billing = date( 'F j, Y', strtotime( $subscription->current_period_end ) )
 PFOB_Template::header( 'Upgrades' );
 ?>
 
-<div class="pfob-container pfob-upgrades-page">
-    <div class="pfob-page-header">
-        <a href="<?php echo home_url( '/projectfob/adminland' ); ?>" class="pfob-back-link">← Back to Adminland</a>
-        <h1>Upgrades</h1>
-        <p>Enhance your ProjectFOB account with these powerful add-ons.</p>
-    </div>
+<div class="upgrade-page-wrapper">
+    <a href="<?php echo home_url( '/projectfob/adminland' ); ?>" class="back-link">← Back to Adminland</a>
 
-    <div class="pfob-upgrade-cards">
-        <!-- Timesheet Add-on -->
-        <div class="pfob-upgrade-card <?php echo $has_timesheet ? 'active' : ''; ?>">
-            <div class="pfob-upgrade-header">
-                <h2>⏱️ Timesheet</h2>
-                <div class="pfob-price">$50/month</div>
-            </div>
+    <h1 class="page-title">Upgrades</h1>
+    <p class="page-subtitle">Enhance your ProjectFOB account with these powerful add-ons.</p>
 
-            <p class="pfob-description">Give your team the power to track time spent on projects.</p>
-
-            <h3>What's included:</h3>
-            <ul class="pfob-features-list">
-                <li>✓ Track time on projects, to-dos, and more</li>
-                <li>✓ View total hours by project or person</li>
-                <li>✓ Create custom reports</li>
-                <li>✓ Export timesheets in CSV format</li>
-                <li>✓ Integration with popular accounting software</li>
-                <li>✓ Automated time tracking reminders</li>
-            </ul>
-
-            <?php if ( ! $has_timesheet ) : ?>
-                <div class="pfob-pricing-info">
-                    <p>You currently pay <strong>$<?php echo $current_cost; ?>/month</strong>, so your new total will be <strong>$<?php echo $current_cost + 50; ?>/month</strong>.</p>
-                    <p class="pfob-billing-note">You won't be charged until <?php echo $next_billing; ?>. Your account will be instantly updated, and you can remove this upgrade any time.</p>
-                </div>
-                <button class="pfob-btn pfob-btn-primary pfob-btn-large" data-upgrade="timesheet">
-                    Buy Timesheet
-                </button>
-            <?php else : ?>
-                <div class="pfob-active-badge">
-                    <span>✓ Active</span>
-                </div>
-                <button class="pfob-btn pfob-btn-secondary" data-remove="timesheet">
-                    Remove Timesheet
-                </button>
-            <?php endif; ?>
+    <!-- Timesheet Upgrade -->
+    <div class="upgrade-card <?php echo $has_timesheet ? 'is-active' : ''; ?>">
+        <div class="upgrade-header">
+            <h2 class="upgrade-name">⏱️ Timesheet</h2>
+            <div class="upgrade-price">$50/month</div>
         </div>
 
-        <!-- Admin Pro Pack -->
-        <div class="pfob-upgrade-card <?php echo $has_admin_pro ? 'active' : ''; ?>">
-            <div class="pfob-upgrade-header">
-                <h2>🛡️ Admin Pro Pack</h2>
-                <div class="pfob-price">$50/month</div>
+        <p class="upgrade-description">Give your team the power to track time spent on projects.</p>
+
+        <h3 class="features-heading">What's included:</h3>
+
+        <div class="feature-item">✓ Track time on projects, to-dos, and more</div>
+        <div class="feature-item">✓ View total hours by project or person</div>
+        <div class="feature-item">✓ Create custom reports</div>
+        <div class="feature-item">✓ Export timesheets in CSV format</div>
+        <div class="feature-item">✓ Integration with popular accounting software</div>
+        <div class="feature-item">✓ Automated time tracking reminders</div>
+
+        <?php if ( ! $has_timesheet ) : ?>
+            <div class="pricing-box">
+                <p>You currently pay <strong>$<?php echo $current_cost; ?>/month</strong>, so your new total will be <strong>$<?php echo $current_cost + 50; ?>/month</strong>.</p>
+                <p class="billing-note">You won't be charged until <?php echo $next_billing; ?>. Your account will be instantly updated, and you can remove this upgrade any time.</p>
             </div>
-
-            <p class="pfob-description">Advanced administrative controls for account owners and administrators.</p>
-
-            <h3>What's included:</h3>
-            <ul class="pfob-features-list">
-                <li>✓ Choose who can send pings</li>
-                <li>✓ Choose who can turn on public links</li>
-                <li>✓ Choose who can archive and delete projects, docs, and more</li>
-                <li>✓ Choose who can change the people on a project</li>
-                <li>✓ Choose who can change project settings</li>
-                <li>✓ Limit editing comments and chats to 15 minutes</li>
-                <li>✓ Clean Sweep: Archive completed to-dos and cards automatically</li>
-                <li>✓ Set Out of Office for others</li>
-                <li>✓ Require two-factor authentication</li>
-                <li>✓ Change Ping & Chat history settings</li>
-            </ul>
-
-            <?php if ( ! $has_admin_pro ) : ?>
-                <div class="pfob-pricing-info">
-                    <p>You currently pay <strong>$<?php echo $current_cost; ?>/month</strong>, so your new total will be <strong>$<?php echo $current_cost + 50; ?>/month</strong>.</p>
-                    <p class="pfob-billing-note">You won't be charged until <?php echo $next_billing; ?>. Your account will be instantly updated, and you can remove this upgrade any time.</p>
-                </div>
-                <button class="pfob-btn pfob-btn-primary pfob-btn-large" data-upgrade="admin-pro">
-                    Buy Admin Pro Pack
-                </button>
-            <?php else : ?>
-                <div class="pfob-active-badge">
-                    <span>✓ Active</span>
-                </div>
-                <button class="pfob-btn pfob-btn-secondary" data-remove="admin-pro">
-                    Remove Admin Pro Pack
-                </button>
-            <?php endif; ?>
-        </div>
+            <button class="buy-button" data-upgrade="timesheet">Buy Timesheet</button>
+        <?php else : ?>
+            <div class="active-badge">✓ Active</div>
+            <button class="remove-button" data-remove="timesheet">Remove Timesheet</button>
+        <?php endif; ?>
     </div>
 
-    <div class="pfob-tax-info">
+    <!-- Admin Pro Pack Upgrade -->
+    <div class="upgrade-card <?php echo $has_admin_pro ? 'is-active' : ''; ?>">
+        <div class="upgrade-header">
+            <h2 class="upgrade-name">🛡️ Admin Pro Pack</h2>
+            <div class="upgrade-price">$50/month</div>
+        </div>
+
+        <p class="upgrade-description">Advanced administrative controls for account owners and administrators.</p>
+
+        <h3 class="features-heading">What's included:</h3>
+
+        <div class="feature-item">✓ Choose who can send pings</div>
+        <div class="feature-item">✓ Choose who can turn on public links</div>
+        <div class="feature-item">✓ Choose who can archive and delete projects, docs, and more</div>
+        <div class="feature-item">✓ Choose who can change the people on a project</div>
+        <div class="feature-item">✓ Choose who can change project settings</div>
+        <div class="feature-item">✓ Limit editing comments and chats to 15 minutes</div>
+        <div class="feature-item">✓ Clean Sweep: Archive completed to-dos and cards automatically</div>
+        <div class="feature-item">✓ Set Out of Office for others</div>
+        <div class="feature-item">✓ Require two-factor authentication</div>
+        <div class="feature-item">✓ Change Ping & Chat history settings</div>
+
+        <?php if ( ! $has_admin_pro ) : ?>
+            <div class="pricing-box">
+                <p>You currently pay <strong>$<?php echo $current_cost; ?>/month</strong>, so your new total will be <strong>$<?php echo $current_cost + 50; ?>/month</strong>.</p>
+                <p class="billing-note">You won't be charged until <?php echo $next_billing; ?>. Your account will be instantly updated, and you can remove this upgrade any time.</p>
+            </div>
+            <button class="buy-button" data-upgrade="admin-pro">Buy Admin Pro Pack</button>
+        <?php else : ?>
+            <div class="active-badge">✓ Active</div>
+            <button class="remove-button" data-remove="admin-pro">Remove Admin Pro Pack</button>
+        <?php endif; ?>
+    </div>
+
+    <div class="tax-notice">
         <p>💡 A number of localities require us to collect sales tax on ProjectFOB subscriptions.</p>
         <p>If your company is officially tax-exempt, contact our support team to request an exemption.</p>
     </div>
 </div>
 
 <style>
-.pfob-upgrades-page {
-    max-width: 1200px;
-    margin: 0 auto;
+/* SIMPLE VERTICAL LAYOUT - NO COLUMNS */
+.upgrade-page-wrapper {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.pfob-back-link {
+.back-link {
     display: inline-block;
     margin-bottom: 16px;
     color: #0066cc;
     text-decoration: none;
+    font-size: 15px;
 }
 
-.pfob-back-link:hover {
+.back-link:hover {
     text-decoration: underline;
 }
 
-.pfob-upgrade-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-    gap: 32px;
-    margin: 32px 0;
+.page-title {
+    font-size: 32px;
+    margin: 0 0 8px 0;
+    color: #333;
 }
 
-.pfob-upgrade-card {
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
+.page-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin: 0 0 32px 0;
+}
+
+.upgrade-card {
+    background: #fff;
+    border: 2px solid #ddd;
+    border-radius: 8px;
     padding: 32px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: all 0.3s;
+    margin-bottom: 32px;
 }
 
-.pfob-upgrade-card.active {
+.upgrade-card.is-active {
     border-color: #10b981;
     background: #f0fdf4;
 }
 
-.pfob-upgrade-card:hover {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-}
-
-.pfob-upgrade-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.upgrade-header {
     margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f0f0f0;
 }
 
-.pfob-upgrade-header h2 {
-    margin: 0;
+.upgrade-name {
     font-size: 24px;
+    margin: 0 0 8px 0;
+    color: #333;
 }
 
-.pfob-price {
+.upgrade-price {
     font-size: 20px;
-    font-weight: bold;
+    font-weight: 600;
     color: #0066cc;
+    margin-top: 8px;
 }
 
-.pfob-description {
+.upgrade-description {
+    font-size: 16px;
     color: #666;
-    margin-bottom: 24px;
-    font-size: 16px;
+    margin: 0 0 24px 0;
+    line-height: 1.6;
 }
 
-.pfob-upgrade-card h3 {
+.features-heading {
     font-size: 16px;
+    font-weight: 600;
     margin: 24px 0 12px 0;
     color: #333;
 }
 
-.pfob-features-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 24px 0;
+.feature-item {
+    padding: 8px 0;
+    font-size: 15px;
+    color: #333;
+    border-bottom: 1px solid #f5f5f5;
 }
 
-.pfob-features-list li {
-    padding: 8px 0;
+.feature-item:last-of-type {
+    border-bottom: none;
+    margin-bottom: 24px;
+}
+
+.pricing-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 6px;
+    margin: 24px 0 20px 0;
+}
+
+.pricing-box p {
+    margin: 8px 0;
+    font-size: 15px;
     color: #333;
 }
 
-.pfob-pricing-info {
-    background: #f8f9fa;
-    padding: 16px;
+.billing-note {
+    font-size: 14px !important;
+    color: #666 !important;
+}
+
+.buy-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #0066cc;
+    color: white;
+    border: none;
     border-radius: 6px;
-    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
 }
 
-.pfob-pricing-info p {
-    margin: 8px 0;
-    font-size: 14px;
+.buy-button:hover {
+    background: #0052a3;
 }
 
-.pfob-billing-note {
-    color: #666;
-    font-size: 13px !important;
+.buy-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
 }
 
-.pfob-active-badge {
+.active-badge {
     display: inline-block;
     background: #10b981;
     color: white;
@@ -262,15 +275,35 @@ PFOB_Template::header( 'Upgrades' );
     margin-bottom: 12px;
 }
 
-.pfob-tax-info {
-    background: #fff9e6;
+.remove-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e5e7eb;
+    color: #333;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.remove-button:hover {
+    background: #d1d5db;
+}
+
+.remove-button:disabled {
+    background: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.tax-notice {
+    background: #fffbeb;
     padding: 20px;
     border-radius: 6px;
-    border-left: 4px solid #ffcc00;
+    border-left: 4px solid #f59e0b;
     margin-top: 32px;
 }
 
-.pfob-tax-info p {
+.tax-notice p {
     margin: 8px 0;
     font-size: 14px;
     color: #666;
