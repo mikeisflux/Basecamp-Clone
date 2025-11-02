@@ -420,7 +420,7 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
         }
 
         // Log activity
-        PFOB_Database::insert( 'pfob_activities', array(
+        PFOB_Database::insert( 'activities', array(
             'user_id' => $user_id,
             'action_type' => 'subscription.plan_changed',
             'subject_type' => 'subscription',
@@ -528,7 +528,7 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
             }
 
             // Log activity
-            PFOB_Database::insert( 'pfob_activities', array(
+            PFOB_Database::insert( 'activities', array(
                 'user_id' => $user_id,
                 'action_type' => 'subscription.addon_pending',
                 'subject_type' => 'subscription',
@@ -603,7 +603,7 @@ class PFOB_Subscription_Endpoint extends PFOB_REST_API {
         }
 
         // Log activity
-        PFOB_Database::insert( 'pfob_activities', array(
+        PFOB_Database::insert( 'activities', array(
             'user_id' => $user_id,
             'action_type' => 'subscription.addon_removed',
             'subject_type' => 'subscription',
