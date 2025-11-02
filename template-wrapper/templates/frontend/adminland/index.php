@@ -138,11 +138,10 @@ error_log( '[Adminland] Template header loaded successfully' );
         <a href="<?php echo home_url( '/projectfob/people' ); ?>" class="action-link">Manage people</a>
         <a href="#" class="action-link" data-action="manage-administrators">Add/remove administrators</a>
         <a href="#" class="action-link" data-action="invite-link">Invite coworkers with a link</a>
-        <a href="#" class="action-link" data-action="manage-groups">Manage groups</a>
-        <a href="#" class="action-link" data-action="manage-companies">Manage companies</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/groups' ); ?>" class="action-link">Manage groups</a>
+        <a href="<?php echo home_url( '/projectfob/adminland/companies' ); ?>" class="action-link">Manage companies</a>
         <a href="#" class="action-link" data-action="rename-tools">Rename project tools</a>
         <a href="#" class="action-link" data-action="message-categories">Change message categories</a>
-        <a href="#" class="action-link" data-action="move-projects">Move projects from Basecamp 2 to Basecamp 4</a>
         <a href="#" class="action-link" data-action="merge-people">Merge people</a>
     </div>
 
