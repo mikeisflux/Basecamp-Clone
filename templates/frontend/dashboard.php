@@ -26,14 +26,7 @@ $has_custom_branding = $plan && ! empty( $plan['features']['custom_branding'] );
     <main class="pfob-main pfob-dashboard">
 
         <div class="pfob-page-header">
-            <div class="pfob-company-logo">
-                <?php if ( $company_logo ) : ?>
-                    <img src="<?php echo esc_url( $company_logo ); ?>" alt="<?php echo esc_attr( $company_name ); ?>" class="pfob-logo-image">
-                <?php else : ?>
-                    <h1><?php echo esc_html( $company_name ); ?></h1>
-                <?php endif; ?>
-
-            </div>
+            <h1>Projects</h1>
 
             <div class="pfob-actions">
                 <button class="pfob-btn pfob-btn-primary" id="create-project-btn">

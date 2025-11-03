@@ -212,6 +212,7 @@ try {
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-messages-endpoint.php';
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-todos-endpoint.php';
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-chat-endpoint.php';
+    require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-documents-endpoint.php';
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-activities-endpoint.php';
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-search-endpoint.php';
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-events-endpoint.php';

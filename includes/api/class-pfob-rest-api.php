@@ -16,6 +16,7 @@ class PFOB_REST_API {
             new PFOB_Messages_Endpoint(),
             new PFOB_Todos_Endpoint(),
             new PFOB_Chat_Endpoint(),
+            new PFOB_Documents_Endpoint(),
             new PFOB_Activities_Endpoint(),
             new PFOB_Search_Endpoint(),
             new PFOB_Events_Endpoint(),
