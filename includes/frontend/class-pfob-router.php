@@ -29,6 +29,8 @@ class PFOB_Router {
         add_rewrite_rule( '^projectfob/signup/?$', 'index.php?pfob_public_page=signup', 'top' );
         add_rewrite_rule( '^projectfob/subscription/success/?$', 'index.php?pfob_public_page=subscription-success', 'top' );
         add_rewrite_rule( '^projectfob/subscription/cancel/?$', 'index.php?pfob_public_page=subscription-cancel', 'top' );
+        add_rewrite_rule( '^projectfob/privacy-policy/?$', 'index.php?pfob_public_page=privacy-policy', 'top' );
+        add_rewrite_rule( '^projectfob/terms-of-service/?$', 'index.php?pfob_public_page=terms-of-service', 'top' );
 
         // ProjectFOB App Routes
         add_rewrite_rule( '^projectfob/?$', 'index.php?pfob_page=dashboard', 'top' );
@@ -258,6 +260,8 @@ class PFOB_Router {
             'signup'               => $template_dir . 'signup.php',
             'subscription-success' => $template_dir . 'subscription-success.php',
             'subscription-cancel'  => $template_dir . 'subscription-cancel.php',
+            'privacy-policy'       => $template_dir . 'privacy-policy.php',
+            'terms-of-service'     => $template_dir . 'terms-of-service.php',
         );
 
         $template = $templates[ $page ] ?? null;
