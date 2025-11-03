@@ -128,8 +128,8 @@ PFOB_Template::header( 'Invite People' );
 }
 
 .pfob-user-type-selector {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 20px;
     margin-bottom: 40px;
 }
