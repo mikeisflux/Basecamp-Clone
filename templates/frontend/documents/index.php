@@ -239,6 +239,9 @@ async function createFolder(name) {
 }
 
 async function uploadFiles(files) {
+    let successCount = 0;
+    let errorCount = 0;
+
     for (const file of files) {
         const formData = new FormData();
         formData.append('file', file);
@@ -256,16 +259,30 @@ async function uploadFiles(files) {
                 body: formData
             });
 
-            if (response.ok) {
-                console.log(`Uploaded: ${file.name}`);
+            const result = await response.json();
+
+            if (result.success) {
+                console.log(`✓ Uploaded: ${file.name}`);
+                successCount++;
+            } else {
+                console.error(`✗ Failed: ${file.name} - ${result.message}`);
+                errorCount++;
+                alert(`Failed to upload ${file.name}: ${result.message}`);
             }
         } catch (error) {
-            console.error(`Failed to upload ${file.name}:`, error);
+            console.error(`✗ Error uploading ${file.name}:`, error);
+            errorCount++;
+            alert(`Error uploading ${file.name}: ${error.message}`);
         }
     }
 
-    // Reload page after all uploads
-    setTimeout(() => window.location.reload(), 1000);
+    // Reload page if at least one file uploaded successfully
+    if (successCount > 0) {
+        console.log(`Uploaded ${successCount} file(s). Reloading...`);
+        setTimeout(() => window.location.reload(), 1000);
+    } else if (errorCount > 0) {
+        console.error(`All ${errorCount} file(s) failed to upload`);
+    }
 }
 
 // Delete document
