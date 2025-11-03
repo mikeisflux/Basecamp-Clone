@@ -347,6 +347,11 @@ document.getElementById('import-project-btn')?.addEventListener('click', () => {
     showImportProjectModal();
 });
 
+// Invite People
+document.getElementById('invite-people-btn')?.addEventListener('click', () => {
+    window.location.href = '<?php echo home_url( '/projectfob/people/invite' ); ?>';
+});
+
 function showImportProjectModal() {
     const modal = document.createElement('div');
     modal.className = 'pfob-modal';

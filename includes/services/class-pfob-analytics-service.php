@@ -336,4 +336,276 @@ class PFOB_Analytics_Service {
             'most_active_project' => $most_active_project_name,
         );
     }
+
+    /**
+     * Get advanced analytics (Business+ feature).
+     */
+    public static function get_advanced_analytics( $user_id, $days = 30, $start_date = null, $end_date = null ) {
+        global $wpdb;
+
+        // Determine date range
+        if ( $start_date && $end_date ) {
+            $since = gmdate( 'Y-m-d H:i:s', strtotime( $start_date ) );
+            $until = gmdate( 'Y-m-d H:i:s', strtotime( $end_date . ' +1 day' ) );
+        } else {
+            $since = gmdate( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
+            $until = gmdate( 'Y-m-d H:i:s' );
+        }
+
+        // Get KPIs with trends
+        $kpis = self::get_advanced_kpis( $user_id, $since, $until );
+
+        // Get trend data for charts
+        $trends = self::get_advanced_trends( $user_id, $since, $until );
+
+        // Get team performance comparison
+        $team = self::get_team_performance( $user_id, $since, $until );
+
+        // Get activity heatmap data
+        $heatmap = self::get_activity_heatmap( $user_id, $since, $until );
+
+        // Get detailed reports
+        $reports = self::get_detailed_reports( $user_id, $since, $until );
+
+        return array(
+            'kpis'     => $kpis,
+            'trends'   => $trends,
+            'team'     => $team,
+            'heatmap'  => $heatmap,
+            'reports'  => $reports,
+        );
+    }
+
+    /**
+     * Get advanced KPIs with trend indicators.
+     */
+    private static function get_advanced_kpis( $user_id, $since, $until ) {
+        global $wpdb;
+
+        // Calculate previous period for trend comparison
+        $period_length = strtotime( $until ) - strtotime( $since );
+        $prev_since = gmdate( 'Y-m-d H:i:s', strtotime( $since ) - $period_length );
+        $prev_until = $since;
+
+        // Projects completed
+        $projects_completed = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(DISTINCT p.id) FROM {$wpdb->prefix}pfob_projects p
+            INNER JOIN {$wpdb->prefix}pfob_project_members pm ON p.id = pm.project_id
+            WHERE pm.user_id = %d AND p.status = 'completed'
+            AND p.updated_at >= %s AND p.updated_at < %s",
+            $user_id, $since, $until
+        ) );
+
+        $prev_projects_completed = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(DISTINCT p.id) FROM {$wpdb->prefix}pfob_projects p
+            INNER JOIN {$wpdb->prefix}pfob_project_members pm ON p.id = pm.project_id
+            WHERE pm.user_id = %d AND p.status = 'completed'
+            AND p.updated_at >= %s AND p.updated_at < %s",
+            $user_id, $prev_since, $prev_until
+        ) );
+
+        // Total activities
+        $total_activities = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_activities
+            WHERE created_at >= %s AND created_at < %s",
+            $since, $until
+        ) );
+
+        $prev_activities = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_activities
+            WHERE created_at >= %s AND created_at < %s",
+            $prev_since, $prev_until
+        ) );
+
+        // Team collaboration score
+        $collaboration_score = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_messages m
+            INNER JOIN {$wpdb->prefix}pfob_projects p ON m.project_id = p.id
+            INNER JOIN {$wpdb->prefix}pfob_project_members pm ON p.id = pm.project_id
+            WHERE pm.user_id = %d AND m.created_at >= %s AND m.created_at < %s",
+            $user_id, $since, $until
+        ) );
+
+        $prev_collaboration_score = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_messages m
+            INNER JOIN {$wpdb->prefix}pfob_projects p ON m.project_id = p.id
+            INNER JOIN {$wpdb->prefix}pfob_project_members pm ON p.id = pm.project_id
+            WHERE pm.user_id = %d AND m.created_at >= %s AND m.created_at < %s",
+            $user_id, $prev_since, $prev_until
+        ) );
+
+        // Calculate trends
+        $projects_trend = $prev_projects_completed > 0
+            ? round( ( ( $projects_completed - $prev_projects_completed ) / $prev_projects_completed ) * 100, 1 )
+            : 0;
+
+        $activities_trend = $prev_activities > 0
+            ? round( ( ( $total_activities - $prev_activities ) / $prev_activities ) * 100, 1 )
+            : 0;
+
+        $collaboration_trend = $prev_collaboration_score > 0
+            ? round( ( ( $collaboration_score - $prev_collaboration_score ) / $prev_collaboration_score ) * 100, 1 )
+            : 0;
+
+        return array(
+            'projects_completed' => array(
+                'value' => (int) $projects_completed,
+                'trend' => $projects_trend,
+            ),
+            'total_activities' => array(
+                'value' => (int) $total_activities,
+                'trend' => $activities_trend,
+            ),
+            'collaboration_score' => array(
+                'value' => (int) $collaboration_score,
+                'trend' => $collaboration_trend,
+            ),
+        );
+    }
+
+    /**
+     * Get trend data for charts.
+     */
+    private static function get_advanced_trends( $user_id, $since, $until ) {
+        global $wpdb;
+
+        $data = array();
+        $start = strtotime( $since );
+        $end = strtotime( $until );
+        $days = round( ( $end - $start ) / DAY_IN_SECONDS );
+
+        for ( $i = 0; $i < $days; $i++ ) {
+            $date = gmdate( 'Y-m-d', $start + ( $i * DAY_IN_SECONDS ) );
+            $next_date = gmdate( 'Y-m-d', $start + ( ( $i + 1 ) * DAY_IN_SECONDS ) );
+
+            $activities = $wpdb->get_var( $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_activities
+                WHERE created_at >= %s AND created_at < %s",
+                $date . ' 00:00:00', $next_date . ' 00:00:00'
+            ) );
+
+            $data[] = array(
+                'date'       => $date,
+                'activities' => (int) $activities,
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get team performance comparison.
+     */
+    private static function get_team_performance( $user_id, $since, $until ) {
+        global $wpdb;
+
+        // Get all team members from user's projects
+        $members = $wpdb->get_results( $wpdb->prepare(
+            "SELECT DISTINCT u.ID, u.display_name
+            FROM {$wpdb->prefix}users u
+            INNER JOIN {$wpdb->prefix}pfob_project_members pm ON u.ID = pm.user_id
+            INNER JOIN {$wpdb->prefix}pfob_projects p ON pm.project_id = p.id
+            INNER JOIN {$wpdb->prefix}pfob_project_members pm2 ON p.id = pm2.project_id
+            WHERE pm2.user_id = %d
+            LIMIT 10",
+            $user_id
+        ) );
+
+        $team_data = array();
+
+        foreach ( $members as $member ) {
+            $todos_completed = $wpdb->get_var( $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_todos
+                WHERE assigned_to = %d AND is_completed = 1
+                AND updated_at >= %s AND updated_at < %s",
+                $member->ID, $since, $until
+            ) );
+
+            $team_data[] = array(
+                'name'      => $member->display_name,
+                'completed' => (int) $todos_completed,
+            );
+        }
+
+        return $team_data;
+    }
+
+    /**
+     * Get activity heatmap data.
+     */
+    private static function get_activity_heatmap( $user_id, $since, $until ) {
+        global $wpdb;
+
+        $heatmap = array();
+
+        for ( $hour = 0; $hour < 24; $hour++ ) {
+            $hourly_data = array();
+
+            for ( $day = 0; $day < 7; $day++ ) {
+                $count = $wpdb->get_var( $wpdb->prepare(
+                    "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_activities
+                    WHERE HOUR(created_at) = %d
+                    AND DAYOFWEEK(created_at) = %d
+                    AND created_at >= %s AND created_at < %s",
+                    $hour, $day + 1, $since, $until
+                ) );
+
+                $hourly_data[] = (int) $count;
+            }
+
+            $heatmap[] = $hourly_data;
+        }
+
+        return $heatmap;
+    }
+
+    /**
+     * Get detailed reports.
+     */
+    private static function get_detailed_reports( $user_id, $since, $until ) {
+        global $wpdb;
+
+        $reports = array();
+
+        // Get all projects with activity in the period
+        $projects = $wpdb->get_results( $wpdb->prepare(
+            "SELECT DISTINCT p.* FROM {$wpdb->prefix}pfob_projects p
+            INNER JOIN {$wpdb->prefix}pfob_project_members pm ON p.id = pm.project_id
+            INNER JOIN {$wpdb->prefix}pfob_activities a ON p.id = a.project_id
+            WHERE pm.user_id = %d AND a.created_at >= %s AND a.created_at < %s
+            ORDER BY a.created_at DESC
+            LIMIT 20",
+            $user_id, $since, $until
+        ) );
+
+        foreach ( $projects as $project ) {
+            $activities = $wpdb->get_var( $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_activities
+                WHERE project_id = %d AND created_at >= %s AND created_at < %s",
+                $project->id, $since, $until
+            ) );
+
+            $todos_completed = $wpdb->get_var( $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_todos
+                WHERE project_id = %d AND is_completed = 1
+                AND updated_at >= %s AND updated_at < %s",
+                $project->id, $since, $until
+            ) );
+
+            $messages = $wpdb->get_var( $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->prefix}pfob_messages
+                WHERE project_id = %d AND created_at >= %s AND created_at < %s",
+                $project->id, $since, $until
+            ) );
+
+            $reports[] = array(
+                'project_name'    => $project->name,
+                'activities'      => (int) $activities,
+                'todos_completed' => (int) $todos_completed,
+                'messages'        => (int) $messages,
+            );
+        }
+
+        return $reports;
+    }
 }

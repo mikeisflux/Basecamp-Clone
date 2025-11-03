@@ -29,6 +29,9 @@ class PFOB_REST_API {
             new PFOB_User_Endpoint(),
             new PFOB_Import_Endpoint(),
             new PFOB_Invitations_Endpoint(),
+            new PFOB_White_Label_Endpoint(),
+            new PFOB_API_Keys_Endpoint(),
+            new PFOB_Integrations_Endpoint(),
         );
 
         foreach ( $endpoints as $endpoint ) {

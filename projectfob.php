@@ -3,7 +3,7 @@
  * Plugin Name: ProjectFOB
  * Plugin URI: https://projectfob.com
  * Description: Every great plan deploys from the FOB. Complete project management and team collaboration SaaS platform with real-time features, subscriptions, and cloud storage.
- * Version: 2.8.0
+ * Version: 2.9.0
  * Author: Divinity Comics Inc
  * Author URI: https://projectfob.com
  * License: GPL-2.0+
@@ -45,7 +45,7 @@ function pfob_debug_log( $message, $level = 'INFO' ) {
 /**
  * Current plugin version.
  */
-define( 'PFOB_VERSION', '2.8.0' );
+define( 'PFOB_VERSION', '2.9.0' );
 
 /**
  * Plugin directory path.
@@ -143,6 +143,7 @@ try {
     require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-activity.php';
     require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-subscription.php';
     require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-billing-history.php';
+    require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-api-key.php';
     require_once PFOB_PLUGIN_DIR . 'includes/models/class-pfob-usage.php';
     pfob_debug_log( '✓ Model classes loaded' );
 } catch ( Throwable $e ) {
@@ -166,6 +167,8 @@ try {
     require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-digest-service.php';
     require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-file-service.php';
     require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-google-calendar-service.php';
+    require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-dropbox-service.php';
+    require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-gdrive-service.php';
     require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-websocket-service.php';
     pfob_debug_log( '✓ Service classes loaded' );
 } catch ( Throwable $e ) {
@@ -218,6 +221,9 @@ try {
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-notifications-endpoint.php';
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-paypal-webhook-endpoint.php';
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-subscription-endpoint.php';
+    require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-white-label-endpoint.php';
+    require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-api-keys-endpoint.php';
+    require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-integrations-endpoint.php';
     pfob_debug_log( '✓ REST API endpoint classes loaded' );
 } catch ( Throwable $e ) {
     pfob_debug_log( $e );
