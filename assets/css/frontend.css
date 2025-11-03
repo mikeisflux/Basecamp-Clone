@@ -32,6 +32,24 @@
     font-size: 16px;
 }
 
+/* Company Logo Bar */
+.pfob-company-logo-bar {
+    background-color: var(--pfob-white);
+    border-bottom: 1px solid var(--pfob-border-color);
+    padding: 15px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pfob-company-logo {
+    max-height: 60px;
+    max-width: 400px;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+}
+
 /* Header */
 .pfob-header {
     background-color: var(--pfob-white);

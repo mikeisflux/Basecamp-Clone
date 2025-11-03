@@ -9,6 +9,20 @@
     <?php PFOB_Assets::inline_css(); ?>
 </head>
 <body class="pfob-body">
+    <?php
+    // Get company logo from subscriber's account
+    $user_id = get_current_user_id();
+    $subscription = PFOB_Subscription::get_by_user_id( $user_id );
+    $subscriber_id = $subscription ? $subscription->user_id : $user_id;
+    $company_logo = get_user_meta( $subscriber_id, 'pfob_company_logo', true );
+    ?>
+
+    <?php if ( $company_logo ) : ?>
+    <div class="pfob-company-logo-bar">
+        <img src="<?php echo esc_url( $company_logo ); ?>" alt="Company Logo" class="pfob-company-logo">
+    </div>
+    <?php endif; ?>
+
     <header class="pfob-header">
         <div class="pfob-header-left">
             <a href="<?php echo home_url( '/projectfob/' ); ?>" class="pfob-logo">

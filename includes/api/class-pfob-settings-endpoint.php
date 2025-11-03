@@ -34,6 +34,20 @@ class PFOB_Settings_Endpoint extends PFOB_REST_API {
             'callback'            => array( $this, 'send_test_digest' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
+
+        // Upload company logo
+        register_rest_route( $this->namespace, '/settings/upload-logo', array(
+            'methods'             => 'POST',
+            'callback'            => array( $this, 'upload_logo' ),
+            'permission_callback' => array( $this, 'check_subscriber_permission' ),
+        ) );
+
+        // Remove company logo
+        register_rest_route( $this->namespace, '/settings/remove-logo', array(
+            'methods'             => 'POST',
+            'callback'            => array( $this, 'remove_logo' ),
+            'permission_callback' => array( $this, 'check_subscriber_permission' ),
+        ) );
     }
 
     /**
@@ -121,5 +135,95 @@ class PFOB_Settings_Endpoint extends PFOB_REST_API {
                 'message' => 'No activity to report, or email sending failed',
             ), 200 );
         }
+    }
+
+    /**
+     * Check if user is a subscriber (account owner).
+     */
+    public function check_subscriber_permission( $request ) {
+        if ( ! is_user_logged_in() ) {
+            return false;
+        }
+
+        $user_id = get_current_user_id();
+        $subscription = PFOB_Subscription::get_by_user_id( $user_id );
+
+        return $subscription && in_array( $subscription->status, array( 'active', 'trialing' ) );
+    }
+
+    /**
+     * Upload company logo.
+     */
+    public function upload_logo( $request ) {
+        $user_id = get_current_user_id();
+
+        // Check if file was uploaded
+        $files = $request->get_file_params();
+        if ( empty( $files['logo'] ) ) {
+            return new WP_Error( 'no_file', 'No file uploaded', array( 'status' => 400 ) );
+        }
+
+        $file = $files['logo'];
+
+        // Validate file type
+        $allowed_types = array( 'image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/webp' );
+        if ( ! in_array( $file['type'], $allowed_types ) ) {
+            return new WP_Error( 'invalid_type', 'Invalid file type. Only images are allowed.', array( 'status' => 400 ) );
+        }
+
+        // Validate file size (max 2MB)
+        if ( $file['size'] > 2 * 1024 * 1024 ) {
+            return new WP_Error( 'file_too_large', 'File size must be less than 2MB', array( 'status' => 400 ) );
+        }
+
+        // Use WordPress file upload handling
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        require_once ABSPATH . 'wp-admin/includes/image.php';
+        require_once ABSPATH . 'wp-admin/includes/media.php';
+
+        // Upload file
+        $upload = wp_handle_upload( $file, array( 'test_form' => false ) );
+
+        if ( isset( $upload['error'] ) ) {
+            return new WP_Error( 'upload_error', $upload['error'], array( 'status' => 500 ) );
+        }
+
+        // Store logo URL in user meta
+        update_user_meta( $user_id, 'pfob_company_logo', $upload['url'] );
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'message' => 'Logo uploaded successfully',
+            'url' => $upload['url'],
+        ), 200 );
+    }
+
+    /**
+     * Remove company logo.
+     */
+    public function remove_logo( $request ) {
+        $user_id = get_current_user_id();
+
+        // Get current logo URL
+        $logo_url = get_user_meta( $user_id, 'pfob_company_logo', true );
+
+        if ( $logo_url ) {
+            // Delete the file if it's in the uploads directory
+            $upload_dir = wp_upload_dir();
+            if ( strpos( $logo_url, $upload_dir['baseurl'] ) === 0 ) {
+                $file_path = str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $logo_url );
+                if ( file_exists( $file_path ) ) {
+                    @unlink( $file_path );
+                }
+            }
+        }
+
+        // Remove logo URL from user meta
+        delete_user_meta( $user_id, 'pfob_company_logo' );
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'message' => 'Logo removed successfully',
+        ), 200 );
     }
 }

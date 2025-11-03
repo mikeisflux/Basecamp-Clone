@@ -147,6 +147,37 @@ error_log( '[Adminland] Template header loaded successfully' );
         <?php endif; ?>
     </div>
 
+    <!-- Custom Branding -->
+    <?php if ( ! empty( $plan['features']['custom_branding'] ) ) : ?>
+    <div class="admin-section">
+        <h2 class="section-title">🎨 Custom Branding</h2>
+        <p style="margin-bottom: 20px;">Upload your company logo to personalize your workspace.</p>
+
+        <?php
+        $current_logo = get_user_meta( $user_id, 'pfob_company_logo', true );
+        ?>
+
+        <div class="logo-upload-section">
+            <?php if ( $current_logo ) : ?>
+                <div class="current-logo-preview">
+                    <strong>Current Logo:</strong><br>
+                    <img src="<?php echo esc_url( $current_logo ); ?>" alt="Company Logo" style="max-width: 300px; max-height: 100px; margin: 10px 0; display: block;">
+                    <button class="button-secondary" id="remove-logo-btn">Remove Logo</button>
+                </div>
+            <?php endif; ?>
+
+            <div class="logo-upload-form" style="margin-top: 20px;">
+                <strong><?php echo $current_logo ? 'Update Logo:' : 'Upload Logo:'; ?></strong>
+                <input type="file" id="logo-upload-input" accept="image/*" style="margin: 10px 0; display: block;">
+                <button class="button-primary" id="upload-logo-btn">Upload Logo</button>
+                <p style="color: #666; font-size: 13px; margin-top: 8px;">Recommended: PNG or SVG, max 200px height, transparent background works best</p>
+            </div>
+
+            <div id="logo-upload-status" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Admin Capabilities -->
     <div class="admin-section">
         <h3 class="section-intro">You're an admin, so you can…</h3>
@@ -715,6 +746,97 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showPauseAccount() {
         showModal('Pause or Cancel Account', '<p><strong>Warning:</strong> Pausing will stop billing but you won\'t be able to access your account until you resume.</p>');
+    }
+
+    // Logo upload functionality
+    const uploadLogoBtn = document.getElementById('upload-logo-btn');
+    const removeLogoBtn = document.getElementById('remove-logo-btn');
+    const logoInput = document.getElementById('logo-upload-input');
+    const statusDiv = document.getElementById('logo-upload-status');
+
+    if (uploadLogoBtn) {
+        uploadLogoBtn.addEventListener('click', async function() {
+            const file = logoInput.files[0];
+            if (!file) {
+                statusDiv.innerHTML = '<p style="color: #dc3232;">Please select a file first</p>';
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                statusDiv.innerHTML = '<p style="color: #dc3232;">Please select an image file</p>';
+                return;
+            }
+
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                statusDiv.innerHTML = '<p style="color: #dc3232;">File size must be less than 2MB</p>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<p style="color: #0066cc;">Uploading...</p>';
+            uploadLogoBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('logo', file);
+
+            try {
+                const response = await fetch('/wp-json/projectfob/v1/settings/upload-logo', {
+                    method: 'POST',
+                    headers: {
+                        'X-WP-Nonce': '<?php echo wp_create_nonce( 'wp_rest' ); ?>'
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.innerHTML = '<p style="color: #46b450;">✓ Logo uploaded successfully! Refreshing...</p>';
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    statusDiv.innerHTML = '<p style="color: #dc3232;">Error: ' + (result.message || 'Upload failed') + '</p>';
+                    uploadLogoBtn.disabled = false;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<p style="color: #dc3232;">Error uploading logo. Please try again.</p>';
+                uploadLogoBtn.disabled = false;
+            }
+        });
+    }
+
+    if (removeLogoBtn) {
+        removeLogoBtn.addEventListener('click', async function() {
+            if (!confirm('Are you sure you want to remove your company logo?')) {
+                return;
+            }
+
+            statusDiv.innerHTML = '<p style="color: #0066cc;">Removing...</p>';
+            removeLogoBtn.disabled = true;
+
+            try {
+                const response = await fetch('/wp-json/projectfob/v1/settings/remove-logo', {
+                    method: 'POST',
+                    headers: {
+                        'X-WP-Nonce': '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.innerHTML = '<p style="color: #46b450;">✓ Logo removed successfully! Refreshing...</p>';
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    statusDiv.innerHTML = '<p style="color: #dc3232;">Error: ' + (result.message || 'Failed to remove logo') + '</p>';
+                    removeLogoBtn.disabled = false;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<p style="color: #dc3232;">Error removing logo. Please try again.</p>';
+                removeLogoBtn.disabled = false;
+            }
+        });
     }
 });
 </script>
