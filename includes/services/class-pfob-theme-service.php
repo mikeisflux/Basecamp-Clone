@@ -33,9 +33,33 @@ class PFOB_Theme_Service {
         $compact_mode = get_user_meta( $user_id, 'pfob_compact_mode', true );
         $show_avatars = get_user_meta( $user_id, 'pfob_show_avatars', true ) !== '0';
 
+        // Get brand colors
+        $brand_colors = get_user_meta( $user_id, 'pfob_brand_colors', true );
+        if ( ! is_array( $brand_colors ) ) {
+            $brand_colors = array();
+        }
+        // Default colors
+        $defaults = array(
+            'primary'    => '#2d9061',
+            'secondary'  => '#0066cc',
+            'background' => '#ffffff',
+            'tile'       => '#f8f9fa',
+            'text'       => '#333333',
+            'accent'     => '#ff6b35'
+        );
+        $brand_colors = array_merge( $defaults, $brand_colors );
+
         ?>
 <style id="pfob-user-theme">
 :root {
+    /* Brand Colors */
+    --pfob-color-primary: <?php echo esc_attr( $brand_colors['primary'] ); ?>;
+    --pfob-color-secondary: <?php echo esc_attr( $brand_colors['secondary'] ); ?>;
+    --pfob-color-background: <?php echo esc_attr( $brand_colors['background'] ); ?>;
+    --pfob-color-tile: <?php echo esc_attr( $brand_colors['tile'] ); ?>;
+    --pfob-color-text: <?php echo esc_attr( $brand_colors['text'] ); ?>;
+    --pfob-color-accent: <?php echo esc_attr( $brand_colors['accent'] ); ?>;
+
     <?php if ( $theme_mode === 'dark' ) : ?>
     /* Dark Theme Colors */
     --pfob-bg-primary: #1a1a1a;
@@ -195,6 +219,92 @@ body.pfob-body {
     padding-left: 0 !important;
 }
 <?php endif; ?>
+
+/* Apply Brand Colors */
+body.pfob-body {
+    background-color: var(--pfob-color-background);
+    color: var(--pfob-color-text);
+}
+
+.pfob-btn-primary,
+.pfob-btn.pfob-btn-primary,
+button.pfob-btn-primary {
+    background-color: var(--pfob-color-primary);
+    border-color: var(--pfob-color-primary);
+}
+
+.pfob-btn-primary:hover {
+    background-color: var(--pfob-color-primary);
+    opacity: 0.9;
+}
+
+.pfob-btn-secondary,
+.pfob-btn.pfob-btn-secondary {
+    background-color: var(--pfob-color-secondary);
+    border-color: var(--pfob-color-secondary);
+}
+
+.pfob-btn-secondary:hover {
+    background-color: var(--pfob-color-secondary);
+    opacity: 0.9;
+}
+
+.pfob-card,
+.pfob-project-card,
+.pfob-message-item,
+.pfob-todo-item,
+.pfob-document-item,
+.pfob-settings-section,
+.admin-section {
+    background-color: var(--pfob-color-tile);
+}
+
+.pfob-link,
+a.pfob-link,
+.pfob-nav-item:hover {
+    color: var(--pfob-color-primary);
+}
+
+.pfob-badge,
+.pfob-notification-badge {
+    background-color: var(--pfob-color-accent);
+}
+
+.pfob-text,
+.pfob-main,
+h1, h2, h3, h4, h5, h6 {
+    color: var(--pfob-color-text);
+}
+
+.pfob-border {
+    border-color: var(--pfob-color-tile);
+}
+
+/* Project cards and tiles */
+.pfob-projects-grid .pfob-project-card {
+    background-color: var(--pfob-color-tile);
+    border: 1px solid var(--pfob-color-tile);
+}
+
+.pfob-project-card:hover {
+    border-color: var(--pfob-color-primary);
+}
+
+/* Active states */
+.pfob-nav-item.active,
+.pfob-tab.active {
+    color: var(--pfob-color-primary);
+    border-bottom-color: var(--pfob-color-primary);
+}
+
+/* Focus states */
+.pfob-input:focus,
+.pfob-textarea:focus,
+.pfob-select:focus {
+    border-color: var(--pfob-color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--pfob-color-primary-rgb), 0.1);
+}
 </style>
         <?php
     }

@@ -48,6 +48,13 @@ class PFOB_Settings_Endpoint extends PFOB_REST_API {
             'callback'            => array( $this, 'remove_logo' ),
             'permission_callback' => array( $this, 'check_subscriber_permission' ),
         ) );
+
+        // Save brand colors
+        register_rest_route( $this->namespace, '/settings/brand-colors', array(
+            'methods'             => 'POST',
+            'callback'            => array( $this, 'save_brand_colors' ),
+            'permission_callback' => array( $this, 'check_subscriber_permission' ),
+        ) );
     }
 
     /**
@@ -224,6 +231,50 @@ class PFOB_Settings_Endpoint extends PFOB_REST_API {
         return new WP_REST_Response( array(
             'success' => true,
             'message' => 'Logo removed successfully',
+        ), 200 );
+    }
+
+    /**
+     * Save brand colors.
+     */
+    public function save_brand_colors( $request ) {
+        $user_id = get_current_user_id();
+        $params = $request->get_json_params();
+
+        if ( ! isset( $params['colors'] ) || ! is_array( $params['colors'] ) ) {
+            return new WP_REST_Response( array(
+                'success' => false,
+                'message' => 'Invalid colors data',
+            ), 400 );
+        }
+
+        $colors = $params['colors'];
+        $allowed_keys = array( 'primary', 'secondary', 'background', 'tile', 'text', 'accent' );
+        $validated_colors = array();
+
+        // Validate and sanitize each color
+        foreach ( $allowed_keys as $key ) {
+            if ( isset( $colors[ $key ] ) ) {
+                $color = sanitize_text_field( $colors[ $key ] );
+                // Validate hex color format
+                if ( preg_match( '/^#[0-9A-F]{6}$/i', $color ) ) {
+                    $validated_colors[ $key ] = $color;
+                } else {
+                    return new WP_REST_Response( array(
+                        'success' => false,
+                        'message' => "Invalid color format for {$key}. Use hex format (e.g., #2d9061)",
+                    ), 400 );
+                }
+            }
+        }
+
+        // Save colors to user meta
+        update_user_meta( $user_id, 'pfob_brand_colors', $validated_colors );
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'message' => 'Brand colors saved successfully',
+            'data' => $validated_colors,
         ), 200 );
     }
 }
