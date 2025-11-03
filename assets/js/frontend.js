@@ -259,11 +259,13 @@ class ProjectFOB {
                 const count = result.data.length;
                 const badge = document.getElementById('notification-badge');
 
-                if (count > 0) {
-                    badge.textContent = count > 9 ? '9+' : count;
-                    badge.style.display = 'block';
-                } else {
-                    badge.style.display = 'none';
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count > 9 ? '9+' : count;
+                        badge.style.display = 'block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
                 }
 
                 this.renderNotifications(result.data);
