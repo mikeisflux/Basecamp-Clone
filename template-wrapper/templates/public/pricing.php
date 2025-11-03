@@ -243,6 +243,54 @@
                 gap: 24px;
             }
         }
+
+        /* Footer Styles */
+        .pfob-public-footer {
+            text-align: center;
+            color: white;
+            padding: 40px 20px 20px;
+            margin-top: 60px;
+        }
+
+        .pfob-footer-links {
+            margin-bottom: 15px;
+        }
+
+        .pfob-footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 10px;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .pfob-footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .pfob-footer-separator {
+            opacity: 0.5;
+            margin: 0 5px;
+        }
+
+        .pfob-footer-copyright {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .pfob-footer-links {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .pfob-footer-separator {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -283,6 +331,21 @@
             </div>
         </div>
     </div>
+
+    <footer class="pfob-public-footer">
+        <div class="pfob-footer-links">
+            <a href="<?php echo home_url( '/projectfob/privacy-policy' ); ?>">Privacy Policy</a>
+            <span class="pfob-footer-separator">|</span>
+            <a href="<?php echo home_url( '/projectfob/terms-of-service' ); ?>">Terms of Service</a>
+            <span class="pfob-footer-separator">|</span>
+            <a href="<?php echo home_url( '/projectfob/pricing' ); ?>">Pricing</a>
+            <span class="pfob-footer-separator">|</span>
+            <a href="<?php echo wp_login_url( home_url( '/projectfob/' ) ); ?>">Sign In</a>
+        </div>
+        <div class="pfob-footer-copyright">
+            &copy; <?php echo date( 'Y' ); ?> ProjectFOB. All rights reserved.
+        </div>
+    </footer>
 
     <script>
         let currentBillingInterval = 'monthly';
