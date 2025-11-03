@@ -48,6 +48,7 @@
                 <?php echo PFOB_Auth_Service::get_user_avatar( get_current_user_id(), 32 ); ?>
                 <span class="pfob-user-name"><?php echo esc_html( wp_get_current_user()->display_name ); ?></span>
                 <div class="pfob-user-dropdown">
+                    <a href="<?php echo home_url( '/projectfob/settings/' ); ?>">⚙️ Settings</a>
                     <?php
                     // Show admin link ONLY for THE SUBSCRIBER (account owner who pays)
                     // Do NOT show for:
@@ -55,9 +56,9 @@
                     // - Invited users (who are using someone else's account)
                     if ( PFOB_Subscription::is_active( get_current_user_id() ) ) :
                     ?>
-                        <a href="<?php echo home_url( '/projectfob/adminland/' ); ?>">Admin</a>
+                        <a href="<?php echo home_url( '/projectfob/adminland/' ); ?>">👑 Adminland</a>
                     <?php endif; ?>
-                    <a href="<?php echo wp_logout_url( home_url( '/projectfob/' ) ); ?>">Sign out</a>
+                    <a href="<?php echo wp_logout_url( home_url( '/projectfob/' ) ); ?>">🚪 Sign out</a>
                 </div>
             </div>
         </div>
