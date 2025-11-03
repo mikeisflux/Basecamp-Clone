@@ -170,6 +170,7 @@ try {
     require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-dropbox-service.php';
     require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-gdrive-service.php';
     require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-websocket-service.php';
+    require_once PFOB_PLUGIN_DIR . 'includes/services/class-pfob-theme-service.php';
     pfob_debug_log( '✓ Service classes loaded' );
 } catch ( Throwable $e ) {
     pfob_debug_log( $e );
@@ -224,6 +225,7 @@ try {
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-white-label-endpoint.php';
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-api-keys-endpoint.php';
     require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-integrations-endpoint.php';
+    require_once PFOB_PLUGIN_DIR . 'includes/api/class-pfob-user-settings-endpoint.php';
     pfob_debug_log( '✓ REST API endpoint classes loaded' );
 } catch ( Throwable $e ) {
     pfob_debug_log( $e );
