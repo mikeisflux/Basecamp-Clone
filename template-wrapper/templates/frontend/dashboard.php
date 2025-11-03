@@ -10,6 +10,16 @@ $projects = PFOB_Project::get_user_projects( $user_id );
 
 // Get user's preferred view (default: grid/tile)
 $view_mode = get_user_meta( $user_id, 'pfob_projects_view', true ) ?: 'grid';
+
+// Get company logo from user meta
+$company_logo = get_user_meta( $user_id, 'pfob_company_logo', true );
+$company_name = get_option( 'pfob_company_name' ) ?: get_bloginfo( 'name' );
+
+// Check if user has custom branding feature
+$subscription = PFOB_Subscription::get_by_user_id( $user_id );
+$plans_config = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+$plan = isset( $plans_config[ $subscription->plan_id ] ) ? $plans_config[ $subscription->plan_id ] : null;
+$has_custom_branding = $plan && ! empty( $plan['features']['custom_branding'] );
 ?>
 
 <div class="pfob-container">
@@ -17,7 +27,17 @@ $view_mode = get_user_meta( $user_id, 'pfob_projects_view', true ) ?: 'grid';
 
         <div class="pfob-page-header">
             <div class="pfob-company-logo">
-                <h1><?php echo esc_html( get_option( 'pfob_company_name' ) ); ?></h1>
+                <?php if ( $company_logo ) : ?>
+                    <img src="<?php echo esc_url( $company_logo ); ?>" alt="<?php echo esc_attr( $company_name ); ?>" class="pfob-logo-image">
+                <?php else : ?>
+                    <h1><?php echo esc_html( $company_name ); ?></h1>
+                <?php endif; ?>
+
+                <?php if ( $has_custom_branding ) : ?>
+                    <button class="pfob-btn pfob-btn-link" id="manage-logo-btn" style="font-size: 12px; margin-top: 5px;">
+                        <?php echo $company_logo ? 'Change logo' : 'Upload logo'; ?>
+                    </button>
+                <?php endif; ?>
             </div>
 
             <div class="pfob-actions">
@@ -212,6 +232,33 @@ $view_mode = get_user_meta( $user_id, 'pfob_projects_view', true ) ?: 'grid';
 .pfob-projects-container {
     position: relative;
     min-height: 200px;
+}
+
+/* Company Logo Styles */
+.pfob-company-logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.pfob-logo-image {
+    max-height: 80px;
+    max-width: 300px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.pfob-btn-link {
+    background: none;
+    border: none;
+    color: #2d9061;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+}
+
+.pfob-btn-link:hover {
+    color: #1f6b48;
 }
 </style>
 
@@ -529,6 +576,143 @@ function showImportProjectModal() {
         }
     });
 }
+
+// Logo Upload Modal
+document.getElementById('manage-logo-btn')?.addEventListener('click', () => {
+    const modal = document.createElement('div');
+    modal.className = 'pfob-modal';
+    modal.id = 'logo-upload-modal';
+    modal.innerHTML = `
+        <div class="pfob-modal-content" style="max-width: 500px;">
+            <div class="pfob-modal-header">
+                <h2>Company Logo</h2>
+                <button class="pfob-modal-close">&times;</button>
+            </div>
+            <div class="pfob-modal-body">
+                <?php if ( $company_logo ) : ?>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="<?php echo esc_url( $company_logo ); ?>" alt="Current Logo" style="max-width: 200px; max-height: 80px; display: block; margin: 0 auto 10px;">
+                        <button type="button" class="pfob-btn pfob-btn-secondary" id="remove-logo-btn">Remove Logo</button>
+                    </div>
+                    <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
+                <?php endif; ?>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">
+                        <?php echo $company_logo ? 'Update Logo' : 'Upload Logo'; ?>
+                    </label>
+                    <input type="file" id="logo-file-input" accept="image/*" style="display: block; margin-bottom: 10px;">
+                    <p style="color: #666; font-size: 13px; margin: 0;">
+                        Recommended: PNG or SVG, max 200px height, transparent background works best
+                    </p>
+                </div>
+
+                <div id="logo-upload-status" style="margin-bottom: 16px;"></div>
+
+                <div class="pfob-form-actions">
+                    <button type="button" class="pfob-btn pfob-btn-primary" id="upload-logo-submit-btn">
+                        Upload Logo
+                    </button>
+                    <button type="button" class="pfob-btn pfob-btn-secondary pfob-modal-close">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Modal close handlers
+    modal.querySelectorAll('.pfob-modal-close').forEach(btn => {
+        btn.addEventListener('click', () => modal.remove());
+    });
+
+    // Remove logo
+    document.getElementById('remove-logo-btn')?.addEventListener('click', async () => {
+        if (!confirm('Are you sure you want to remove your company logo?')) {
+            return;
+        }
+
+        const statusDiv = document.getElementById('logo-upload-status');
+        statusDiv.innerHTML = '<p style="color: #0066cc;">Removing logo...</p>';
+
+        try {
+            const response = await fetch('<?php echo rest_url( 'projectfob/v1/settings/remove-logo' ); ?>', {
+                method: 'POST',
+                headers: {
+                    'X-WP-Nonce': pfobData.nonce,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                statusDiv.innerHTML = '<p style="color: #46b450;">✓ Logo removed! Refreshing...</p>';
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                statusDiv.innerHTML = '<p style="color: #dc3232;">Error: ' + (result.message || 'Failed to remove logo') + '</p>';
+            }
+        } catch (error) {
+            statusDiv.innerHTML = '<p style="color: #dc3232;">Error removing logo. Please try again.</p>';
+        }
+    });
+
+    // Upload logo
+    document.getElementById('upload-logo-submit-btn').addEventListener('click', async () => {
+        const fileInput = document.getElementById('logo-file-input');
+        const file = fileInput.files[0];
+        const statusDiv = document.getElementById('logo-upload-status');
+        const submitBtn = document.getElementById('upload-logo-submit-btn');
+
+        if (!file) {
+            statusDiv.innerHTML = '<p style="color: #dc3232;">Please select a file first</p>';
+            return;
+        }
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            statusDiv.innerHTML = '<p style="color: #dc3232;">Please select an image file</p>';
+            return;
+        }
+
+        // Validate file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            statusDiv.innerHTML = '<p style="color: #dc3232;">File size must be less than 2MB</p>';
+            return;
+        }
+
+        statusDiv.innerHTML = '<p style="color: #0066cc;">Uploading...</p>';
+        submitBtn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('logo', file);
+
+        try {
+            const response = await fetch('<?php echo rest_url( 'projectfob/v1/settings/upload-logo' ); ?>', {
+                method: 'POST',
+                headers: {
+                    'X-WP-Nonce': pfobData.nonce
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                statusDiv.innerHTML = '<p style="color: #46b450;">✓ Logo uploaded successfully! Refreshing...</p>';
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                statusDiv.innerHTML = '<p style="color: #dc3232;">Error: ' + (result.message || 'Upload failed') + '</p>';
+                submitBtn.disabled = false;
+            }
+        } catch (error) {
+            statusDiv.innerHTML = '<p style="color: #dc3232;">Error uploading logo. Please try again.</p>';
+            submitBtn.disabled = false;
+        }
+    });
+});
 </script>
 <script src="<?php echo PFOB_PLUGIN_URL; ?>assets/js/frontend.js?ver=<?php echo PFOB_VERSION; ?>"></script>
 
