@@ -33,33 +33,106 @@ class PFOB_Theme_Service {
         $compact_mode = get_user_meta( $user_id, 'pfob_compact_mode', true );
         $show_avatars = get_user_meta( $user_id, 'pfob_show_avatars', true ) !== '0';
 
-        // Get brand colors
+        // Get brand colors - only apply if user has customized them
         $brand_colors = get_user_meta( $user_id, 'pfob_brand_colors', true );
-        if ( ! is_array( $brand_colors ) ) {
-            $brand_colors = array();
-        }
-        // Default colors
-        $defaults = array(
-            'primary'    => '#2d9061',
-            'secondary'  => '#0066cc',
-            'background' => '#ffffff',
-            'tile'       => '#f8f9fa',
-            'text'       => '#333333',
-            'accent'     => '#ff6b35'
-        );
-        $brand_colors = array_merge( $defaults, $brand_colors );
+        $has_custom_colors = ! empty( $brand_colors ) && is_array( $brand_colors );
 
         ?>
 <style id="pfob-user-theme">
-:root {
-    /* Brand Colors */
-    --pfob-color-primary: <?php echo esc_attr( $brand_colors['primary'] ); ?>;
-    --pfob-color-secondary: <?php echo esc_attr( $brand_colors['secondary'] ); ?>;
-    --pfob-color-background: <?php echo esc_attr( $brand_colors['background'] ); ?>;
-    --pfob-color-tile: <?php echo esc_attr( $brand_colors['tile'] ); ?>;
-    --pfob-color-text: <?php echo esc_attr( $brand_colors['text'] ); ?>;
-    --pfob-color-accent: <?php echo esc_attr( $brand_colors['accent'] ); ?>;
+<?php if ( $has_custom_colors ) : ?>
+/* Custom Brand Colors */
+body.pfob-body {
+    <?php if ( isset( $brand_colors['background'] ) ) : ?>
+    background-color: <?php echo esc_attr( $brand_colors['background'] ); ?>;
+    <?php endif; ?>
+    <?php if ( isset( $brand_colors['text'] ) ) : ?>
+    color: <?php echo esc_attr( $brand_colors['text'] ); ?>;
+    <?php endif; ?>
+}
 
+.pfob-btn-primary,
+.pfob-btn.pfob-btn-primary,
+button.pfob-btn-primary {
+    <?php if ( isset( $brand_colors['primary'] ) ) : ?>
+    background-color: <?php echo esc_attr( $brand_colors['primary'] ); ?>;
+    border-color: <?php echo esc_attr( $brand_colors['primary'] ); ?>;
+    <?php endif; ?>
+}
+
+.pfob-btn-primary:hover {
+    opacity: 0.9;
+}
+
+.pfob-btn-secondary,
+.pfob-btn.pfob-btn-secondary {
+    <?php if ( isset( $brand_colors['secondary'] ) ) : ?>
+    background-color: <?php echo esc_attr( $brand_colors['secondary'] ); ?>;
+    border-color: <?php echo esc_attr( $brand_colors['secondary'] ); ?>;
+    <?php endif; ?>
+}
+
+.pfob-btn-secondary:hover {
+    opacity: 0.9;
+}
+
+<?php if ( isset( $brand_colors['tile'] ) ) : ?>
+.pfob-card,
+.pfob-project-card,
+.pfob-message-item,
+.pfob-todo-item,
+.pfob-document-item,
+.pfob-settings-section,
+.admin-section {
+    background-color: <?php echo esc_attr( $brand_colors['tile'] ); ?>;
+}
+
+.pfob-projects-grid .pfob-project-card {
+    background-color: <?php echo esc_attr( $brand_colors['tile'] ); ?>;
+    border: 1px solid <?php echo esc_attr( $brand_colors['tile'] ); ?>;
+}
+<?php endif; ?>
+
+<?php if ( isset( $brand_colors['primary'] ) ) : ?>
+.pfob-link,
+a.pfob-link,
+.pfob-nav-item:hover {
+    color: <?php echo esc_attr( $brand_colors['primary'] ); ?>;
+}
+
+.pfob-project-card:hover {
+    border-color: <?php echo esc_attr( $brand_colors['primary'] ); ?>;
+}
+
+.pfob-nav-item.active,
+.pfob-tab.active {
+    color: <?php echo esc_attr( $brand_colors['primary'] ); ?>;
+    border-bottom-color: <?php echo esc_attr( $brand_colors['primary'] ); ?>;
+}
+
+.pfob-input:focus,
+.pfob-textarea:focus,
+.pfob-select:focus {
+    border-color: <?php echo esc_attr( $brand_colors['primary'] ); ?>;
+}
+<?php endif; ?>
+
+<?php if ( isset( $brand_colors['accent'] ) ) : ?>
+.pfob-badge,
+.pfob-notification-badge {
+    background-color: <?php echo esc_attr( $brand_colors['accent'] ); ?>;
+}
+<?php endif; ?>
+
+<?php if ( isset( $brand_colors['text'] ) ) : ?>
+.pfob-text,
+.pfob-main,
+h1, h2, h3, h4, h5, h6 {
+    color: <?php echo esc_attr( $brand_colors['text'] ); ?>;
+}
+<?php endif; ?>
+<?php endif; ?>
+
+:root {
     <?php if ( $theme_mode === 'dark' ) : ?>
     /* Dark Theme Colors */
     --pfob-bg-primary: #1a1a1a;
@@ -219,92 +292,6 @@ body.pfob-body {
     padding-left: 0 !important;
 }
 <?php endif; ?>
-
-/* Apply Brand Colors */
-body.pfob-body {
-    background-color: var(--pfob-color-background);
-    color: var(--pfob-color-text);
-}
-
-.pfob-btn-primary,
-.pfob-btn.pfob-btn-primary,
-button.pfob-btn-primary {
-    background-color: var(--pfob-color-primary);
-    border-color: var(--pfob-color-primary);
-}
-
-.pfob-btn-primary:hover {
-    background-color: var(--pfob-color-primary);
-    opacity: 0.9;
-}
-
-.pfob-btn-secondary,
-.pfob-btn.pfob-btn-secondary {
-    background-color: var(--pfob-color-secondary);
-    border-color: var(--pfob-color-secondary);
-}
-
-.pfob-btn-secondary:hover {
-    background-color: var(--pfob-color-secondary);
-    opacity: 0.9;
-}
-
-.pfob-card,
-.pfob-project-card,
-.pfob-message-item,
-.pfob-todo-item,
-.pfob-document-item,
-.pfob-settings-section,
-.admin-section {
-    background-color: var(--pfob-color-tile);
-}
-
-.pfob-link,
-a.pfob-link,
-.pfob-nav-item:hover {
-    color: var(--pfob-color-primary);
-}
-
-.pfob-badge,
-.pfob-notification-badge {
-    background-color: var(--pfob-color-accent);
-}
-
-.pfob-text,
-.pfob-main,
-h1, h2, h3, h4, h5, h6 {
-    color: var(--pfob-color-text);
-}
-
-.pfob-border {
-    border-color: var(--pfob-color-tile);
-}
-
-/* Project cards and tiles */
-.pfob-projects-grid .pfob-project-card {
-    background-color: var(--pfob-color-tile);
-    border: 1px solid var(--pfob-color-tile);
-}
-
-.pfob-project-card:hover {
-    border-color: var(--pfob-color-primary);
-}
-
-/* Active states */
-.pfob-nav-item.active,
-.pfob-tab.active {
-    color: var(--pfob-color-primary);
-    border-bottom-color: var(--pfob-color-primary);
-}
-
-/* Focus states */
-.pfob-input:focus,
-.pfob-textarea:focus,
-.pfob-select:focus {
-    border-color: var(--pfob-color-primary);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(var(--pfob-color-primary-rgb), 0.1);
-}
 </style>
         <?php
     }

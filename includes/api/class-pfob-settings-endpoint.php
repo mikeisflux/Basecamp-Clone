@@ -239,6 +239,26 @@ class PFOB_Settings_Endpoint extends PFOB_REST_API {
      */
     public function save_brand_colors( $request ) {
         $user_id = get_current_user_id();
+
+        // Check if user has Business or Enterprise tier (custom_branding feature)
+        $subscription = PFOB_Subscription::get_active_subscription( $user_id );
+        if ( ! $subscription ) {
+            return new WP_REST_Response( array(
+                'success' => false,
+                'message' => 'No active subscription found',
+            ), 403 );
+        }
+
+        $plans_config = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+        $plan = isset( $plans_config[ $subscription->plan_id ] ) ? $plans_config[ $subscription->plan_id ] : null;
+
+        if ( ! $plan || empty( $plan['features']['custom_branding'] ) ) {
+            return new WP_REST_Response( array(
+                'success' => false,
+                'message' => 'Brand colors are only available for Business and Enterprise tiers',
+            ), 403 );
+        }
+
         $params = $request->get_json_params();
 
         if ( ! isset( $params['colors'] ) || ! is_array( $params['colors'] ) ) {
