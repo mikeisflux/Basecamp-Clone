@@ -87,7 +87,7 @@ $view_mode = get_user_meta( $user_id, 'pfob_files_view', true ) ?: 'grid';
                 <div class="pfob-empty-state">
                     <h3>No files yet</h3>
                     <p>Upload your first file or create a folder to get started.</p>
-                    <button class="pfob-btn pfob-btn-primary" onclick="document.getElementById('upload-file-btn').click()">
+                    <button class="pfob-btn pfob-btn-primary" onclick="document.getElementById('upload-menu-btn').click()">
                         Upload First File
                     </button>
                 </div>
