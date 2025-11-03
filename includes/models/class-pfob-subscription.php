@@ -75,7 +75,11 @@ class PFOB_Subscription {
         );
 
         if ( $subscription && ! empty( $subscription->metadata ) ) {
-            $subscription->metadata = json_decode( $subscription->metadata, true );
+            if ( is_string( $subscription->metadata ) ) {
+                $subscription->metadata = json_decode( $subscription->metadata, true );
+            } elseif ( ! is_array( $subscription->metadata ) ) {
+                $subscription->metadata = array();
+            }
         }
 
         return $subscription;
@@ -110,10 +114,15 @@ class PFOB_Subscription {
         error_log( '[Subscription] Found subscription: ID=' . $subscription->id . ', plan_id=' . $subscription->plan_id );
 
         if ( $subscription && ! empty( $subscription->metadata ) ) {
-            error_log( '[Subscription] Decoding metadata JSON' );
-            $subscription->metadata = json_decode( $subscription->metadata, true );
-            if ( json_last_error() !== JSON_ERROR_NONE ) {
-                error_log( '[Subscription] JSON decode error: ' . json_last_error_msg() );
+            if ( is_string( $subscription->metadata ) ) {
+                error_log( '[Subscription] Decoding metadata JSON' );
+                $subscription->metadata = json_decode( $subscription->metadata, true );
+                if ( json_last_error() !== JSON_ERROR_NONE ) {
+                    error_log( '[Subscription] JSON decode error: ' . json_last_error_msg() );
+                }
+            } elseif ( ! is_array( $subscription->metadata ) ) {
+                error_log( '[Subscription] Metadata is not string or array, setting to empty array' );
+                $subscription->metadata = array();
             }
         }
 
@@ -135,7 +144,11 @@ class PFOB_Subscription {
         );
 
         if ( $subscription && ! empty( $subscription->metadata ) ) {
-            $subscription->metadata = json_decode( $subscription->metadata, true );
+            if ( is_string( $subscription->metadata ) ) {
+                $subscription->metadata = json_decode( $subscription->metadata, true );
+            } elseif ( ! is_array( $subscription->metadata ) ) {
+                $subscription->metadata = array();
+            }
         }
 
         return $subscription;

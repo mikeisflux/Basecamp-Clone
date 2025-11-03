@@ -145,7 +145,12 @@ class PFOB_Subscription_Manager {
                                 $plan_name = $plan ? $plan['name'] : $sub->plan_id;
 
                                 // Get billing interval from metadata (default to monthly for old subscriptions)
-                                $metadata = $sub->metadata ? json_decode($sub->metadata, true) : array();
+                                $metadata = $sub->metadata;
+                                if (is_string($metadata)) {
+                                    $metadata = json_decode($metadata, true);
+                                } elseif (!is_array($metadata)) {
+                                    $metadata = array();
+                                }
                                 $billing_interval = $metadata['billing_interval'] ?? 'monthly';
 
                                 // Get the appropriate price based on billing interval
@@ -233,7 +238,12 @@ class PFOB_Subscription_Manager {
         $current_plan = $plans[$subscription->plan_id] ?? null;
 
         // Get billing interval from metadata (default to monthly for old subscriptions)
-        $metadata = $subscription->metadata ? json_decode($subscription->metadata, true) : array();
+        $metadata = $subscription->metadata;
+        if (is_string($metadata)) {
+            $metadata = json_decode($metadata, true);
+        } elseif (!is_array($metadata)) {
+            $metadata = array();
+        }
         $billing_interval = $metadata['billing_interval'] ?? 'monthly';
 
         // Get the appropriate price and label based on billing interval
