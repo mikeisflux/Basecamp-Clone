@@ -107,7 +107,18 @@ $view_mode = get_user_meta( $user_id, 'pfob_files_view', true ) ?: 'grid';
                         <?php else : ?>
                             <div class="pfob-document-link" onclick="previewFile(<?php echo $doc->id; ?>)">
                                 <div class="pfob-document-icon">
-                                    <?php echo PFOB_File_Service::get_file_icon( $doc->mime_type ); ?>
+                                    <?php
+                                    $is_image = ! empty( $doc->mime_type ) && strpos( $doc->mime_type, 'image' ) !== false;
+                                    if ( $is_image && ! empty( $doc->file_path ) ) :
+                                        $image_url = content_url( $doc->file_path );
+                                    ?>
+                                        <img src="<?php echo esc_url( $image_url ); ?>"
+                                             alt="<?php echo esc_attr( $doc->name ); ?>"
+                                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;"
+                                             loading="lazy">
+                                    <?php else : ?>
+                                        <?php echo PFOB_File_Service::get_file_icon( $doc->mime_type ); ?>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="pfob-document-info">
                                     <div class="pfob-document-name"><?php echo esc_html( $doc->name ); ?></div>
@@ -925,6 +936,32 @@ async function importDropboxFiles(files) {
     gap: 15px;
 }
 
+.pfob-view-grid .pfob-document-icon {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.pfob-view-grid .pfob-document-icon svg {
+    width: 48px;
+    height: 48px;
+}
+
+.pfob-view-grid .pfob-document-link {
+    display: flex;
+    flex-direction: column;
+}
+
+.pfob-view-grid .pfob-document-info {
+    padding: 0 8px;
+}
+
 /* List View */
 .pfob-documents-container.pfob-view-list {
     display: flex;
@@ -957,6 +994,19 @@ async function importDropboxFiles(files) {
 .pfob-view-list .pfob-document-icon {
     flex-shrink: 0;
     font-size: 24px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.pfob-view-list .pfob-document-icon svg {
+    width: 32px;
+    height: 32px;
 }
 
 .pfob-view-list .pfob-document-info {
