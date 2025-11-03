@@ -14,6 +14,13 @@ class PFOB_Documents_Endpoint extends PFOB_REST_API {
      * Register routes.
      */
     public function register_routes() {
+        // Get document
+        register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/documents/(?P<document_id>\d+)', array(
+            'methods'             => 'GET',
+            'callback'            => array( $this, 'get_document' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
+        ) );
+
         // Upload document
         register_rest_route( $this->namespace, '/projects/(?P<project_id>\d+)/documents/upload', array(
             'methods'             => 'POST',
@@ -51,12 +58,48 @@ class PFOB_Documents_Endpoint extends PFOB_REST_API {
     }
 
     /**
+     * Get a document.
+     */
+    public function get_document( $request ) {
+        $project_id = $request->get_param( 'project_id' );
+        $document_id = $request->get_param( 'document_id' );
+
+        $document = PFOB_Document::get( $document_id );
+
+        if ( ! $document || $document->project_id != $project_id ) {
+            return new WP_REST_Response( array(
+                'success' => false,
+                'message' => 'Document not found',
+            ), 404 );
+        }
+
+        // Generate download URL if file exists
+        $download_url = null;
+        if ( ! empty( $document->file_path ) ) {
+            $download_url = WP_CONTENT_URL . $document->file_path;
+        }
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'data'    => array(
+                'id'           => $document->id,
+                'name'         => $document->name,
+                'type'         => $document->type,
+                'file_path'    => $document->file_path,
+                'file_size'    => $document->file_size,
+                'is_folder'    => $document->is_folder,
+                'download_url' => $download_url,
+                'created_at'   => $document->created_at,
+            ),
+        ), 200 );
+    }
+
+    /**
      * Upload a document.
      */
     public function upload_document( $request ) {
         $project_id = $request->get_param( 'project_id' );
         $files = $request->get_file_params();
-        $params = $request->get_body_params();
 
         if ( empty( $files['file'] ) ) {
             return new WP_REST_Response( array(
@@ -66,7 +109,7 @@ class PFOB_Documents_Endpoint extends PFOB_REST_API {
         }
 
         $file = $files['file'];
-        $parent_id = isset( $params['parent_id'] ) ? intval( $params['parent_id'] ) : null;
+        $parent_id = $request->get_param( 'parent_id' ) ? intval( $request->get_param( 'parent_id' ) ) : null;
 
         // Validate file
         if ( $file['error'] !== UPLOAD_ERR_OK ) {
@@ -128,15 +171,18 @@ class PFOB_Documents_Endpoint extends PFOB_REST_API {
         }
 
         // Log activity
-        PFOB_Activity::log(
-            'document_uploaded',
-            $project_id,
-            get_current_user_id(),
-            array(
-                'document_id'   => $document_id,
-                'document_name' => $filename,
-            )
-        );
+        PFOB_Activity::log( array(
+            'project_id'   => $project_id,
+            'user_id'      => get_current_user_id(),
+            'action_type'  => 'uploaded',
+            'subject_type' => 'document',
+            'subject_id'   => $document_id,
+            'description'  => 'Uploaded document: ' . $filename,
+            'metadata'     => array(
+                'filename' => $filename,
+                'size'     => $file['size'],
+            ),
+        ) );
 
         return new WP_REST_Response( array(
             'success' => true,
@@ -175,15 +221,17 @@ class PFOB_Documents_Endpoint extends PFOB_REST_API {
         }
 
         // Log activity
-        PFOB_Activity::log(
-            'folder_created',
-            $project_id,
-            get_current_user_id(),
-            array(
-                'folder_id'   => $folder_id,
+        PFOB_Activity::log( array(
+            'project_id'   => $project_id,
+            'user_id'      => get_current_user_id(),
+            'action_type'  => 'created',
+            'subject_type' => 'folder',
+            'subject_id'   => $folder_id,
+            'description'  => 'Created folder: ' . $name,
+            'metadata'     => array(
                 'folder_name' => $name,
-            )
-        );
+            ),
+        ) );
 
         return new WP_REST_Response( array(
             'success' => true,
@@ -221,14 +269,17 @@ class PFOB_Documents_Endpoint extends PFOB_REST_API {
         }
 
         // Log activity
-        PFOB_Activity::log(
-            'document_deleted',
-            $project_id,
-            get_current_user_id(),
-            array(
-                'document_name' => $document->name,
-            )
-        );
+        PFOB_Activity::log( array(
+            'project_id'   => $project_id,
+            'user_id'      => get_current_user_id(),
+            'action_type'  => 'deleted',
+            'subject_type' => 'document',
+            'subject_id'   => $document_id,
+            'description'  => 'Deleted document: ' . $document->name,
+            'metadata'     => array(
+                'filename' => $document->name,
+            ),
+        ) );
 
         return new WP_REST_Response( array(
             'success' => true,

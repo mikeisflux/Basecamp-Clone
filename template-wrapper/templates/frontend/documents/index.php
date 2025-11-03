@@ -278,7 +278,7 @@ document.querySelectorAll('.pfob-delete-doc-btn').forEach(btn => {
         }
 
         try {
-            const response = await fetch(`${pfobData.restUrl}/documents/${docId}`, {
+            const response = await fetch(`${pfobData.restUrl}/projects/${pfobData.projectId}/documents/${docId}`, {
                 method: 'DELETE',
                 headers: { 'X-WP-Nonce': pfobData.nonce }
             });
@@ -295,7 +295,7 @@ document.querySelectorAll('.pfob-delete-doc-btn').forEach(btn => {
 // File preview function with advanced support
 async function previewFile(docId) {
     try {
-        const response = await fetch(`${pfobData.restUrl}/documents/${docId}`, {
+        const response = await fetch(`${pfobData.restUrl}/projects/${pfobData.projectId}/documents/${docId}`, {
             headers: { 'X-WP-Nonce': pfobData.nonce }
         });
 
