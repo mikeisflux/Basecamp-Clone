@@ -31,9 +31,30 @@ $view_mode = get_user_meta( $user_id, 'pfob_files_view', true ) ?: 'grid';
                 <button class="pfob-btn pfob-btn-secondary" id="new-folder-btn">
                     New Folder
                 </button>
-                <button class="pfob-btn pfob-btn-primary" id="upload-file-btn">
-                    Upload Files
-                </button>
+                <div class="pfob-upload-dropdown">
+                    <button class="pfob-btn pfob-btn-primary" id="upload-menu-btn">
+                        Upload Files ▾
+                    </button>
+                    <div class="pfob-upload-menu" id="upload-menu" style="display:none;">
+                        <button class="pfob-upload-option" id="upload-local-btn">
+                            💻 Upload from Computer
+                        </button>
+                        <button class="pfob-upload-option" id="upload-gdrive-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align: middle;">
+                                <path fill="#4285F4" d="M8.5 6.5L15.5 6.5 20.25 15 15.5 23.5 3.75 23.5 8.5 15z"/>
+                                <path fill="#34A853" d="M8.5 6.5L1.75 15 8.5 23.5 15.5 23.5z"/>
+                                <path fill="#FBBC04" d="M15.5 6.5L8.5 6.5 8.5 23.5 15.5 23.5z"/>
+                            </svg>
+                            Upload from Google Drive
+                        </button>
+                        <button class="pfob-upload-option" id="upload-dropbox-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#0061FF" style="vertical-align: middle;">
+                                <path d="M6 1.807L0 5.629l6 3.822 6.001-3.822L6 1.807zM18 1.807l-6 3.822 6 3.822 6-3.822-6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452l-6 3.822zm12.001 0l6 3.822 6-3.822-6-3.822-6 3.822z"/>
+                            </svg>
+                            Upload from Dropbox
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -158,9 +179,34 @@ document.getElementById('new-folder-btn')?.addEventListener('click', () => {
     }
 });
 
-// Upload button
-document.getElementById('upload-file-btn')?.addEventListener('click', () => {
+// Upload dropdown menu
+document.getElementById('upload-menu-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const menu = document.getElementById('upload-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', () => {
+    document.getElementById('upload-menu').style.display = 'none';
+});
+
+// Local computer upload
+document.getElementById('upload-local-btn')?.addEventListener('click', () => {
     document.getElementById('file-input').click();
+    document.getElementById('upload-menu').style.display = 'none';
+});
+
+// Google Drive upload
+document.getElementById('upload-gdrive-btn')?.addEventListener('click', async () => {
+    document.getElementById('upload-menu').style.display = 'none';
+    await openGoogleDrivePicker();
+});
+
+// Dropbox upload
+document.getElementById('upload-dropbox-btn')?.addEventListener('click', async () => {
+    document.getElementById('upload-menu').style.display = 'none';
+    await openDropboxPicker();
 });
 
 // File input change
@@ -581,9 +627,199 @@ async function saveDocumentOrder() {
         console.error('Failed to save document order:', error);
     }
 }
+
+// Google Drive Picker - Uses current user's personal Google Drive
+async function openGoogleDrivePicker() {
+    try {
+        // Check if user has connected their personal Google Drive
+        const statusResponse = await fetch(`${pfobData.restUrl}/integrations/gdrive/status`, {
+            headers: { 'X-WP-Nonce': pfobData.nonce }
+        });
+
+        const status = await statusResponse.json();
+
+        if (!status.success || !status.data.is_connected) {
+            if (confirm('You need to connect your personal Google Drive first. Go to settings now?')) {
+                window.location.href = '<?php echo home_url('/projectfob/settings/cloud-storage'); ?>';
+            }
+            return;
+        }
+
+        // Get picker token for current user
+        const tokenResponse = await fetch(`${pfobData.restUrl}/integrations/gdrive/picker-token`, {
+            headers: { 'X-WP-Nonce': pfobData.nonce }
+        });
+
+        const tokenData = await tokenResponse.json();
+
+        if (!tokenData.success) {
+            alert('Failed to access your Google Drive. Please reconnect in settings.');
+            return;
+        }
+
+        // Load Google Picker API
+        gapi.load('picker', () => {
+            const picker = new google.picker.PickerBuilder()
+                .addView(google.picker.ViewId.DOCS)
+                .setOAuthToken(tokenData.data.access_token)
+                .setCallback(async (data) => {
+                    if (data.action === google.picker.Action.PICKED) {
+                        const files = data.docs;
+                        await importGoogleDriveFiles(files);
+                    }
+                })
+                .build();
+            picker.setVisible(true);
+        });
+
+    } catch (error) {
+        console.error('Google Drive picker error:', error);
+        alert('Failed to open Google Drive picker');
+    }
+}
+
+// Dropbox Picker - Uses current user's personal Dropbox
+async function openDropboxPicker() {
+    try {
+        // Check if user has connected their personal Dropbox
+        const statusResponse = await fetch(`${pfobData.restUrl}/integrations/dropbox/status`, {
+            headers: { 'X-WP-Nonce': pfobData.nonce }
+        });
+
+        const status = await statusResponse.json();
+
+        if (!status.success || !status.data.is_connected) {
+            if (confirm('You need to connect your personal Dropbox first. Go to settings now?')) {
+                window.location.href = '<?php echo home_url('/projectfob/settings/cloud-storage'); ?>';
+            }
+            return;
+        }
+
+        // Open Dropbox Chooser for current user
+        Dropbox.choose({
+            success: async (files) => {
+                await importDropboxFiles(files);
+            },
+            cancel: () => {
+                console.log('Dropbox picker cancelled');
+            },
+            linkType: 'direct',
+            multiselect: true,
+            extensions: [],
+        });
+
+    } catch (error) {
+        console.error('Dropbox picker error:', error);
+        alert('Failed to open Dropbox picker. Make sure you have connected your Dropbox account.');
+    }
+}
+
+// Import files from Google Drive (user's personal files)
+async function importGoogleDriveFiles(files) {
+    for (const file of files) {
+        try {
+            const response = await fetch(`${pfobData.restUrl}/projects/${pfobData.projectId}/documents/import/gdrive`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': pfobData.nonce
+                },
+                body: JSON.stringify({
+                    file_id: file.id,
+                    file_name: file.name,
+                    mime_type: file.mimeType,
+                    parent_id: pfobData.currentFolder
+                })
+            });
+
+            if (response.ok) {
+                console.log(`Imported from Google Drive: ${file.name}`);
+            }
+        } catch (error) {
+            console.error(`Failed to import ${file.name}:`, error);
+        }
+    }
+
+    setTimeout(() => window.location.reload(), 1000);
+}
+
+// Import files from Dropbox (user's personal files)
+async function importDropboxFiles(files) {
+    for (const file of files) {
+        try {
+            const response = await fetch(`${pfobData.restUrl}/projects/${pfobData.projectId}/documents/import/dropbox`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': pfobData.nonce
+                },
+                body: JSON.stringify({
+                    file_link: file.link,
+                    file_name: file.name,
+                    file_size: file.bytes,
+                    parent_id: pfobData.currentFolder
+                })
+            });
+
+            if (response.ok) {
+                console.log(`Imported from Dropbox: ${file.name}`);
+            }
+        } catch (error) {
+            console.error(`Failed to import ${file.name}:`, error);
+        }
+    }
+
+    setTimeout(() => window.location.reload(), 1000);
+}
 </script>
 
+<!-- Load Google Picker API -->
+<script src="https://apis.google.com/js/api.js"></script>
+
+<!-- Load Dropbox Chooser -->
+<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="<?php echo esc_attr( get_option( 'pfob_dropbox_app_key', '' ) ); ?>"></script>
+
 <style>
+/* Upload Dropdown Menu */
+.pfob-upload-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.pfob-upload-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    min-width: 250px;
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.pfob-upload-option {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background 0.2s;
+}
+
+.pfob-upload-option:hover {
+    background: #f0f8f4;
+}
+
+.pfob-upload-option svg {
+    margin-right: 10px;
+}
+
 .pfob-view-toggle {
     display: flex;
     gap: 5px;
