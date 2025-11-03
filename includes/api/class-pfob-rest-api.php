@@ -37,6 +37,9 @@ class PFOB_REST_API {
         foreach ( $endpoints as $endpoint ) {
             $endpoint->register_routes();
         }
+
+        // Register user settings endpoint (static methods)
+        PFOB_User_Settings_Endpoint::register_routes();
     }
 
     /**

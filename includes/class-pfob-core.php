@@ -100,6 +100,9 @@ class PFOB_Core {
         // Initialize digest service
         PFOB_Digest_Service::init();
 
+        // Initialize theme service
+        PFOB_Theme_Service::init();
+
         // Register REST API routes
         add_action( 'rest_api_init', array( $rest_api, 'register_routes' ) );
 

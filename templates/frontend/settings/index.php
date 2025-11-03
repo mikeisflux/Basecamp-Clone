@@ -470,11 +470,124 @@ document.getElementById('connect-dropbox')?.addEventListener('click', async () =
     window.location.href = '<?php echo home_url( '/projectfob/settings/cloud-storage/' ); ?>';
 });
 
-// Save handlers for other sections
-['notifications', 'calendar', 'privacy', 'preferences'].forEach(section => {
-    document.getElementById(`save-${section}`)?.addEventListener('click', async () => {
-        alert(`${section.charAt(0).toUpperCase() + section.slice(1)} settings saved!`);
-    });
+// Save Notifications
+document.getElementById('save-notifications')?.addEventListener('click', async () => {
+    const data = {
+        notifications: {
+            mentions: document.getElementById('notify-mentions').checked,
+            comments: document.getElementById('notify-comments').checked,
+            assignments: document.getElementById('notify-assignments').checked,
+            project_invites: document.getElementById('notify-project-invites').checked,
+        },
+        email_digest_frequency: document.getElementById('email-digest-frequency').value
+    };
+
+    try {
+        const response = await fetch(`${pfobData.restUrl}/user/preferences`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': pfobData.nonce
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert('Notification settings saved!');
+        } else {
+            alert('Failed to save notification settings');
+        }
+    } catch (error) {
+        alert('Failed to save notification settings');
+        console.error(error);
+    }
+});
+
+// Save Calendar
+document.getElementById('save-calendar')?.addEventListener('click', async () => {
+    const data = {
+        calendar_sync_enabled: document.getElementById('calendar-sync-enabled').checked,
+        calendar_two_way_sync: document.getElementById('calendar-two-way-sync').checked
+    };
+
+    try {
+        const response = await fetch(`${pfobData.restUrl}/user/preferences`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': pfobData.nonce
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert('Calendar settings saved!');
+        } else {
+            alert('Failed to save calendar settings');
+        }
+    } catch (error) {
+        alert('Failed to save calendar settings');
+        console.error(error);
+    }
+});
+
+// Save Privacy
+document.getElementById('save-privacy')?.addEventListener('click', async () => {
+    const data = {
+        show_activity: document.getElementById('show-activity').checked,
+        show_online_status: document.getElementById('show-online-status').checked,
+        session_timeout: document.getElementById('session-timeout').checked
+    };
+
+    try {
+        const response = await fetch(`${pfobData.restUrl}/user/preferences`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': pfobData.nonce
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert('Privacy settings saved!');
+        } else {
+            alert('Failed to save privacy settings');
+        }
+    } catch (error) {
+        alert('Failed to save privacy settings');
+        console.error(error);
+    }
+});
+
+// Save Preferences
+document.getElementById('save-preferences')?.addEventListener('click', async () => {
+    const data = {
+        timezone: document.getElementById('user-timezone').value,
+        default_project_view: document.getElementById('default-project-view').value,
+        date_format: document.getElementById('date-format').value,
+        enable_shortcuts: document.getElementById('enable-shortcuts').checked
+    };
+
+    try {
+        const response = await fetch(`${pfobData.restUrl}/user/preferences`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': pfobData.nonce
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert('Preferences saved!');
+        } else {
+            alert('Failed to save preferences');
+        }
+    } catch (error) {
+        alert('Failed to save preferences');
+        console.error(error);
+    }
 });
 </script>
 
