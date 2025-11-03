@@ -1,7 +1,25 @@
 <?php
 /**
  * Calendar Integration Settings Page
+ *
+ * Required: Professional, Business, or Enterprise plan
  */
+
+// Check if user has Google Calendar feature in their plan
+$user_id = get_current_user_id();
+$subscription = PFOB_Subscription::get_by_user_id( $user_id );
+
+if ( ! $subscription ) {
+    wp_die( __( 'Access denied. You must have an active subscription to access this page.', 'projectfob' ) );
+}
+
+$plans_config = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+$plan = isset( $plans_config[ $subscription->plan_id ] ) ? $plans_config[ $subscription->plan_id ] : null;
+
+// Check if plan includes Google Calendar feature
+if ( ! $plan || empty( $plan['features']['google_calendar'] ) ) {
+    wp_die( __( 'Access denied. Google Calendar integration is only available on Professional, Business, and Enterprise plans. <a href="' . home_url( '/projectfob/adminland/billing' ) . '">Upgrade your plan</a>', 'projectfob' ) );
+}
 
 PFOB_Template::header( 'Calendar Integration' );
 
