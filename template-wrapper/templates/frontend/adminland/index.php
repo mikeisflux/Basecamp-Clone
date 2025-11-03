@@ -151,13 +151,29 @@ error_log( '[Adminland] Template header loaded successfully' );
     <?php if ( ! empty( $plan['features']['custom_branding'] ) ) : ?>
     <div class="admin-section">
         <h2 class="section-title">🎨 Custom Branding</h2>
-        <p style="margin-bottom: 20px;">Upload your company logo to personalize your workspace.</p>
+        <p style="margin-bottom: 20px;">Customize your workspace with your company logo and brand colors.</p>
 
         <?php
         $current_logo = get_user_meta( $user_id, 'pfob_company_logo', true );
+        $brand_colors = get_user_meta( $user_id, 'pfob_brand_colors', true );
+        if ( ! is_array( $brand_colors ) ) {
+            $brand_colors = array();
+        }
+        // Default colors
+        $defaults = array(
+            'primary'    => '#2d9061',
+            'secondary'  => '#0066cc',
+            'background' => '#ffffff',
+            'tile'       => '#f8f9fa',
+            'text'       => '#333333',
+            'accent'     => '#ff6b35'
+        );
+        $brand_colors = array_merge( $defaults, $brand_colors );
         ?>
 
-        <div class="logo-upload-section">
+        <!-- Logo Upload Section -->
+        <div class="logo-upload-section" style="margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid #e0e0e0;">
+            <h3 style="margin-bottom: 15px;">Company Logo</h3>
             <?php if ( $current_logo ) : ?>
                 <div class="current-logo-preview">
                     <strong>Current Logo:</strong><br>
@@ -174,6 +190,86 @@ error_log( '[Adminland] Template header loaded successfully' );
             </div>
 
             <div id="logo-upload-status" style="margin-top: 10px;"></div>
+        </div>
+
+        <!-- Brand Colors Section -->
+        <div class="brand-colors-section">
+            <h3 style="margin-bottom: 15px;">Brand Colors</h3>
+            <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Customize the color scheme for your entire workspace.</p>
+
+            <div class="color-settings" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <div class="color-input-group">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">
+                        Primary Color
+                        <span style="font-weight: normal; color: #666; font-size: 13px;">(Buttons, links)</span>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="color" id="color-primary" value="<?php echo esc_attr( $brand_colors['primary'] ); ?>" style="width: 60px; height: 40px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+                        <input type="text" id="color-primary-text" value="<?php echo esc_attr( $brand_colors['primary'] ); ?>" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">
+                    </div>
+                </div>
+
+                <div class="color-input-group">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">
+                        Secondary Color
+                        <span style="font-weight: normal; color: #666; font-size: 13px;">(Secondary buttons)</span>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="color" id="color-secondary" value="<?php echo esc_attr( $brand_colors['secondary'] ); ?>" style="width: 60px; height: 40px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+                        <input type="text" id="color-secondary-text" value="<?php echo esc_attr( $brand_colors['secondary'] ); ?>" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">
+                    </div>
+                </div>
+
+                <div class="color-input-group">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">
+                        Background Color
+                        <span style="font-weight: normal; color: #666; font-size: 13px;">(Main background)</span>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="color" id="color-background" value="<?php echo esc_attr( $brand_colors['background'] ); ?>" style="width: 60px; height: 40px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+                        <input type="text" id="color-background-text" value="<?php echo esc_attr( $brand_colors['background'] ); ?>" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">
+                    </div>
+                </div>
+
+                <div class="color-input-group">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">
+                        Tile Color
+                        <span style="font-weight: normal; color: #666; font-size: 13px;">(Cards, panels)</span>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="color" id="color-tile" value="<?php echo esc_attr( $brand_colors['tile'] ); ?>" style="width: 60px; height: 40px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+                        <input type="text" id="color-tile-text" value="<?php echo esc_attr( $brand_colors['tile'] ); ?>" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">
+                    </div>
+                </div>
+
+                <div class="color-input-group">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">
+                        Text Color
+                        <span style="font-weight: normal; color: #666; font-size: 13px;">(Primary text)</span>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="color" id="color-text" value="<?php echo esc_attr( $brand_colors['text'] ); ?>" style="width: 60px; height: 40px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+                        <input type="text" id="color-text-text" value="<?php echo esc_attr( $brand_colors['text'] ); ?>" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">
+                    </div>
+                </div>
+
+                <div class="color-input-group">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">
+                        Accent Color
+                        <span style="font-weight: normal; color: #666; font-size: 13px;">(Highlights, badges)</span>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="color" id="color-accent" value="<?php echo esc_attr( $brand_colors['accent'] ); ?>" style="width: 60px; height: 40px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+                        <input type="text" id="color-accent-text" value="<?php echo esc_attr( $brand_colors['accent'] ); ?>" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="button-primary" id="save-brand-colors-btn">Save Brand Colors</button>
+                <button class="button-secondary" id="reset-brand-colors-btn">Reset to Defaults</button>
+                <div id="brand-colors-status" style="margin-left: 10px;"></div>
+            </div>
         </div>
     </div>
     <?php endif; ?>
@@ -836,6 +932,97 @@ document.addEventListener('DOMContentLoaded', function() {
                 statusDiv.innerHTML = '<p style="color: #dc3232;">Error removing logo. Please try again.</p>';
                 removeLogoBtn.disabled = false;
             }
+        });
+    }
+
+    // Brand Colors functionality
+    const colorInputs = ['primary', 'secondary', 'background', 'tile', 'text', 'accent'];
+
+    // Sync color pickers with text inputs
+    colorInputs.forEach(colorName => {
+        const colorPicker = document.getElementById(`color-${colorName}`);
+        const colorText = document.getElementById(`color-${colorName}-text`);
+
+        if (colorPicker && colorText) {
+            // Update text when color picker changes
+            colorPicker.addEventListener('input', function() {
+                colorText.value = this.value;
+            });
+
+            // Update color picker when text changes
+            colorText.addEventListener('input', function() {
+                if (/^#[0-9A-F]{6}$/i.test(this.value)) {
+                    colorPicker.value = this.value;
+                }
+            });
+        }
+    });
+
+    // Save brand colors
+    const saveBrandColorsBtn = document.getElementById('save-brand-colors-btn');
+    const brandColorsStatusDiv = document.getElementById('brand-colors-status');
+
+    if (saveBrandColorsBtn) {
+        saveBrandColorsBtn.addEventListener('click', async function() {
+            const colors = {};
+            colorInputs.forEach(colorName => {
+                const colorValue = document.getElementById(`color-${colorName}`).value;
+                colors[colorName] = colorValue;
+            });
+
+            brandColorsStatusDiv.innerHTML = '<p style="color: #0066cc;">Saving...</p>';
+            saveBrandColorsBtn.disabled = true;
+
+            try {
+                const response = await fetch('/wp-json/projectfob/v1/settings/brand-colors', {
+                    method: 'POST',
+                    headers: {
+                        'X-WP-Nonce': '<?php echo wp_create_nonce( 'wp_rest' ); ?>',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ colors: colors })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    brandColorsStatusDiv.innerHTML = '<p style="color: #46b450;">✓ Colors saved! Refreshing...</p>';
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    brandColorsStatusDiv.innerHTML = '<p style="color: #dc3232;">Error: ' + (result.message || 'Failed to save colors') + '</p>';
+                    saveBrandColorsBtn.disabled = false;
+                }
+            } catch (error) {
+                brandColorsStatusDiv.innerHTML = '<p style="color: #dc3232;">Error saving colors. Please try again.</p>';
+                saveBrandColorsBtn.disabled = false;
+            }
+        });
+    }
+
+    // Reset brand colors to defaults
+    const resetBrandColorsBtn = document.getElementById('reset-brand-colors-btn');
+
+    if (resetBrandColorsBtn) {
+        resetBrandColorsBtn.addEventListener('click', function() {
+            if (!confirm('Are you sure you want to reset all colors to defaults?')) {
+                return;
+            }
+
+            const defaults = {
+                primary: '#2d9061',
+                secondary: '#0066cc',
+                background: '#ffffff',
+                tile: '#f8f9fa',
+                text: '#333333',
+                accent: '#ff6b35'
+            };
+
+            colorInputs.forEach(colorName => {
+                document.getElementById(`color-${colorName}`).value = defaults[colorName];
+                document.getElementById(`color-${colorName}-text`).value = defaults[colorName];
+            });
+
+            brandColorsStatusDiv.innerHTML = '<p style="color: #0066cc;">Colors reset to defaults. Click "Save Brand Colors" to apply.</p>';
         });
     }
 });

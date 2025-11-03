@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}=== ProjectFOB - Templates Builder ===${NC}\n"
 
 # Configuration
-VERSION="2.10.0"
+VERSION="2.11.0"
 DIST_DIR="dist"
 WRAPPER_DIR="template-wrapper"
 
