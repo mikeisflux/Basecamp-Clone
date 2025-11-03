@@ -87,6 +87,7 @@ class PFOB_Router {
         add_rewrite_rule( '^projectfob/schedule/?$', 'index.php?pfob_page=my-schedule', 'top' );
 
         // Settings
+        add_rewrite_rule( '^projectfob/settings/?$', 'index.php?pfob_page=settings', 'top' );
         add_rewrite_rule( '^projectfob/settings/notifications/?$', 'index.php?pfob_page=notifications', 'top' );
         add_rewrite_rule( '^projectfob/settings/calendar-integration/?$', 'index.php?pfob_page=calendar-integration', 'top' );
         add_rewrite_rule( '^projectfob/settings/cloud-storage/?$', 'index.php?pfob_page=cloud-storage', 'top' );
@@ -229,6 +230,7 @@ class PFOB_Router {
             'analytics'       => $template_dir . 'analytics.php',
             'advanced-analytics' => $template_dir . 'advanced-analytics/index.php',
             'my-schedule'     => $template_dir . 'my-schedule.php',
+            'settings'        => $template_dir . 'settings/index.php',
             'notifications'   => $template_dir . 'settings/notifications.php',
             'calendar-integration' => $template_dir . 'settings/calendar-integration.php',
             'cloud-storage'   => $template_dir . 'settings/cloud-storage.php',
