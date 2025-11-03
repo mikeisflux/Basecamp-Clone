@@ -21,7 +21,7 @@ class PFOB_Template {
     }
 
     public static function footer() {
-        // Footer content if needed
+        include PFOB_PLUGIN_DIR . 'templates/components/footer.php';
     }
 
     public static function get_project_url( $project ) {
