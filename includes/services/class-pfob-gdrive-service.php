@@ -12,7 +12,7 @@ class PFOB_GDrive_Service {
      * Get Google OAuth authorization URL.
      */
     public static function get_authorization_url( $user_id ) {
-        $client_id = get_option( 'pfob_google_drive_client_id' );
+        $client_id = get_option( 'pfob_gdrive_client_id' );
         $redirect_uri = self::get_redirect_uri();
 
         if ( empty( $client_id ) ) {
@@ -47,8 +47,8 @@ class PFOB_GDrive_Service {
         }
 
         // Exchange code for tokens
-        $client_id = get_option( 'pfob_google_drive_client_id' );
-        $client_secret = get_option( 'pfob_google_drive_client_secret' );
+        $client_id = get_option( 'pfob_gdrive_client_id' );
+        $client_secret = get_option( 'pfob_gdrive_client_secret' );
         $redirect_uri = self::get_redirect_uri();
 
         $response = wp_remote_post( 'https://oauth2.googleapis.com/token', array(
@@ -107,8 +107,8 @@ class PFOB_GDrive_Service {
             return false;
         }
 
-        $client_id = get_option( 'pfob_google_drive_client_id' );
-        $client_secret = get_option( 'pfob_google_drive_client_secret' );
+        $client_id = get_option( 'pfob_gdrive_client_id' );
+        $client_secret = get_option( 'pfob_gdrive_client_secret' );
 
         $response = wp_remote_post( 'https://oauth2.googleapis.com/token', array(
             'body' => array(

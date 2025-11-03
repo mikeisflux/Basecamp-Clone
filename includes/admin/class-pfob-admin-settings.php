@@ -113,6 +113,14 @@ class PFOB_Admin_Settings {
         // R2 Settings
         register_setting( 'pfob_r2_settings', 'pfob_r2_access_key_id' );
         register_setting( 'pfob_r2_settings', 'pfob_r2_secret_access_key' );
+
+        // Google Drive Settings
+        register_setting( 'pfob_gdrive_settings', 'pfob_gdrive_client_id' );
+        register_setting( 'pfob_gdrive_settings', 'pfob_gdrive_client_secret' );
+
+        // Dropbox Settings
+        register_setting( 'pfob_dropbox_settings', 'pfob_dropbox_app_key' );
+        register_setting( 'pfob_dropbox_settings', 'pfob_dropbox_app_secret' );
     }
 
     /**
@@ -212,6 +220,22 @@ class PFOB_Admin_Settings {
         }
         if ( isset( $_POST['pfob_r2_secret_access_key'] ) ) {
             update_option( 'pfob_r2_secret_access_key', sanitize_text_field( $_POST['pfob_r2_secret_access_key'] ) );
+        }
+
+        // Google Drive settings
+        if ( isset( $_POST['pfob_gdrive_client_id'] ) ) {
+            update_option( 'pfob_gdrive_client_id', sanitize_text_field( $_POST['pfob_gdrive_client_id'] ) );
+        }
+        if ( isset( $_POST['pfob_gdrive_client_secret'] ) ) {
+            update_option( 'pfob_gdrive_client_secret', sanitize_text_field( $_POST['pfob_gdrive_client_secret'] ) );
+        }
+
+        // Dropbox settings
+        if ( isset( $_POST['pfob_dropbox_app_key'] ) ) {
+            update_option( 'pfob_dropbox_app_key', sanitize_text_field( $_POST['pfob_dropbox_app_key'] ) );
+        }
+        if ( isset( $_POST['pfob_dropbox_app_secret'] ) ) {
+            update_option( 'pfob_dropbox_app_secret', sanitize_text_field( $_POST['pfob_dropbox_app_secret'] ) );
         }
 
         add_settings_error( 'pfob_settings', 'settings_saved', 'Settings saved successfully!', 'success' );

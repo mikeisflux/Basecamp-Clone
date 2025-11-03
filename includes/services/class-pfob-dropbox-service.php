@@ -12,7 +12,7 @@ class PFOB_Dropbox_Service {
      * Get Dropbox OAuth authorization URL.
      */
     public static function get_authorization_url( $user_id ) {
-        $client_id = get_option( 'pfob_dropbox_client_id' );
+        $client_id = get_option( 'pfob_dropbox_app_key' );
         $redirect_uri = self::get_redirect_uri();
 
         if ( empty( $client_id ) ) {
@@ -45,8 +45,8 @@ class PFOB_Dropbox_Service {
         }
 
         // Exchange code for tokens
-        $client_id = get_option( 'pfob_dropbox_client_id' );
-        $client_secret = get_option( 'pfob_dropbox_client_secret' );
+        $client_id = get_option( 'pfob_dropbox_app_key' );
+        $client_secret = get_option( 'pfob_dropbox_app_secret' );
         $redirect_uri = self::get_redirect_uri();
 
         $response = wp_remote_post( 'https://api.dropboxapi.com/oauth2/token', array(

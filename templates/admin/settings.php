@@ -18,8 +18,16 @@ $paypal_webhook_id = get_option( 'pfob_paypal_webhook_id', '' );
 $r2_access_key = get_option( 'pfob_r2_access_key_id', '' );
 $r2_secret_key = get_option( 'pfob_r2_secret_access_key', '' );
 
+$gdrive_client_id = get_option( 'pfob_gdrive_client_id', '' );
+$gdrive_client_secret = get_option( 'pfob_gdrive_client_secret', '' );
+
+$dropbox_app_key = get_option( 'pfob_dropbox_app_key', '' );
+$dropbox_app_secret = get_option( 'pfob_dropbox_app_secret', '' );
+
 $paypal_configured = ! empty( $paypal_client_id ) && ! empty( $paypal_client_secret );
 $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
+$gdrive_configured = ! empty( $gdrive_client_id ) && ! empty( $gdrive_client_secret );
+$dropbox_configured = ! empty( $dropbox_app_key ) && ! empty( $dropbox_app_secret );
 ?>
 
 <div class="wrap pfob-admin-settings">
@@ -220,6 +228,156 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
                 </table>
             </div>
 
+            <!-- Google Drive Configuration -->
+            <div class="pfob-settings-section">
+                <div class="section-header">
+                    <h2>
+                        <span class="dashicons dashicons-admin-links"></span>
+                        Google Drive Integration
+                        <?php if ( $gdrive_configured ) : ?>
+                            <span class="status-badge status-success">Configured</span>
+                        <?php else : ?>
+                            <span class="status-badge status-warning">Not Configured</span>
+                        <?php endif; ?>
+                    </h2>
+                    <p class="description">Configure Google Drive API for cloud storage integration (Business+ plans).</p>
+                </div>
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">
+                            <label for="pfob_gdrive_client_id">Client ID</label>
+                        </th>
+                        <td>
+                            <input type="text"
+                                   id="pfob_gdrive_client_id"
+                                   name="pfob_gdrive_client_id"
+                                   value="<?php echo esc_attr( $gdrive_client_id ); ?>"
+                                   class="regular-text"
+                                   placeholder="Google Drive Client ID">
+                            <p class="description">
+                                Get from: <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">
+                            <label for="pfob_gdrive_client_secret">Client Secret</label>
+                        </th>
+                        <td>
+                            <input type="password"
+                                   id="pfob_gdrive_client_secret"
+                                   name="pfob_gdrive_client_secret"
+                                   value="<?php echo esc_attr( $gdrive_client_secret ); ?>"
+                                   class="regular-text"
+                                   placeholder="Google Drive Client Secret">
+                            <button type="button" class="button button-secondary" onclick="togglePasswordVisibility('pfob_gdrive_client_secret')">
+                                <span class="dashicons dashicons-visibility"></span> Show
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">Redirect URI</th>
+                        <td>
+                            <code><?php echo esc_url( rest_url( 'projectfob/v1/integrations/gdrive/callback' ) ); ?></code>
+                            <p class="description">
+                                Add this as an authorized redirect URI in your Google Cloud Console OAuth 2.0 Client.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">Required Scopes</th>
+                        <td>
+                            <ul style="margin: 0; padding-left: 20px;">
+                                <li><code>https://www.googleapis.com/auth/drive.file</code></li>
+                                <li><code>https://www.googleapis.com/auth/drive.readonly</code></li>
+                            </ul>
+                            <p class="description">
+                                These scopes will be requested during OAuth flow.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Dropbox Configuration -->
+            <div class="pfob-settings-section">
+                <div class="section-header">
+                    <h2>
+                        <span class="dashicons dashicons-admin-links"></span>
+                        Dropbox Integration
+                        <?php if ( $dropbox_configured ) : ?>
+                            <span class="status-badge status-success">Configured</span>
+                        <?php else : ?>
+                            <span class="status-badge status-warning">Not Configured</span>
+                        <?php endif; ?>
+                    </h2>
+                    <p class="description">Configure Dropbox API for cloud storage integration (Business+ plans).</p>
+                </div>
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">
+                            <label for="pfob_dropbox_app_key">App Key</label>
+                        </th>
+                        <td>
+                            <input type="text"
+                                   id="pfob_dropbox_app_key"
+                                   name="pfob_dropbox_app_key"
+                                   value="<?php echo esc_attr( $dropbox_app_key ); ?>"
+                                   class="regular-text"
+                                   placeholder="Dropbox App Key">
+                            <p class="description">
+                                Get from: <a href="https://www.dropbox.com/developers/apps" target="_blank">Dropbox App Console</a>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">
+                            <label for="pfob_dropbox_app_secret">App Secret</label>
+                        </th>
+                        <td>
+                            <input type="password"
+                                   id="pfob_dropbox_app_secret"
+                                   name="pfob_dropbox_app_secret"
+                                   value="<?php echo esc_attr( $dropbox_app_secret ); ?>"
+                                   class="regular-text"
+                                   placeholder="Dropbox App Secret">
+                            <button type="button" class="button button-secondary" onclick="togglePasswordVisibility('pfob_dropbox_app_secret')">
+                                <span class="dashicons dashicons-visibility"></span> Show
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">Redirect URI</th>
+                        <td>
+                            <code><?php echo esc_url( rest_url( 'projectfob/v1/integrations/dropbox/callback' ) ); ?></code>
+                            <p class="description">
+                                Add this as a redirect URI in your Dropbox App settings.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">Required Permissions</th>
+                        <td>
+                            <ul style="margin: 0; padding-left: 20px;">
+                                <li>files.content.write</li>
+                                <li>files.content.read</li>
+                            </ul>
+                            <p class="description">
+                                Set these permissions in your Dropbox App Console under "Permissions" tab.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
             <!-- Save Button -->
             <p class="submit">
                 <button type="submit" name="pfob_save_settings" class="button button-primary button-large">
@@ -274,6 +432,30 @@ $r2_configured = ! empty( $r2_access_key ) && ! empty( $r2_secret_key );
                         <li>Click "Sync Subscription Plans to PayPal"</li>
                         <li>Test R2 connection</li>
                         <li>Visit <a href="<?php echo site_url( '/projectfob/pricing' ); ?>" target="_blank"><?php echo site_url( '/projectfob/pricing' ); ?></a></li>
+                    </ol>
+                </div>
+
+                <div class="help-card">
+                    <h3>5. Setup Google Drive (Optional)</h3>
+                    <ol>
+                        <li>Go to <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a></li>
+                        <li>Create new project or select existing</li>
+                        <li>Enable "Google Drive API"</li>
+                        <li>Create OAuth 2.0 credentials</li>
+                        <li>Add redirect URI (shown above)</li>
+                        <li>Copy Client ID and Secret</li>
+                    </ol>
+                </div>
+
+                <div class="help-card">
+                    <h3>6. Setup Dropbox (Optional)</h3>
+                    <ol>
+                        <li>Go to <a href="https://www.dropbox.com/developers/apps" target="_blank">Dropbox App Console</a></li>
+                        <li>Click "Create app"</li>
+                        <li>Choose "Scoped access"</li>
+                        <li>Choose "Full Dropbox" access</li>
+                        <li>Add redirect URI (shown above)</li>
+                        <li>Copy App Key and Secret</li>
                     </ol>
                 </div>
             </div>
