@@ -15,7 +15,7 @@ echo -e "${GREEN}=== ProjectFOB - WordPress Plugin Builder ===${NC}\n"
 
 # Configuration
 PLUGIN_SLUG="projectfob"
-VERSION="2.6.9"
+VERSION="2.7.0"
 BUILD_DIR="build"
 DIST_DIR="dist"
 PLUGIN_DIR="${BUILD_DIR}/${PLUGIN_SLUG}"
@@ -23,7 +23,6 @@ PLUGIN_DIR="${BUILD_DIR}/${PLUGIN_SLUG}"
 # Clean previous builds
 echo -e "${YELLOW}Cleaning previous builds...${NC}"
 rm -rf ${BUILD_DIR}
-rm -rf ${DIST_DIR}
 mkdir -p ${PLUGIN_DIR}
 mkdir -p ${DIST_DIR}
 
