@@ -89,6 +89,7 @@
     border-radius: var(--pfob-radius);
     font-weight: 500;
     transition: background-color 0.2s;
+    white-space: nowrap;
 }
 
 .pfob-nav-item:hover {
