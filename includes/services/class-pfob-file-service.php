@@ -99,37 +99,60 @@ class PFOB_File_Service {
     }
 
     public static function get_file_icon( $mime_type ) {
-        $icons = array(
-            'image' => '🖼️',
-            'pdf'   => '📄',
-            'word'  => '📝',
-            'excel' => '📊',
-            'zip'   => '🗜️',
-            'video' => '🎥',
-            'audio' => '🎵',
-        );
-
         // Handle null/empty mime type
         if ( empty( $mime_type ) ) {
-            return '📎';
+            return self::get_generic_icon();
         }
 
+        // Image files
         if ( strpos( $mime_type, 'image' ) !== false ) {
-            return $icons['image'];
-        } elseif ( strpos( $mime_type, 'pdf' ) !== false ) {
-            return $icons['pdf'];
-        } elseif ( strpos( $mime_type, 'word' ) !== false || strpos( $mime_type, 'document' ) !== false ) {
-            return $icons['word'];
-        } elseif ( strpos( $mime_type, 'excel' ) !== false || strpos( $mime_type, 'spreadsheet' ) !== false ) {
-            return $icons['excel'];
-        } elseif ( strpos( $mime_type, 'zip' ) !== false || strpos( $mime_type, 'compressed' ) !== false ) {
-            return $icons['zip'];
-        } elseif ( strpos( $mime_type, 'video' ) !== false ) {
-            return $icons['video'];
-        } elseif ( strpos( $mime_type, 'audio' ) !== false ) {
-            return $icons['audio'];
+            return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#10B981"/><path d="M16 20L20 24L28 16L36 24V34H12V24L16 20Z" fill="white"/><circle cx="20" cy="18" r="3" fill="white"/></svg>';
         }
 
-        return '📎';
+        // PDF files
+        if ( strpos( $mime_type, 'pdf' ) !== false ) {
+            return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#DC2626"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">PDF</text></svg>';
+        }
+
+        // Word documents
+        if ( strpos( $mime_type, 'word' ) !== false || strpos( $mime_type, 'document' ) !== false || strpos( $mime_type, 'msword' ) !== false ) {
+            return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#2B5797"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">DOC</text></svg>';
+        }
+
+        // Excel spreadsheets
+        if ( strpos( $mime_type, 'excel' ) !== false || strpos( $mime_type, 'spreadsheet' ) !== false ) {
+            return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#16A34A"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">XLS</text></svg>';
+        }
+
+        // PowerPoint presentations
+        if ( strpos( $mime_type, 'powerpoint' ) !== false || strpos( $mime_type, 'presentation' ) !== false ) {
+            return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#EA580C"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">PPT</text></svg>';
+        }
+
+        // Text files
+        if ( strpos( $mime_type, 'text' ) !== false ) {
+            return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#6B7280"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">TXT</text></svg>';
+        }
+
+        // Zip/Archive files
+        if ( strpos( $mime_type, 'zip' ) !== false || strpos( $mime_type, 'compressed' ) !== false || strpos( $mime_type, 'archive' ) !== false ) {
+            return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#F59E0B"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">ZIP</text></svg>';
+        }
+
+        // Video files
+        if ( strpos( $mime_type, 'video' ) !== false ) {
+            return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#7C3AED"/><polygon points="20,16 20,32 32,24" fill="white"/></svg>';
+        }
+
+        // Audio files
+        if ( strpos( $mime_type, 'audio' ) !== false ) {
+            return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#EC4899"/><path d="M20 14H22V28C22 30 20 32 18 32C16 32 14 30 14 28C14 26 16 24 18 24C19 24 20 24.5 20 25V14Z M26 12L32 14V24C32 26 30 28 28 28C26 28 24 26 24 24C24 22 26 20 28 20C29 20 30 20.5 30 21V16L26 15V12Z" fill="white"/></svg>';
+        }
+
+        return self::get_generic_icon();
+    }
+
+    private static function get_generic_icon() {
+        return '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#9CA3AF"/><path d="M18 12H26L32 18V36H18V12Z M26 12V18H32" stroke="white" stroke-width="2" fill="none"/></svg>';
     }
 }

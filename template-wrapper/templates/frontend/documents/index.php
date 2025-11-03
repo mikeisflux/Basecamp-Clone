@@ -496,12 +496,57 @@ function formatFileSize(bytes) {
 }
 
 function PFOB_File_Service_getFileIcon(mimeType) {
-    if (mimeType.startsWith('image/')) return '🖼️';
-    if (mimeType.startsWith('video/')) return '🎥';
-    if (mimeType.startsWith('audio/')) return '🎵';
-    if (mimeType === 'application/pdf') return '📄';
-    if (isOfficeDocument(mimeType)) return '📊';
-    return '📎';
+    if (!mimeType) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#9CA3AF"/><path d="M18 12H26L32 18V36H18V12Z M26 12V18H32" stroke="white" stroke-width="2" fill="none"/></svg>';
+    }
+
+    // Image files
+    if (mimeType.includes('image')) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#10B981"/><path d="M16 20L20 24L28 16L36 24V34H12V24L16 20Z" fill="white"/><circle cx="20" cy="18" r="3" fill="white"/></svg>';
+    }
+
+    // PDF files
+    if (mimeType.includes('pdf')) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#DC2626"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">PDF</text></svg>';
+    }
+
+    // Word documents
+    if (mimeType.includes('word') || mimeType.includes('document') || mimeType.includes('msword')) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#2B5797"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">DOC</text></svg>';
+    }
+
+    // Excel spreadsheets
+    if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#16A34A"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">XLS</text></svg>';
+    }
+
+    // PowerPoint presentations
+    if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#EA580C"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">PPT</text></svg>';
+    }
+
+    // Text files
+    if (mimeType.includes('text')) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#6B7280"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">TXT</text></svg>';
+    }
+
+    // Zip/Archive files
+    if (mimeType.includes('zip') || mimeType.includes('compressed') || mimeType.includes('archive')) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#F59E0B"/><text x="24" y="30" font-family="sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">ZIP</text></svg>';
+    }
+
+    // Video files
+    if (mimeType.includes('video')) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#7C3AED"/><polygon points="20,16 20,32 32,24" fill="white"/></svg>';
+    }
+
+    // Audio files
+    if (mimeType.includes('audio')) {
+        return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#EC4899"/><path d="M20 14H22V28C22 30 20 32 18 32C16 32 14 30 14 28C14 26 16 24 18 24C19 24 20 24.5 20 25V14Z M26 12L32 14V24C32 26 30 28 28 28C26 28 24 26 24 24C24 22 26 20 28 20C29 20 30 20.5 30 21V16L26 15V12Z" fill="white"/></svg>';
+    }
+
+    // Generic file
+    return '<svg width="80" height="80" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#9CA3AF"/><path d="M18 12H26L32 18V36H18V12Z M26 12V18H32" stroke="white" stroke-width="2" fill="none"/></svg>';
 }
 
 function escapeHtml(text) {
