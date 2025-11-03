@@ -26,9 +26,6 @@ if ( ! $plan ) {
     wp_die( __( 'Invalid subscription plan.', 'projectfob' ) );
 }
 
-// Get base plan cost
-$current_cost = $plan['price'];
-
 // Get add-ons from subscription metadata
 // Note: metadata is already decoded as an array in get_by_user_id()
 $metadata = array();
@@ -46,7 +43,20 @@ if ( ! empty( $subscription->metadata ) ) {
 $has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'] === true;
 $has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin_pro'] === true;
 
-// Calculate total cost with add-ons
+// Get billing interval from metadata (default to monthly for old subscriptions)
+$billing_interval = $metadata['billing_interval'] ?? 'monthly';
+
+// Calculate base plan cost based on billing interval
+$subscription_cost = 0.00;
+if ( $billing_interval === 'yearly' ) {
+    $subscription_cost = $plan['yearly_price'] ?? $plan['monthly_price'] ?? 0.00;
+    $current_cost = $subscription_cost / 12; // Show monthly equivalent
+} else {
+    $subscription_cost = $plan['monthly_price'] ?? 0.00;
+    $current_cost = $subscription_cost;
+}
+
+// Calculate total cost with add-ons (add-ons are always monthly)
 if ( $has_timesheet ) {
     $current_cost += 50;
 }

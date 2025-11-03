@@ -144,6 +144,23 @@ class PFOB_Subscription_Manager {
                                 $plan = $plans[$sub->plan_id] ?? null;
                                 $plan_name = $plan ? $plan['name'] : $sub->plan_id;
 
+                                // Get billing interval from metadata (default to monthly for old subscriptions)
+                                $metadata = $sub->metadata ? json_decode($sub->metadata, true) : array();
+                                $billing_interval = $metadata['billing_interval'] ?? 'monthly';
+
+                                // Get the appropriate price based on billing interval
+                                $price = 0.00;
+                                $price_label = '/mo';
+                                if ($plan) {
+                                    if ($billing_interval === 'yearly') {
+                                        $price = $plan['yearly_price'] ?? $plan['monthly_price'] ?? 0.00;
+                                        $price_label = '/yr';
+                                    } else {
+                                        $price = $plan['monthly_price'] ?? 0.00;
+                                        $price_label = '/mo';
+                                    }
+                                }
+
                                 $status_colors = array(
                                     'active' => '#46b450',
                                     'pending' => '#ffb900',
@@ -160,7 +177,7 @@ class PFOB_Subscription_Manager {
                                     </td>
                                     <td>
                                         <strong><?php echo esc_html($plan_name); ?></strong><br>
-                                        <small>$<?php echo $plan ? number_format($plan['price'], 2) : '0.00'; ?>/mo</small>
+                                        <small>$<?php echo number_format($price, 2); ?><?php echo $price_label; ?></small>
                                     </td>
                                     <td>
                                         <span style="color: <?php echo $status_color; ?>; font-weight: bold;">
@@ -214,6 +231,23 @@ class PFOB_Subscription_Manager {
 
         $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
         $current_plan = $plans[$subscription->plan_id] ?? null;
+
+        // Get billing interval from metadata (default to monthly for old subscriptions)
+        $metadata = $subscription->metadata ? json_decode($subscription->metadata, true) : array();
+        $billing_interval = $metadata['billing_interval'] ?? 'monthly';
+
+        // Get the appropriate price and label based on billing interval
+        $current_price = 0.00;
+        $current_price_label = '/month';
+        if ($current_plan) {
+            if ($billing_interval === 'yearly') {
+                $current_price = $current_plan['yearly_price'] ?? $current_plan['monthly_price'] ?? 0.00;
+                $current_price_label = '/year';
+            } else {
+                $current_price = $current_plan['monthly_price'] ?? 0.00;
+                $current_price_label = '/month';
+            }
+        }
 
         // Get usage statistics
         $usage = PFOB_Usage::get_all_current($user_id);
@@ -270,7 +304,7 @@ class PFOB_Subscription_Manager {
                                 <th>Current Plan:</th>
                                 <td>
                                     <strong><?php echo $current_plan ? $current_plan['name'] : $subscription->plan_id; ?></strong>
-                                    <br><small>$<?php echo $current_plan ? number_format($current_plan['price'], 2) : '0.00'; ?>/month</small>
+                                    <br><small>$<?php echo number_format($current_price, 2); ?><?php echo $current_price_label; ?></small>
                                 </td>
                             </tr>
                             <tr>
@@ -390,7 +424,7 @@ class PFOB_Subscription_Manager {
                             <select name="new_plan" class="widefat" style="margin-bottom: 10px;">
                                 <?php foreach ($plans as $plan_id => $plan): ?>
                                     <option value="<?php echo esc_attr($plan_id); ?>" <?php selected($plan_id, $subscription->plan_id); ?>>
-                                        <?php echo esc_html($plan['name']); ?> - $<?php echo number_format($plan['price'], 2); ?>/mo
+                                        <?php echo esc_html($plan['name']); ?> - $<?php echo number_format($plan['monthly_price'] ?? 0, 2); ?>/mo
                                     </option>
                                 <?php endforeach; ?>
                             </select>

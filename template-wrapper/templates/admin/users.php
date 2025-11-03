@@ -59,6 +59,19 @@ $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
                         }
                         $has_timesheet = isset( $metadata['addon_timesheet'] ) && $metadata['addon_timesheet'] === true;
                         $has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin_pro'] === true;
+
+                        // Get billing interval and price
+                        $billing_interval = $metadata['billing_interval'] ?? 'monthly';
+                        $display_price = 0.00;
+                        $price_label = '/mo';
+                        if ( $plan ) {
+                            if ( $billing_interval === 'yearly' ) {
+                                $display_price = ( $plan['yearly_price'] ?? $plan['monthly_price'] ?? 0 ) / 12;
+                                $price_label = '/mo (billed yearly)';
+                            } else {
+                                $display_price = $plan['monthly_price'] ?? 0;
+                            }
+                        }
                         ?>
                         <tr>
                             <td>
@@ -68,7 +81,7 @@ $plans = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
                             <td>
                                 <strong><?php echo esc_html( $plan['name'] ?? ucfirst( $subscription->plan_id ) ); ?></strong>
                                 <br>
-                                <span style="color: #666;">$<?php echo number_format( $plan['price'] ?? 0, 2 ); ?>/mo</span>
+                                <span style="color: #666;">$<?php echo number_format( $display_price, 2 ); ?><?php echo esc_html( $price_label ); ?></span>
                             </td>
                             <td>
                                 <div class="pfob-addons-toggle">

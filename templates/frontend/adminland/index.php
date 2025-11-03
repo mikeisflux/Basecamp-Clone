@@ -44,11 +44,7 @@ if ( ! $plan ) {
     error_log( '[Adminland] Plan loaded: ' . $plan['name'] );
 }
 
-// Calculate costs
-$monthly_cost = $plan['price'];
-$next_payment_date = $subscription->current_period_end ? date( 'F j, Y', strtotime( $subscription->current_period_end ) ) : 'N/A';
-
-// Check for add-ons (from subscription metadata)
+// Check for add-ons (from subscription metadata) and get billing interval
 error_log( '[Adminland] Checking add-ons from metadata' );
 $metadata = array();
 if ( ! empty( $subscription->metadata ) ) {
@@ -73,12 +69,32 @@ $has_admin_pro = isset( $metadata['addon_admin_pro'] ) && $metadata['addon_admin
 error_log( '[Adminland] Has Timesheet: ' . ( $has_timesheet ? 'Yes' : 'No' ) );
 error_log( '[Adminland] Has Admin Pro: ' . ( $has_admin_pro ? 'Yes' : 'No' ) );
 
+// Get billing interval from metadata (default to monthly for old subscriptions)
+$billing_interval = $metadata['billing_interval'] ?? 'monthly';
+error_log( '[Adminland] Billing interval: ' . $billing_interval );
+
+// Calculate costs based on billing interval
+$subscription_cost = 0.00;
+$cost_label = '/month';
+if ( $billing_interval === 'yearly' ) {
+    $subscription_cost = $plan['yearly_price'] ?? $plan['monthly_price'] ?? 0.00;
+    $cost_label = '/year';
+} else {
+    $subscription_cost = $plan['monthly_price'] ?? 0.00;
+    $cost_label = '/month';
+}
+
+// Add-ons are always monthly
+$monthly_cost = ( $billing_interval === 'yearly' ) ? ( $subscription_cost / 12 ) : $subscription_cost;
 if ( $has_timesheet ) {
     $monthly_cost += 50;
 }
 if ( $has_admin_pro ) {
     $monthly_cost += 50;
 }
+
+// Next payment date
+$next_payment_date = $subscription->current_period_end ? date( 'F j, Y', strtotime( $subscription->current_period_end ) ) : 'N/A';
 
 // Get organization name
 $organization = get_user_meta( $user_id, 'pfob_organization', true ) ?: get_bloginfo( 'name' );
@@ -97,7 +113,7 @@ error_log( '[Adminland] Template header loaded successfully' );
         <h2 class="section-title">Your Subscription</h2>
 
         <div class="info-row">
-            <strong>Plan:</strong> <?php echo esc_html( $plan['name'] ); ?> ($<?php echo esc_html( $plan['price'] ); ?>/month)
+            <strong>Plan:</strong> <?php echo esc_html( $plan['name'] ); ?> ($<?php echo esc_html( number_format( $subscription_cost, 2 ) ); ?><?php echo esc_html( $cost_label ); ?>)
         </div>
 
         <div class="info-row">
