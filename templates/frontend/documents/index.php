@@ -309,9 +309,10 @@ async function previewFile(docId) {
             document.getElementById('preview-file-name').textContent = doc.name;
 
             let previewHTML = '';
+            const mimeType = doc.mime_type || '';
 
             // Handle different file types
-            if (doc.mime_type.startsWith('image/')) {
+            if (mimeType.startsWith('image/')) {
                 // Image gallery with zoom
                 previewHTML = `
                     <div class="pfob-image-preview">
@@ -322,7 +323,7 @@ async function previewFile(docId) {
                         <div class="pfob-preview-hint">Click image to zoom</div>
                     </div>
                 `;
-            } else if (doc.mime_type === 'application/pdf') {
+            } else if (mimeType === 'application/pdf') {
                 // Enhanced PDF viewer
                 previewHTML = `
                     <div class="pfob-pdf-preview">
@@ -341,12 +342,12 @@ async function previewFile(docId) {
                         </div>
                     </div>
                 `;
-            } else if (doc.mime_type.startsWith('video/')) {
+            } else if (mimeType.startsWith('video/')) {
                 // Video player
                 previewHTML = `
                     <div class="pfob-video-preview">
                         <video controls style="width:100%; max-height:600px; border-radius:8px;">
-                            <source src="${doc.url}" type="${doc.mime_type}">
+                            <source src="${doc.url}" type="${mimeType}">
                             Your browser does not support the video tag.
                         </video>
                         <div class="pfob-preview-actions">
@@ -356,14 +357,14 @@ async function previewFile(docId) {
                         </div>
                     </div>
                 `;
-            } else if (doc.mime_type.startsWith('audio/')) {
+            } else if (mimeType.startsWith('audio/')) {
                 // Audio player
                 previewHTML = `
                     <div class="pfob-audio-preview">
                         <div class="pfob-audio-icon">🎵</div>
                         <h3>${escapeHtml(doc.name)}</h3>
                         <audio controls style="width:100%; margin:20px 0;">
-                            <source src="${doc.url}" type="${doc.mime_type}">
+                            <source src="${doc.url}" type="${mimeType}">
                             Your browser does not support the audio element.
                         </audio>
                         <div class="pfob-preview-actions">
@@ -373,7 +374,7 @@ async function previewFile(docId) {
                         </div>
                     </div>
                 `;
-            } else if (isOfficeDocument(doc.mime_type)) {
+            } else if (isOfficeDocument(mimeType)) {
                 // Microsoft Office documents using Office Online Viewer
                 const encodedUrl = encodeURIComponent(doc.url);
                 previewHTML = `
@@ -394,7 +395,7 @@ async function previewFile(docId) {
                         </div>
                     </div>
                 `;
-            } else if (doc.mime_type === 'text/plain' || doc.mime_type.includes('text/')) {
+            } else if (mimeType === 'text/plain' || mimeType.includes('text/')) {
                 // Text file preview
                 fetch(doc.url)
                     .then(r => r.text())
@@ -416,11 +417,11 @@ async function previewFile(docId) {
                 // Fallback for unsupported types
                 previewHTML = `
                     <div class="pfob-preview-unsupported">
-                        <div class="pfob-file-icon-large">${PFOB_File_Service_getFileIcon(doc.mime_type)}</div>
+                        <div class="pfob-file-icon-large">${PFOB_File_Service_getFileIcon(mimeType)}</div>
                         <h3>${escapeHtml(doc.name)}</h3>
                         <p>Preview not available for this file type.</p>
                         <p class="pfob-file-meta">
-                            ${doc.mime_type}<br>
+                            ${mimeType}<br>
                             ${formatFileSize(doc.file_size)}
                         </p>
                         <div class="pfob-preview-actions">

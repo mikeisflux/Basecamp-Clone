@@ -109,6 +109,11 @@ class PFOB_File_Service {
             'audio' => '🎵',
         );
 
+        // Handle null/empty mime type
+        if ( empty( $mime_type ) ) {
+            return '📎';
+        }
+
         if ( strpos( $mime_type, 'image' ) !== false ) {
             return $icons['image'];
         } elseif ( strpos( $mime_type, 'pdf' ) !== false ) {

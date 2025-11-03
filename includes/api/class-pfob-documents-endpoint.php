@@ -79,15 +79,20 @@ class PFOB_Documents_Endpoint extends PFOB_REST_API {
             $download_url = WP_CONTENT_URL . $document->file_path;
         }
 
+        // Get mime type from file
+        $mime_type = ! empty( $document->mime_type ) ? $document->mime_type : 'application/octet-stream';
+
         return new WP_REST_Response( array(
             'success' => true,
             'data'    => array(
                 'id'           => $document->id,
                 'name'         => $document->name,
                 'type'         => $document->type,
+                'mime_type'    => $mime_type,
                 'file_path'    => $document->file_path,
                 'file_size'    => $document->file_size,
                 'is_folder'    => $document->is_folder,
+                'url'          => $download_url,
                 'download_url' => $download_url,
                 'created_at'   => $document->created_at,
             ),
@@ -149,6 +154,7 @@ class PFOB_Documents_Endpoint extends PFOB_REST_API {
         // Get file info
         $file_type = wp_check_filetype( $filename );
         $relative_path = str_replace( WP_CONTENT_DIR, '', $file_path );
+        $mime_type = ! empty( $file_type['type'] ) ? $file_type['type'] : 'application/octet-stream';
 
         // Create document record
         $document_id = PFOB_Document::create( array(
@@ -156,6 +162,7 @@ class PFOB_Documents_Endpoint extends PFOB_REST_API {
             'parent_id'  => $parent_id,
             'name'       => $filename,
             'type'       => $file_type['ext'] ?: 'file',
+            'mime_type'  => $mime_type,
             'file_path'  => $relative_path,
             'file_size'  => $file['size'],
             'is_folder'  => 0,
