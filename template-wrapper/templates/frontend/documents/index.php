@@ -327,9 +327,13 @@ async function previewFile(docId) {
 
             let previewHTML = '';
             const mimeType = doc.mime_type || '';
+            const fileName = doc.name.toLowerCase();
+
+            // Check if file is actually an image despite .pdf extension
+            const isPDFNamedImage = fileName.endsWith('.pdf') && mimeType.startsWith('image/');
 
             // Handle different file types
-            if (mimeType.startsWith('image/')) {
+            if (mimeType.startsWith('image/') || isPDFNamedImage) {
                 // Image gallery with zoom
                 previewHTML = `
                     <div class="pfob-image-preview">
@@ -341,7 +345,7 @@ async function previewFile(docId) {
                     </div>
                 `;
             } else if (mimeType === 'application/pdf') {
-                // Enhanced PDF viewer
+                // Enhanced PDF viewer (works for both text PDFs and scanned image PDFs)
                 previewHTML = `
                     <div class="pfob-pdf-preview">
                         <iframe src="${doc.url}"
@@ -349,7 +353,10 @@ async function previewFile(docId) {
                                 height="700px"
                                 style="border:none; border-radius:8px;">
                         </iframe>
-                        <div class="pfob-preview-actions">
+                        <div class="pfob-preview-hint" style="margin-top: 10px; color: #666; font-size: 13px;">
+                            Displays both document PDFs and scanned image PDFs
+                        </div>
+                        <div class="pfob-preview-actions" style="margin-top: 10px;">
                             <a href="${doc.url}" target="_blank" class="pfob-btn pfob-btn-secondary">
                                 Open in New Tab
                             </a>
