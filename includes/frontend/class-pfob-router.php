@@ -54,6 +54,8 @@ class PFOB_Router {
         add_rewrite_rule( '^projectfob/adminland/public-items/?$', 'index.php?pfob_page=public-items', 'top' );
         add_rewrite_rule( '^projectfob/adminland/trash/?$', 'index.php?pfob_page=trash', 'top' );
         add_rewrite_rule( '^projectfob/adminland/upgrades/?$', 'index.php?pfob_page=upgrades', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/white-label/?$', 'index.php?pfob_page=white-label', 'top' );
+        add_rewrite_rule( '^projectfob/adminland/api-access/?$', 'index.php?pfob_page=api-access', 'top' );
 
         // Timesheet (Add-on)
         add_rewrite_rule( '^projectfob/timesheet/?$', 'index.php?pfob_page=timesheet', 'top' );
@@ -77,6 +79,7 @@ class PFOB_Router {
 
         // Analytics
         add_rewrite_rule( '^projectfob/analytics/?$', 'index.php?pfob_page=analytics', 'top' );
+        add_rewrite_rule( '^projectfob/advanced-analytics/?$', 'index.php?pfob_page=advanced-analytics', 'top' );
 
         // Personal Schedule (all events across all projects)
         add_rewrite_rule( '^projectfob/schedule/?$', 'index.php?pfob_page=my-schedule', 'top' );
@@ -84,6 +87,7 @@ class PFOB_Router {
         // Settings
         add_rewrite_rule( '^projectfob/settings/notifications/?$', 'index.php?pfob_page=notifications', 'top' );
         add_rewrite_rule( '^projectfob/settings/calendar-integration/?$', 'index.php?pfob_page=calendar-integration', 'top' );
+        add_rewrite_rule( '^projectfob/settings/cloud-storage/?$', 'index.php?pfob_page=cloud-storage', 'top' );
         add_rewrite_rule( '^projectfob/settings/import-export/?$', 'index.php?pfob_page=import-export', 'top' );
 
         // Projects
@@ -206,6 +210,8 @@ class PFOB_Router {
             'public-items'    => $template_dir . 'adminland/public-items.php',
             'trash'           => $template_dir . 'adminland/trash.php',
             'upgrades'        => $template_dir . 'adminland/upgrades.php',
+            'white-label'     => $template_dir . 'adminland/white-label.php',
+            'api-access'      => $template_dir . 'adminland/api-access.php',
             'timesheet'       => $template_dir . 'timesheet/index.php',
             'timesheet-reports' => $template_dir . 'timesheet/reports.php',
             'timesheet-settings' => $template_dir . 'timesheet/settings.php',
@@ -219,9 +225,11 @@ class PFOB_Router {
             'user-projects'   => $template_dir . 'people/user-projects.php',
             'search'          => $template_dir . 'search.php',
             'analytics'       => $template_dir . 'analytics.php',
+            'advanced-analytics' => $template_dir . 'advanced-analytics/index.php',
             'my-schedule'     => $template_dir . 'my-schedule.php',
             'notifications'   => $template_dir . 'settings/notifications.php',
             'calendar-integration' => $template_dir . 'settings/calendar-integration.php',
+            'cloud-storage'   => $template_dir . 'settings/cloud-storage.php',
             'import-export'   => $template_dir . 'settings/import-export.php',
             'project'         => $template_dir . 'project/single.php',
             'project-create'  => $template_dir . 'project/create.php',

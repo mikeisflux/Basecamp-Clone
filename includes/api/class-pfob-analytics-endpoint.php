@@ -41,6 +41,13 @@ class PFOB_Analytics_Endpoint extends PFOB_REST_API {
             'callback'            => array( $this, 'get_all_projects_analytics' ),
             'permission_callback' => array( $this, 'check_permission_with_subscription' ),
         ) );
+
+        // Get advanced analytics (Business+ plans)
+        register_rest_route( $this->namespace, '/analytics/advanced', array(
+            'methods'             => 'GET',
+            'callback'            => array( $this, 'get_advanced_analytics' ),
+            'permission_callback' => array( $this, 'check_permission_with_subscription' ),
+        ) );
     }
 
     /**
@@ -113,6 +120,37 @@ class PFOB_Analytics_Endpoint extends PFOB_REST_API {
         $user_id = get_current_user_id();
 
         $analytics = PFOB_Analytics_Service::get_all_projects_analytics( $user_id, $days );
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'data' => $analytics,
+        ), 200 );
+    }
+
+    /**
+     * Get advanced analytics (Business+ plans only).
+     */
+    public function get_advanced_analytics( $request ) {
+        $user_id = get_current_user_id();
+
+        // Check if user has advanced analytics feature
+        $subscription = PFOB_Subscription::get_by_user_id( $user_id );
+        if ( ! $subscription ) {
+            return new WP_Error( 'no_subscription', 'No active subscription', array( 'status' => 403 ) );
+        }
+
+        $plans_config = include PFOB_PLUGIN_DIR . 'includes/config/subscription-plans.php';
+        $plan = isset( $plans_config[ $subscription->plan_id ] ) ? $plans_config[ $subscription->plan_id ] : null;
+
+        if ( ! $plan || empty( $plan['features']['advanced_analytics'] ) ) {
+            return new WP_Error( 'feature_unavailable', 'Advanced Analytics is only available on Business and Enterprise plans', array( 'status' => 403 ) );
+        }
+
+        $days = $request->get_param( 'days' ) ?: 30;
+        $start_date = $request->get_param( 'start' );
+        $end_date = $request->get_param( 'end' );
+
+        $analytics = PFOB_Analytics_Service::get_advanced_analytics( $user_id, $days, $start_date, $end_date );
 
         return new WP_REST_Response( array(
             'success' => true,
