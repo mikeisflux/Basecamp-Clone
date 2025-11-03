@@ -519,7 +519,7 @@ class PFOB_Subscription_Manager {
 
         // Log activity
         if ($result) {
-            PFOB_Database::insert('pfob_activities', array(
+            PFOB_Database::insert('activities', array(
                 'user_id' => $user_id,
                 'action_type' => 'subscription.plan_changed',
                 'subject_type' => 'subscription',
@@ -546,7 +546,7 @@ class PFOB_Subscription_Manager {
 
         // Log activity
         if ($result) {
-            PFOB_Database::insert('pfob_activities', array(
+            PFOB_Database::insert('activities', array(
                 'user_id' => $user_id,
                 'action_type' => 'subscription.status_changed',
                 'subject_type' => 'subscription',
@@ -576,7 +576,7 @@ class PFOB_Subscription_Manager {
 
         // Log activity
         if ($result) {
-            PFOB_Database::insert('pfob_activities', array(
+            PFOB_Database::insert('activities', array(
                 'user_id' => $user_id,
                 'action_type' => 'subscription.cancelled',
                 'subject_type' => 'subscription',
@@ -601,7 +601,7 @@ class PFOB_Subscription_Manager {
 
         // Log activity
         if ($result !== false) {
-            PFOB_Database::insert('pfob_activities', array(
+            PFOB_Database::insert('activities', array(
                 'user_id' => $user_id,
                 'action_type' => 'subscription.usage_reset',
                 'subject_type' => 'subscription',
